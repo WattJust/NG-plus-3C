@@ -180,6 +180,7 @@ function getInfCondenserCostScaling() {
 	let scaling = 1
 	if (player.eternityUpgrades.includes(12)) scaling *= 2/3
 	scaling *= 1-tmp.qcRewards[8]
+	if (player.masterystudies.includes("d13")) scaling *= 1-getTreeUpgradeEffect(11)
 	return scaling;
 }
 

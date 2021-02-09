@@ -715,6 +715,7 @@ var softcap_data = {
 			start() {
 				let start = new Decimal("1e8000000");
 				if (player.masterystudies.includes("t332")) start = start.times(getMTSMult(332));
+				if (player.masterystudies.includes("d13")) start = start.pow(getTreeUpgradeEffect(12));
 				return start;
 			},
 			pow: 0.95,

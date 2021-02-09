@@ -40,8 +40,8 @@ function updateTreeOfDecayTab(){
 		if (branchNum == c + 1) {
 			var decays = getRadioactiveDecays(shorthand)
 			var power = Math.floor(getBU1Power(shorthand) / 120 + 1)			
-			document.getElementById(color + "UpgPow1").textContent = decays || power > 1 ? shorten(Decimal.pow(2, (1 + decays * .1) / power)) : 2
-			document.getElementById(color + "UpgSpeed1").textContent = decays > 2 || power > 1 ? shorten(Decimal.pow(2, Math.max(.8 + decays * .1, 1) / power)) : 2
+			document.getElementById(color + "UpgPow1").textContent = tmp.ngp3c?"more":((decays || power > 1 ? shorten(Decimal.pow(2, (1 + decays * .1) / power)) : 2)+"x")
+			document.getElementById(color + "UpgSpeed1").textContent = tmp.ngp3c?"":((decays > 2 || power > 1 ? shorten(Decimal.pow(2, Math.max(.8 + decays * .1, 1) / power)) : 2)+"x")
 			lvl = getBranchUpgLevel(shorthand, 3)
 			let s = getBranchUpg3SoftcapStart()
 			if (lvl >= s) eff = Decimal.pow(4, (Math.sqrt((lvl + 1) / s) - Math.sqrt(lvl / s)) * s).toFixed(2)
@@ -260,8 +260,8 @@ function getTreeUpgradeCost(upg,add) {
 	
 	if (upg == 9) return Decimal.pow(Math.pow(lvl+1, 2)*10, Math.pow(lvl, 1.25)).times(2.5e18)
 	if (upg == 10) return Decimal.pow(8, lvl).times(5e20)
-	if (upg == 11) return new Decimal(1/0);
-	if (upg == 12) return new Decimal(1/0);
+	if (upg == 11) return Decimal.pow(2.5, lvl * Math.max(lvl - 9, 1)).times(5e22);
+	if (upg == 12) return Decimal.pow(lvl*2+1, lvl/2.5+1).times(1e23);
 
 	return 0
 }
@@ -297,7 +297,7 @@ function getEffectiveTreeUpgLevel(upg){
 
 function getTotalNumOfToDUpgrades(){
 	let power = 0
-	for (var upg = 1; upg < 9; upg++) power += getTreeUpgradeLevel(upg)
+	for (var upg = 1; upg < (tmp.ngp3c?13:9); upg++) power += getTreeUpgradeLevel(upg)
 	return power
 }
 
@@ -335,6 +335,12 @@ function getTreeUpgradeEffect(upg) {
 	if (upg == 10) {
 		return tmp.qu.tod.r.spin.plus(1).pow(Math.sqrt(lvl)*2e8)
 	}
+	if (upg == 11) {
+		return 1-1/(Math.log10(tmp.qu.tod.g.spin.plus(1).log10()*lvl+1)*Math.sqrt(lvl)*1e5+1)
+	}
+	if (upg == 12) {
+		return Math.pow(tmp.qu.tod.b.spin.plus(1).log10()*lvl+1, 0.2)
+	}
 	return 0
 }
 
@@ -343,6 +349,8 @@ function getTreeUpgradeEffectDesc(upg) {
 	if (upg == 2) return getDilExp("TU3").toFixed(2) + " -> " + getDilExp().toFixed(2)
 	if (upg == 4) return "^" + getFullExpansion(Math.round(getElectronBoost("noTree"))) + " -> ^" + getFullExpansion(Math.round(tmp.mpte))
 	if (upg == 8) return getTreeUpgradeEffect(8).toFixed(2)
+	if (upg == 11) return (100*getTreeUpgradeEffect(11)).toFixed(5)
+	if (upg == 12) return shorten(getTreeUpgradeEffect(12))
 	return shortenMoney(getTreeUpgradeEffect(upg))
 }
 
