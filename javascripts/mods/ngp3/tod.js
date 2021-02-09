@@ -223,7 +223,8 @@ function getQuarkSpinProduction(branch) {
 	
 	if (tmp.ngp3c) {
 		let mult = new Decimal(2.25);
-		mult = mult.plus(Object.values(tmp.qu.tod[branch].upgrades).reduce((a,c) => Decimal.add(a,c)))
+		if (Object.values(tmp.qu.tod[branch].upgrades).length==1) mult = mult.plus(Object.values(tmp.qu.tod[branch].upgrades)[0])
+		else if (Object.values(tmp.qu.tod[branch].upgrades).length>0) mult = mult.plus(Object.values(tmp.qu.tod[branch].upgrades).reduce((a,c) => Decimal.add(a,c)))
 		ret = ret.times(mult);
 		if (player.masterystudies.includes("t432")) ret = ret.times(3)
 		if (tmp.qu.tod[branch].quarks.eq(0)) ret = ret.div(20)
