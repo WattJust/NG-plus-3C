@@ -284,22 +284,30 @@ function setupToDHTMLandData(){
 function setupNanofieldHTMLandData(){
 	var nfRewards = document.getElementById("nfRewards")
 	var row = 0
-	for (var r = 1; r <= 8; r += 2) {
+	for (var r = 1; r <= 8; r += 4) {
 		nfRewards.insertRow(row).innerHTML = 
 			"<td id='nfRewardHeader" + r + "' class='milestoneText'></td>" +
-			"<td id='nfRewardHeader" + (r + 1) + "' class='milestoneText'></td>"
+			"<td id='nfRewardHeader" + (r + 1) + "' class='milestoneText'></td>" +
+			"<td id='nfRewardHeader" + (r + 2) + "' class='milestoneText'></td>" +
+			"<td id='nfRewardHeader" + (r + 3) + "' class='milestoneText'></td>"
 		row++
 		nfRewards.insertRow(row).innerHTML = 
 			"<td id='nfRewardTier" + r + "' class='milestoneTextSmall'></td>" +
-			"<td id='nfRewardTier" + (r + 1) + "' class='milestoneTextSmall'></td>"
+			"<td id='nfRewardTier" + (r + 1) + "' class='milestoneTextSmall'></td>" +
+			"<td id='nfRewardTier" + (r + 2) + "' class='milestoneTextSmall'></td>" +
+			"<td id='nfRewardTier" + (r + 3) + "' class='milestoneTextSmall'></td>"
 		row++
 		nfRewards.insertRow(row).innerHTML = 
 			"<td><button class='nfRewardlocked' id='nfReward" + r + "'></button></td>" +
-			"<td><button class='nfRewardlocked' id='nfReward" + (r + 1) + "'></button></td>"
+			"<td><button class='nfRewardlocked' id='nfReward" + (r + 1) + "'></button></td>" +
+			"<td><button class='nfRewardlocked' id='nfReward" + (r + 2) + "'></button></td>" +
+			"<td><button class='nfRewardlocked' id='nfReward" + (r + 3) + "'></button></td>"
 		row++
 		nfRewards.insertRow(row).innerHTML = 
 			"<td><button class='nfCondlocked' id='nfCond" + r +"' style='display: none' onclick='condenseNanoReward(" + r + ")'></button></td>" + 
-			"<td><button class='nfCondlocked' id='nfCond" + (r + 1) +"' style='display: none' onclick='condenseNanoReward(" + (r + 1) + ")'></button></td>"
+			"<td><button class='nfCondlocked' id='nfCond" + (r + 1) +"' style='display: none' onclick='condenseNanoReward(" + (r + 1) + ")'></button></td>" +
+			"<td><button class='nfCondlocked' id='nfCond" + (r + 2) +"' style='display: none' onclick='condenseNanoReward(" + (r + 2) + ")'></button></td>" +
+			"<td><button class='nfCondlocked' id='nfCond" + (r + 3) +"' style='display: none' onclick='condenseNanoReward(" + (r + 3) + ")'></button></td>"
 		row++
 	}
 	document.getElementById("nfReward7").style["font-size"] = "10px"
@@ -5277,13 +5285,15 @@ function treeOfDecayUpdating(diff){
 		var decayPower = getRDPower(shorthand)
 				
 		var mult = Decimal.pow(2,decayPower)
+		let ug = getUnstableGain(shorthand)
+		var pseudoPower = Decimal.div(ug.gt(mult)?ug.div(mult).log(2)+1:ug.div(mult),decayRate)
 		var power = Decimal.div(branch.quarks.gt(mult)?branch.quarks.div(mult).log(2)+1:branch.quarks.div(mult),decayRate)
 		var decayed = power.min(diff)
 		power = power.sub(decayed).times(decayRate)
 
 		var sProd = getQuarkSpinProduction(shorthand)
 		branch.quarks = power.gt(1) ? Decimal.pow(2,power-1).times(mult) : power.times(mult)	
-		branch.spin = branch.spin.add(sProd.times(decayed))	
+		branch.spin = branch.spin.add(sProd.times((tmp.ngp3c && player.masterystudies.includes("t432"))?pseudoPower.min(diff).max(decayed):decayed))	
 	}
 }
 

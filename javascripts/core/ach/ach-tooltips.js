@@ -370,7 +370,7 @@ function setR18Tooltip(){
 	let ie = document.getElementById("Impossible expectations")
 	let wasted = document.getElementById("Studies are wasted")
 	let protonsDecay = document.getElementById("Do protons decay?")
-	//ng3p46/////
+	let marked = document.getElementById("Hardly marked")
 	let stop = document.getElementById("Stop blocking me!")
 	let dying = document.getElementById("Are you currently dying?")
 
@@ -380,6 +380,7 @@ function setR18Tooltip(){
 	ie.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 8e6)) + " antimatter in a paired challenge with the PC6+8 combination." + (tmp.ngp3l ? "" : " Reward: Automatically buy the Quark multiplier to dimensions every second if you have the 8th brave milestone."))
 	wasted.setAttribute('ach-tooltip', "Get " + shorten(1.1e7) + " TT without having TT generation, keeping your previous TT, and respeccing studies. Reward: While you have less than 1 hour worth of TT production, you gain 10x as much TT.")
 	protonsDecay.setAttribute('ach-tooltip', "Unlock Tree of Decay." + ((!tmp.ngp3l&&!tmp.ngp3c) ? " Reward: You keep the two thirds power of your preons upon quantum when outside of a Quantum Challenge." : ""))
+	marked.setAttribute('ach-tooltip', "Complete a PC with the QC3 & 8 combination."+(tmp.ngp3c?"":" Reward: You keep the cube root of your normal replicants upon quantum when outside of a Quantum Challenge."))
 	stop.setAttribute('ach-tooltip', "Get the replicanti reset requirement to " + shorten(Decimal.pow(10, 1.25e7)) + ". Reward: Getting a normal replicant manually doesn't reset your replicanti and can be automated.")
 	dying.setAttribute('ach-tooltip', "Reach " + shorten(Decimal.pow(10, 2.75e5)) + " IP while dilated, in PC6+8, and without having time studies." + (tmp.ngp3l ? "" : " Reward: Branches are faster based on your Meta-Dimension Boosts."))
 }

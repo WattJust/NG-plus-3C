@@ -122,8 +122,14 @@ function getCondenserPow() {
 	return pow
 }
 
+function getFreeCondensers() {
+	let c = 0;
+	if (player.masterystudies.includes("d13")) c += getTreeUpgradeEffect(9);
+	return c;
+}
+
 function getCondenserEff(x) {
-	return Decimal.pow(player.money.plus(1).log10()+1, Decimal.mul(player.condensed.normal[x], getCondenserPow()))
+	return Decimal.pow(player.money.plus(1).log10()+1, Decimal.mul(player.condensed.normal[x]+getFreeCondensers(), getCondenserPow()))
 }
 
 function updateCondenser(x) {
@@ -205,6 +211,7 @@ function getExtraInfConds() {
 	let cond = 0
 	if (player.timestudy.studies.includes(44)) cond+=3
 	if (player.dilation.upgrades.includes("ngp3c2")) cond += getDil36Mult()
+	if (player.masterystudies.includes("d13")) cond += getTreeUpgradeEffect(9);
 	return cond
 }
 
@@ -381,6 +388,7 @@ function getFreeTimeConds() {
 	let cond = 0
 	if (player.dilation.upgrades.includes("ngp3c2")) cond += getDil36Mult()
 	if (player.dilation.upgrades.includes("ngpp4")) cond++;
+	if (player.masterystudies.includes("d13")) cond += getTreeUpgradeEffect(9);
 	return cond;
 }
 
@@ -659,6 +667,7 @@ function getMetaCondenserPow() {
 function getFreeMetaConds() {
 	let cond = 0
 	if (player.dilation.upgrades.includes("ngpp4")) cond++;
+	if (player.masterystudies.includes("d13")) cond += getTreeUpgradeEffect(9);
 	return cond;
 }
 

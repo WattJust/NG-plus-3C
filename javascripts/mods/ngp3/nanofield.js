@@ -1,6 +1,6 @@
 function getNanospeedText(){
 	s = getNanofieldSpeedText()
-	if (!shiftDown) s = ghostified || nanospeed != 1 || !tmp.ns.eq(1) ? "Your Nanofield speed is currently " + (nanospeed == 1 ? "" : shorten(tmp.ns) + " * " + shorten(nanospeed) + " = ") + shorten(getNanofieldFinalSpeed()) + "x (hold shift for details)" : ""
+	if (!shiftDown) s = ghostified || nanospeed != 1 || !tmp.ns.eq(1) ? "Nanospeed: " + (nanospeed == 1 ? "" : shorten(tmp.ns) + " * " + shorten(nanospeed) + " = ") + shorten(getNanofieldFinalSpeed()) + "x (hold shift for details)" : ""
 	return s
 }
 
@@ -209,6 +209,7 @@ function isNanoEffectUsed(x) {
 function getNanofieldSpeedText(){
 	text = ""
 	if (tmp.ngp3c && player.masterystudies.includes("t403")) text += "TS403: " + shorten(getMTSMult(403))+"x, "
+	if (tmp.ngp3c && player.masterystudies.includes("t431")) text += "TS431: " + shorten(getMTSMult(431))+"x, "
 	if (ghostified) text += "Ghostify Bonus: " + shorten(tmp.qu.nanofield.rewards >= 16 ? 1 : (player.ghostify.milestone >= 1 ? 6 : 3)) + "x, "
 	if (!tmp.ngp3l && player.achievements.includes("ng3p78")) text += "'Aren't you already dead' reward: " +shorten(Math.sqrt(getTreeUpgradeLevel(8) * tmp.tue + 1)) + "x, "
 	if (hasNU(15)) text += "Neutrino upgrade 15: " + shorten(tmp.nu[6]) + "x, "
@@ -218,7 +219,8 @@ function getNanofieldSpeedText(){
 
 function getNanofieldSpeed() {
 	let x = new Decimal(1)
-	if (tmp.ngp3c && player.masterystudies.includes("t403")) x = getMTSMult(403)
+	if (tmp.ngp3c && player.masterystudies.includes("t403")) x = x.times(getMTSMult(403))
+	if (tmp.ngp3c && player.masterystudies.includes("t431")) x = x.times(getMTSMult(431))
 	if (ghostified) x = x.times(tmp.qu.nanofield.rewards >= 16 ? 1 : (player.ghostify.milestone >= 1 ? 6 : 3))
 	if (!tmp.ngp3l && player.achievements.includes("ng3p78")) x = x.times(Math.sqrt(getTreeUpgradeLevel(8) * tmp.tue + 1))
 	if (hasNU(15)) x = tmp.nu[6].times(x)

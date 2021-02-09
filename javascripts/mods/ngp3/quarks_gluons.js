@@ -157,7 +157,7 @@ function updateColorCharge() {
 	var colors = ['r','g','b']
 	for (var i = 0; i < 3; i++) {
 		var ret = new Decimal(0)
-		if (player.ghostify.milestones >= 2) ret = tmp.qu.usedQuarks[colors[i]]
+		if (player.ghostify.milestones >= 2 || (tmp.ngp3c && player.masterystudies.includes("t432"))) ret = tmp.qu.usedQuarks[colors[i]]
 		colorCharge[colors[i]] = ret
 	}
 
@@ -169,7 +169,7 @@ function updateColorCharge() {
 	}
 
 	colorCharge.normal={color:sorted[0],charge:Decimal.sub(tmp.qu.usedQuarks[sorted[0]]).sub(tmp.qu.usedQuarks[sorted[1]])}
-	if (player.ghostify.milestones<2) colorCharge[sorted[0]]=colorCharge[sorted[0]].add(colorCharge.normal.charge)
+	if (player.ghostify.milestones<2 && !(tmp.ngp3c && player.masterystudies.includes("t432"))) colorCharge[sorted[0]]=colorCharge[sorted[0]].add(colorCharge.normal.charge)
 	if (tmp.qu.usedQuarks[sorted[0]].gt(0)&&colorCharge.normal.charge.eq(0)) giveAchievement("Hadronization")
 
 	updateQuarksTabOnUpdate()
@@ -218,6 +218,7 @@ function updateColorPowers(log) {
 	colorBoosts.r=Math.pow(log.r,player.dilation.active?2/3:0.5)/10+1
 	if (colorBoosts.r>1.3) colorBoosts.r=Math.sqrt(colorBoosts.r*1.3)
 	if (colorBoosts.r>2.3&&(!player.dilation.active||getTreeUpgradeLevel(2)>7||ghostified)) colorBoosts.r=Math.pow(colorBoosts.r/2.3,0.5*(ghostified&&player.ghostify.neutrinos.boosts>4?1+tmp.nb[5]:1))*2.3
+	if (player.dilation.active && colorBoosts.r>=12 && tmp.ngp3c) colorBoosts.r = Math.log10(colorBoosts.r-2)+11
 
 	//Green
 	let m = 1
@@ -372,7 +373,7 @@ function generateAllGluons() {
 }
 
 GUCosts = [null, 1, 2, 4, 100, 7e15, 4e19, 3e28, "1e570"]
-GUCosts_Condensed = [null, 1, 2, 4, 100, 7e18, 1e24, 1e28, "1e570"]
+GUCosts_Condensed = [null, 1, 2, 4, 100, 7e18, 1e24, 1e28, 2e99]
 
 function getGUCost(id) {
 	let costs = tmp.ngp3c?GUCosts_Condensed:GUCosts
@@ -477,7 +478,8 @@ function getBR4Effect() {
 }
 
 function getGU8Effect(type) {
-	return Math.pow(tmp.qu.gluons[type].div("1e565").add(1).log10() * 0.505 + 1, 1.5)
+	if (tmp.ngp3c) return Math.pow(tmp.qu.gluons[type].div(1e90).add(1).log10() * 0.325 + 1, 1.5)
+	else return Math.pow(tmp.qu.gluons[type].div("1e565").add(1).log10() * 0.505 + 1, 1.5)
 }
 
 //Display
@@ -639,6 +641,8 @@ function updateGluonsTabOnUpdate(mode) {
 			if (tmp.qu.gluons[name].lt(cost)) document.getElementById(upg+"btn").className = "gluonupgrade unavailablebtn"
 			else document.getElementById(upg + "btn").className = "gluonupgrade " + name
 		}
+		let colNames = ["Red","Green","Blue"]
+		document.getElementById(names[c]+"upg8desc").textContent = tmp.ngp3c?(colNames[c]+" branch is faster based on your "+names[c].toUpperCase()+" gluons."):(colNames[c]+" unstable quarks decay slower based on your "+names[c].toUpperCase()+" gluons.")
 	}
 	if (mode == undefined || mode == "display") document.getElementById("qkmultcurrent").textContent = shortenDimensions(Decimal.pow(2, tmp.qu.multPower.total))
 	document.getElementById("rgupg4").innerHTML = player.aarexModifications.ngp3c?"Galaxies are 50% stronger.<br>Cost: 100 RG gluons":"Galaxies are 50% stronger, but electrons are 30% weaker and normal galaxies are 60% weaker.<br>Cost: 100 RG gluons"

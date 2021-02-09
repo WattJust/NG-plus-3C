@@ -316,6 +316,7 @@ function getWorkingTickspeed(){
 			tick = tick.div(Decimal.pow(pow, r))
 		}
 		tick = softcap(tick.pow(-1), "ngp3cTS").pow(-1)
+		if (player.dilation.active && tick.pow(-1).gte(Decimal.pow(10, 350e9))) tick = Decimal.pow(10, -Math.sqrt(tick.pow(-1).log10()*350e9))
 		if (player.currentEternityChall=="eterc7") return new Decimal(1000)
 	}
 	return tick

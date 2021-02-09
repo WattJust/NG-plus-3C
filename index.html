@@ -613,13 +613,14 @@
 					<tr>
 						<td><button class="timestudylocked" id="timestudy421" style='font-size:10px' onclick='buyMasteryStudy("t", 421)'></button></td>
 						<td><button class="timestudylocked" id="timestudy422" style='font-size:10px' onclick='buyMasteryStudy("t", 422)'></button></td>
-						<td><button class="timestudylocked" id="dilstudy13" onclick='buyMasteryStudy("d", 13)'>Unlock Tree of Decay<br><span id="ds13Cost"></span><span id="ds13Req"></span></button></td>
+						<td><button class="timestudylocked" id="dilstudy13" onclick='buyMasteryStudy("d", 13)' style='font-size: 10px;'>Unlock Tree of Decay<br><span id="ds13Cost"></span><span id="ds13Req"></span></button></td>
 					</tr>
 				</table>
 				<table class="table" id="studytable">
 					<tr>
-						<td><button class="timestudylocked" id="timestudy431" style='font-size:10px' onclick='buyMasteryStudy("t", 431)'></button></td>
 						<td><button class="timestudylocked" id="dilstudy14" onclick='buyMasteryStudy("d", 14)'>Unlock Big Rip<br><span id="ds14Cost"></span><span id="ds14Req"></span></button></td>
+						<td><button class="timestudylocked" id="timestudy432" style='font-size:9px' onclick='buyMasteryStudy("t", 432)'></button></td>
+						<td><button class="timestudylocked" id="timestudy431" style='font-size:9px' onclick='buyMasteryStudy("t", 431)'></button></td>
 					</tr>
 				</table>
 				<div style="height: 60px;"></div>
@@ -2698,7 +2699,7 @@
 								<div id="Do protons decay?" class="achievement achievementlocked" style="background-image: url(images/139.png)" ach-tooltip="Unlock Tree of Decay. Reward: You keep the two thirds power of your preons upon quantum when outside of a Quantum Challenge."></div>
 							</td>
 							<td>
-								<div id="Hardly marked" class="achievement achievementlocked" style="background-image: url(images/140.png)" ach-tooltip="Complete a PC with the QC3 & 8 combination. Reward: You keep the cube root of your normal replicants upon quantum when outside of a Quantum Challenge."></div>
+								<div id="Hardly marked" class="achievement achievementlocked" style="background-image: url(images/140.png)"></div>
 							</td>
 							<td>
 								<div id="Stop blocking me!" class="achievement achievementlocked" style="background-image: url(images/141.png)"></div>
@@ -4972,11 +4973,11 @@
 					<td><button id='brupg6' onclick='buyGluonUpg("br",6)' style='font-size:8.5px'>Meta-Dimension Boosts slow down the Distant Antimatter Galaxy cost scaling.<br><span id='brupg6current'></span><br>Cost: <span id='brupg6cost'></span> BR gluons</button></td>
 				</tr><tr id='gupgrow4'>
 					<td id='rgupg7col' colspan=2><button id='rgupg7' onclick='buyGluonUpg("rg",7)'>Slow down the Remote Antimatter Galaxy scaling by 10%.<br>Cost: <span id='rgupg7cost'></span> RG gluons</button></td>
-					<td id='rgupg8col'><button id='rgupg8' onclick='buyGluonUpg("rg",8)'>Red unstable quarks decay slower based on your RG gluons.<br><span id='rgupg8current'></span><br>Cost: <span id='rgupg8cost'></span> RG gluons</button></td>
+					<td id='rgupg8col'><button id='rgupg8' onclick='buyGluonUpg("rg",8)'><span id="rgupg8desc">Red unstable quarks decay slower based on your RG gluons.</span><br><span id='rgupg8current'></span><br>Cost: <span id='rgupg8cost'></span> RG gluons</button></td>
 					<td id='gbupg7col' colspan=2><button id='gbupg7' onclick='buyGluonUpg("gb",7)'>Infinity Points slow down the Remote Antimatter Galaxy scaling.<br><span id='gbupg7current'></span><br>Cost: <span id='gbupg7cost'></span> GB gluons</button></td>
-					<td id='gbupg8col'><button id='gbupg8' onclick='buyGluonUpg("gb",8)'>Green unstable quarks decay slower based on your GB gluons.<br><span id='gbupg8current'></span><br>Cost: <span id='gbupg8cost'></span> GB gluons</button></td>
+					<td id='gbupg8col'><button id='gbupg8' onclick='buyGluonUpg("gb",8)'><span id="gbupg8desc">Green unstable quarks decay slower based on your GB gluons.</span><br><span id='gbupg8current'></span><br>Cost: <span id='gbupg8cost'></span> GB gluons</button></td>
 					<td id='brupg7col' colspan=2><button id='brupg7' onclick='buyGluonUpg("br",7)'>Eternity Points slow down the Remote Antimatter Galaxy scaling.<br><span id='brupg7current'></span><br>Cost: <span id='brupg7cost'></span> BR gluons</button></td>
-					<td id='brupg8col'><button id='brupg8' onclick='buyGluonUpg("br",8)'>Blue unstable quarks decay slower based on your BR gluons.<br><span id='brupg8current'></span><br>Cost: <span id='brupg8cost'></span> BR gluons</button></td>
+					<td id='brupg8col'><button id='brupg8' onclick='buyGluonUpg("br",8)'><span id="brupg8desc">Blue unstable quarks decay slower based on your BR gluons.</span><br><span id='brupg8current'></span><br>Cost: <span id='brupg8cost'></span> BR gluons</button></td>
 				</tr><tr><td colspan=6>
 					Current QK gain multiplier: <span id='qkmultcurrent'></span>x
 				</td></tr><tr style='vertical-align:0'>
@@ -5095,7 +5096,7 @@
 				</table>
 				<div class='nftab' id='nanoverse'>
 					You have <span id="quarksNanofield"></span> preons.<br>
-					<span id="ns"></span>
+					<span id="ns" style="font-size: 14px;"></span>
 					<table class="qtable"><tr><td>
 						You have <span id="preonEnergy" style="font-size:35px"></span> preon energy.<br>
 						You have <span id="quarkPower" style="font-size:35px"></span> preon power. Next at <span id="quarkPowerThreshold" style="font-size:35px"></span> preon energy.<br>
@@ -5157,6 +5158,11 @@
 						<td><button class='gluonupgrade unavailablebtn' id='treeupg6' onclick='buyTreeUpg(6)'>Emperor Dimensions produce faster.<br>Level: <span id='treeupg6lvl'>?</span><br>Currently: <span id='treeupg6current'>?</span>x<br><span id="treeupg6cost"></span></button></td>
 						<td><button class='gluonupgrade unavailablebtn' id='treeupg7' onclick='buyTreeUpg(7)'>Replicantis boost dilated time production.<br>Level: <span id='treeupg7lvl'>?</span><br>Currently: <span id='treeupg7current'>?</span>x<br><span id="treeupg7cost"></span></button></td>
 						<td><button class='gluonupgrade unavailablebtn' id='treeupg8' onclick='buyTreeUpg(8)' style='font-size:9px'>Your best-in-this-quantum meta-antimatter makes the meta-antimatter effect stronger.<br>Level: <span id='treeupg8lvl'>?</span><br>Currently: +<span id='treeupg8current'>?</span> to exponent<br><span id="treeupg8cost"></span></button></td>
+					</tr><tr id="treeupgrow3">
+						<td><button class='gluonupgrade unavailablebtn' id='treeupg9' onclick='buyTreeUpg(9)'>Nanorewards add free Normal, Infinity, Time, & Meta Condensers.<br>Level: <span id='treeupg9lvl'>?</span><br>Currently: +<span id='treeupg9current'>?</span><br><span id="treeupg9cost"></span></button></td>
+						<td><button class='gluonupgrade unavailablebtn' id='treeupg10' onclick='buyTreeUpg(10)'>Red Quark Spin makes OS_ND_6 start later.<br>Level: <span id='treeupg10lvl'>?</span><br>Currently: <span id='treeupg10current'>?</span>x<br><span id="treeupg10cost"></span></button></td>
+						<td><button class='gluonupgrade unavailablebtn' id='treeupg11' onclick='buyTreeUpg(11)'>???<br>Level: <span id='treeupg11lvl'>?</span><br>Currently: <span id='treeupg11current'>?</span>x<br><span id="treeupg11cost"></span></button></td>
+						<td><button class='gluonupgrade unavailablebtn' id='treeupg12' onclick='buyTreeUpg(12)'>???<br>Level: <span id='treeupg12lvl'>?</span><br>Currently: <span id='treeupg12current'>?</span>x<br><span id="treeupg12cost"></span></button></td>
 					</tr></table>
 					<button class="storebtn" onclick="maxTreeUpg()" style="width: 190px">Max all upgrades</button>
 				</div>

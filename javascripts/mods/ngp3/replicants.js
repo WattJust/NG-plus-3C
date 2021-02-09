@@ -178,6 +178,7 @@ function getEmperorDimensionGlobalMultiplier() {
 	let ret = new Decimal(1)
 	if (player.masterystudies.includes("t392")) ret = getMTSMult(392)
 	if (player.masterystudies.includes("t402")) ret = ret.times(30)
+	if (tmp.ngp3c && player.masterystudies.includes("t431")) ret = ret.times(getMTSMult(431))
 	if (player.masterystudies.includes("d13")) ret = ret.times(getTreeUpgradeEffect(6))
 	if (hasBosonicUpg(35)) ret = ret.times(tmp.blu[35].eds)
 	return ret
@@ -260,7 +261,7 @@ function canFeedReplicant(tier, auto) {
 }
 
 function isLimitUpgAffordable() {
-	if (!player.masterystudies.includes("d11")) return tmp.qu.replicants.limit < 10
+	if (!player.masterystudies.includes("d11")) return tmp.qu.replicants.limit < 10 && tmp.qu.replicants.limitDim == 1
 	return true
 }
 
@@ -351,7 +352,7 @@ function breakLimit() {
 		tmp.qu.gluons.gb = tmp.qu.gluons.gb.sub(tmp.qu.replicants.limitCost)
 		tmp.qu.gluons.br = tmp.qu.gluons.br.sub(tmp.qu.replicants.limitCost)
 		tmp.qu.replicants.limit++
-		if (tmp.qu.replicants.limit > 10 && tmp.qu.replicants.limitDim < 8) {
+		if (tmp.qu.replicants.limit > 10 && tmp.qu.replicants.limitDim < 8 && player.masterystudies.includes("d11")) {
 			tmp.qu.replicants.limit = 1
 			tmp.qu.replicants.limitDim++
 		}
@@ -386,7 +387,7 @@ function maxBuyLimit() {
 			tmp.qu.replicants.limit += toAdd
 		}
 		var dimAdd = Math.max(Math.min(Math.ceil(tmp.qu.replicants.limit / 10 - 1), 8 - tmp.qu.replicants.limitDim), 0)
-		if (dimAdd > 0) {
+		if (dimAdd > 0 && player.masterystudies.includes("d11")) {
 			tmp.qu.replicants.limit -= dimAdd * 10
 			tmp.qu.replicants.limitDim += dimAdd
 		}

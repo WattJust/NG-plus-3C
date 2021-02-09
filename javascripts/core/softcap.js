@@ -454,7 +454,11 @@ var softcap_data = {
 		},
 		6: {
 			func: "pow",
-			start: Decimal.pow(10, 1.6e9),
+			start() {
+				let start = Decimal.pow(10, 1.6e9);
+				if (player.masterystudies.includes("d13") && tmp.ngp3c) start = start.times(getTreeUpgradeEffect(10));
+				return start;
+			},
 			pow: 1/23,
 			derv: false,
 		},
@@ -726,7 +730,7 @@ var softcap_data = {
 	ngp3cQK: {
 		1: {
 			func: "pow",
-			start: new Decimal(1e100),
+			start: new Decimal(1e200),
 			pow: 1/3,
 			derv: false,
 		},

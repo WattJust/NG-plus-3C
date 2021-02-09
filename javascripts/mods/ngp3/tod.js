@@ -54,7 +54,8 @@ function updateTreeOfDecayTab(){
 	if (!branchNum) {
 		var start = getLogTotalSpin() > 200 ? "" : "Cost: "
 		var end = getLogTotalSpin() > 200 ? "" : " quark spin"
-		for (var u = 1; u <= 8; u++) {
+		document.getElementById("treeupgrow3").style.display = tmp.ngp3c ? "" : "none"
+		for (var u = 1; u <= (tmp.ngp3c?12:8); u++) {
 			var lvl = getTreeUpgradeLevel(u)
 			document.getElementById("treeupg" + u).className = "gluonupgrade " + (canBuyTreeUpg(u) ? shorthands[getTreeUpgradeLevel(u) % 3] : "unavailablebtn")
 			document.getElementById("treeupg" + u + "current").textContent = getTreeUpgradeEffectDesc(u)
@@ -126,9 +127,14 @@ function showBranchTab(tabName) {
 	closeToolTip()
 }
 
+function getUnstableGainDiv(over=false) {
+	if (tmp.ngp3c) return "1e80"
+	else return over?"1e420":"1e300"
+}
+
 function getUnstableGain(branch) {
-	let ret = tmp.qu.usedQuarks[branch].div("1e420").add(1).log10()
-	if (ret < 2) ret = Math.max(tmp.qu.usedQuarks[branch].div("1e300").div(99).log10() / 60,0)
+	let ret = tmp.qu.usedQuarks[branch].div(getUnstableGainDiv(true)).add(1).log10()
+	if (ret < 2 && !tmp.ngp3c) ret = Math.max(tmp.qu.usedQuarks[branch].div(getUnstableGainDiv()).div(99).log10() / 60,0)
 	let power = getBranchUpgLevel(branch, 2) - getRDPower(branch)
 	ret = Decimal.pow(2, power).times(ret)
 	if (ret.gt(1)) ret = Decimal.pow(ret, Math.pow(2, power + 1))
@@ -139,7 +145,11 @@ function getUnstableGain(branch) {
 function unstableQuarks(branch) {
 	if (tmp.qu.usedQuarks[branch].eq(0) || getUnstableGain(branch).lte(tmp.qu.tod[branch].quarks)) return
 	tmp.qu.tod[branch].quarks = tmp.qu.tod[branch].quarks.max(getUnstableGain(branch))
-	if (player.ghostify.milestones < 4) tmp.qu.usedQuarks[branch] = new Decimal(0)
+	if (player.ghostify.milestones < 4) {
+		tmp.qu.usedQuarks[branch] = new Decimal(0)
+		updateColorCharge();
+		updateTODStuff();
+	}
 	if (player.ghostify.reference > 0) player.ghostify.reference--
 	if (player.unstableThisGhostify) player.unstableThisGhostify ++
 	else player.unstableThisGhostify = 10
@@ -177,14 +187,16 @@ function getBranchFinalSpeed() {
 
 function getDecayRate(branch) {
 	let ret = Decimal.pow(2, getBU1Power(branch) * Math.max((getRadioactiveDecays(branch) - 8) / 10, 1)).div(getBranchUpgMult(branch, 3)).div(Decimal.pow(2, Math.max(0, getRDPower(branch) - 4)))
-	if (branch == "r") {
-		if (GUBought("rg8")) ret = ret.div(getGU8Effect("rg"))
-	}
-	if (branch == "g") {
-		if (GUBought("gb8")) ret = ret.div(getGU8Effect("gb"))
-	}
-	if (branch == "b") {
-		if (GUBought("br8")) ret = ret.div(getGU8Effect("br"))
+	if (!tmp.ngp3c) {
+		if (branch == "r") {
+			if (GUBought("rg8")) ret = ret.div(getGU8Effect("rg"))
+		}
+		if (branch == "g") {
+			if (GUBought("gb8")) ret = ret.div(getGU8Effect("gb"))
+		}
+		if (branch == "b") {
+			if (GUBought("br8")) ret = ret.div(getGU8Effect("br"))
+		}
 	}
 	ret = ret.times(getBranchFinalSpeed())
 	return ret.min(Math.pow(2, 40)).times(todspeed)
@@ -197,6 +209,7 @@ function getMilestone14SpinMult(){
 }
 
 function getQuarkSpinProduction(branch) {
+	if (tmp.ngp3c && tmp.qu.tod[branch].quarks.eq(0) && (!player.masterystudies.includes("t432")||tmp.qu.usedQuarks[branch].eq(0))) return new Decimal(0)
 	let ret = getBranchUpgMult(branch, 1).times(getBranchFinalSpeed())
 	if (hasNU(4)) ret = ret.times(tmp.nu[2])
 	if (player.achievements.includes("ng3p74")) if (tmp.qu.tod[branch].decays) ret = ret.times(1 + tmp.qu.tod[branch].decays)
@@ -207,23 +220,48 @@ function getQuarkSpinProduction(branch) {
 	}
 	if (!tmp.ngp3l) ret = ret.times(Decimal.pow(1.1, player.quantum.nanofield.rewards - 12))
 	ret = ret.times(todspeed)
+	
+	if (tmp.ngp3c) {
+		let mult = new Decimal(2.25);
+		mult = mult.plus(Object.values(tmp.qu.tod[branch].upgrades).reduce((a,c) => Decimal.add(a,c)))
+		ret = ret.times(mult);
+		if (player.masterystudies.includes("t432")) ret = ret.times(3)
+		if (tmp.qu.tod[branch].quarks.eq(0)) ret = ret.div(20)
+		if (branch == "r") {
+			if (GUBought("rg8")) ret = ret.times(getGU8Effect("rg"))
+		}
+		if (branch == "g") {
+			if (GUBought("gb8")) ret = ret.times(getGU8Effect("gb"))
+		}
+		if (branch == "b") {
+			if (GUBought("br8")) ret = ret.times(getGU8Effect("br"))
+		}
+	}
 	return ret
 }
 
 function getTreeUpgradeCost(upg,add) {
 	let lvl = getTreeUpgradeLevel(upg)
 	if (add !== undefined) lvl += add
+	
 	if (upg == 1) return Decimal.pow(2, lvl * 2 + Math.max(lvl - 35, 0) * (lvl - 34) / 2).times(50)
 	if (upg == 2) return Decimal.pow(4, lvl * (lvl + 3) / 2).times(600)
-	if (upg == 3) return Decimal.pow(32, lvl).times(3e9)
-	if (upg == 4) return Decimal.pow(2, lvl + Math.max(lvl - 37, 0) * (lvl - 36) / 2).times(1e12)
+	if (upg == 3) return Decimal.pow(32, lvl).times(tmp.ngp3c?5e6:3e9)
+	if (upg == 4) return Decimal.pow(2, lvl + Math.max(lvl - 37, 0) * (lvl - 36) / 2).times(tmp.ngp3c?1e9:1e12)
 	if (upg == 5) {
-		if (player.achievements.includes("ng3p87")) return Decimal.pow(2, lvl + Math.pow(Math.max(0, lvl - 50), 1.5)).times(4e12)
-		return Decimal.pow(2, lvl + Math.max(lvl - 35, 0) * (lvl - 34) / 2 + Math.pow(Math.max(0, lvl - 50), 1.5)).times(4e12)
+		let start = tmp.ngp3c?1e11:4e12;
+		if (player.achievements.includes("ng3p87")) return Decimal.pow(2, lvl + Math.pow(Math.max(0, lvl - 50), 1.5)).times(start)
+		return Decimal.pow(2, lvl + Math.max(lvl - 35, 0) * (lvl - 34) / 2 + Math.pow(Math.max(0, lvl - 50), 1.5)).times(start)
 	}
-	if (upg == 6) return Decimal.pow(4, lvl * (lvl + 3) / 2).times(6e22)
-	if (upg == 7) return Decimal.pow(16, lvl * lvl).times(4e22)
-	if (upg == 8) return Decimal.pow(2, lvl).times(3e23)
+	if (upg == 6) return Decimal.pow(4, lvl * (lvl + 3) / 2).times(tmp.ngp3c?2e15:6e22)
+	if (upg == 7) return Decimal.pow(16, lvl * lvl).times(tmp.ngp3c?1e16:4e22)
+	if (upg == 8) return Decimal.pow(2, lvl).times(tmp.ngp3c?1e18:3e23)
+	
+	if (upg == 9) return Decimal.pow(Math.pow(lvl+1, 2)*10, Math.pow(lvl, 1.25)).times(2.5e18)
+	if (upg == 10) return Decimal.pow(8, lvl).times(5e20)
+	if (upg == 11) return new Decimal(1/0);
+	if (upg == 12) return new Decimal(1/0);
+
 	return 0
 }
 
@@ -268,27 +306,33 @@ function getTreeUpgradeEffect(upg) {
 		return Math.floor(lvl * 30)
 	}
 	if (upg == 2) {
-		return lvl * 0.25
+		return lvl * (tmp.ngp3c?1.5:0.25)
 	}
 	if (upg == 3) {
 		return Decimal.pow(2, Math.sqrt(Math.sqrt(Math.max(lvl * 3 - 2, 0)) * Math.max(getTotalNumOfToDUpgrades() - 10, 0)))
 	}
 	if (upg == 4) {
-		return Math.sqrt(1 + Math.log10(lvl * 0.5 + 1) * 0.1)
+		return Math.sqrt(1 + Math.log10(lvl * 0.5 + 1) * (tmp.ngp3c?0.25:0.1))
 	}
 	if (upg == 5) {
 		let MA = player.meta.bestOverQuantums
 		if (player.achievements.includes("ng3p87")) MA = MA.plus(player.meta.bestOverGhostifies)
-		return Math.pow(Math.log10(MA.add(1).log10() + 1) / 5 + 1, Math.sqrt(lvl))
+		return Math.pow(Math.log10(MA.add(1).log10() + 1) / (tmp.ngp3c?4.5:5) + 1, Math.sqrt(lvl))
 	}
 	if (upg == 6) {
-		return Decimal.pow(2, lvl)
+		return Decimal.pow(tmp.ngp3c?3:2, lvl)
 	}
 	if (upg == 7) {
-		return Decimal.pow(player.replicanti.amount.max(1).log10() + 1, 0.25 * lvl)
+		return Decimal.pow(player.replicanti.amount.max(1).log10() + 1, (tmp.ngp3c?0.75:0.25) * lvl)
 	}
 	if (upg == 8) {
-		return Math.log10(Decimal.add(player.meta.bestAntimatter, 1).log10() + 1) / 4 * Math.sqrt(lvl)
+		return Math.log10(Decimal.add(player.meta.bestAntimatter, 1).log10() + 1) / (tmp.ngp3c?0.6:4) * Math.sqrt(lvl)
+	}
+	if (upg == 9) {
+		return tmp.qu.nanofield.rewards * lvl * 0.95
+	}
+	if (upg == 10) {
+		return tmp.qu.tod.r.spin.plus(1).pow(Math.sqrt(lvl)*2e8)
 	}
 	return 0
 }
@@ -302,9 +346,16 @@ function getTreeUpgradeEffectDesc(upg) {
 }
 
 var branchUpgCostScales = [[300, 15], [50, 8], [4e7, 7]]
+var branchUpgCostScalesCond = [[300, 15], [50, 8], [1e6, 2]]
+
+function getBranchUpgCostScales(upg) {
+	if (tmp.ngp3c) return branchUpgCostScalesCond[upg-1]
+	else return branchUpgCostScales[upg-1]
+}
+
 function getBranchUpgCost(branch, upg) {
 	var lvl = getBranchUpgLevel(branch, upg)
-	var scale = branchUpgCostScales[upg-1]
+	var scale = getBranchUpgCostScales(upg)
 	return Decimal.pow(2, lvl * upg + Math.max(lvl - scale[1], 0) * Math.max(3 - upg, 1)).times(scale[0])
 }
 
@@ -358,11 +409,11 @@ function getUQName(shorthand) {
 			if (amt % 5) ret = (["radioactive", "infinity", "eternal", "quantum"])[amt % 5 - 1] + " " + ret
 		} else if (amt < 110) {
 			amt -= 50
-			if (amt > 4) ret = "disappearing" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
+			if (amt > 4) ret = "ethereal" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
 			if (amt % 5) ret = (["radioactive", "infinity", "eternal", "quantum"])[amt % 5 - 1] + " " + ret
 		} else if (amt < 165) {
 			amt -= 105
-			if (amt > 4) ret = "reappearing" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
+			if (amt > 4) ret = "superethereal" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
 			if (amt % 5) ret = (["radioactive", "infinity", "eternal", "quantum"])[amt % 5 - 1] + " " + ret
 		} else {
 			ret = "unstable^" + amt
@@ -375,7 +426,7 @@ function maxTreeUpg() {
 	var update = false
 	var colors = ["r", "g", "b"]
 	var todData = tmp.qu.tod
-	for (var u = 1; u <= 8; u++) {
+	for (var u = 1; u <= (tmp.ngp3c?12:8); u++) {
 		var cost = getTreeUpgradeCost(u)
 		var newSpins = []
 		var lvl = getTreeUpgradeLevel(u)
@@ -417,7 +468,7 @@ function maxBranchUpg(branch, weak) {
 	var bData = tmp.qu.tod[branch]
 	for (var u = (weak ? 2 : 1); u < 4; u++) {
 		var oldLvl = getBranchUpgLevel(branch, u)
-		var scaleStart = branchUpgCostScales[u - 1][1]
+		var scaleStart = getBranchUpgCostScales(u)[1]
 		var cost = getBranchUpgCost(branch, u)
 		if (bData.spin.gte(cost) && oldLvl < scaleStart) {
 			var costMult = Math.pow(2, u)
@@ -519,12 +570,14 @@ function getRDPower(branch) {
 
 function getBU1Power(branch) {
 	let x = getBranchUpgLevel(branch,1)
+	if (tmp.ngp3c && x>=10) x = Math.sqrt(x*10)
 	let s = Math.floor(Math.sqrt(0.25 + 2 * x / 120) - 0.5)
 	return s * 120 + (x - s * (s + 1) * 60)/(s + 1)
 }
 
 function getBU2Power(branch) {
 	let x = getBranchUpgLevel(branch, 2)
+	if (tmp.ngp3c && x>=5) x = Math.sqrt(x*5)
 	if (player.achievements.includes("ng3p94")) x += getRadioactiveDecays(branch)
 	return x
 }
