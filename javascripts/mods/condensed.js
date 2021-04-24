@@ -2,7 +2,6 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 	if (!player.aarexModifications.ngp3c) return;
 	// Load Stuff
 	let preVer = player.aarexModifications.ngp3c||0
-	player.aarexModifications.ngp3c = 1.22;
 	if (player.condensed === undefined) {
 		player.condensed = {
 			normal: [null, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -51,13 +50,20 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		for (let i=5;i<=8;i++) player["timeDimension"+i].cost = timeDimCost(i, player["timeDimension"+i].bought)
 	}
 	if (preVer<1.21) {
-		player.quantum.replicants.quantumFoodCost = getQFBaseCost();
-		player.quantum.replicants.limitCost = getReplicantLimitBaseCost();
-		player.quantum.replicants.hatchSpeedCost = getHatchSpeedBaseCost();
+		tmp.qu.replicants.quantumFoodCost = getQFBaseCost();
+		tmp.qu.replicants.limitCost = getReplicantLimitBaseCost();
+		tmp.qu.replicants.hatchSpeedCost = getHatchSpeedBaseCost();
 	}
 	if (preVer<1.22) {
-		player.quantum.replicants.requirement = getReplicantBaseReq();
+		tmp.qu.replicants.requirement = getReplicantBaseReq();
 	}
+	if (preVer<1.23 && tmp.qu.replicants.quantumFoodCost.eq(2e46) && tmp.qu.replicants.limitCost.eq(1e49) && tmp.qu.replicants.hatchSpeedCost.eq(1e49)) {
+		tmp.qu.replicants.quantumFoodCost = getQFBaseCost();
+		tmp.qu.replicants.limitCost = getReplicantLimitBaseCost();
+		tmp.qu.replicants.hatchSpeedCost = getHatchSpeedBaseCost();
+	}
+	
+	player.aarexModifications.ngp3c = 1.23;
 }
 
 const CONDENSER_START = {
