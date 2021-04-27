@@ -75,7 +75,7 @@ function getGalaxyRequirement(offset = 0, display) {
 	if (inNC(6, 1) && player.aarexModifications.ngexV != undefined && tmp.grd.galaxies >= 2) amount -= 2 * mult
 	if (inNC(4) || player.pSac !== undefined) amount = player.tickspeedBoosts == undefined ? 99 + base : amount + (player.aarexModifications.ngmX > 3 ? 20 : -30)
 	if (tmp.be) {
-		amount *= 50
+		amount *= tmp.ngp3c?20:50
 		if (tmp.qu.breakEternity.upgrades.includes(2)) amount /= getBreakUpgMult(2)
 		if (player.currentEternityChall == "eterc10" && tmp.qu.breakEternity.upgrades.includes(9)) amount /= getBreakUpgMult(9)
 	}

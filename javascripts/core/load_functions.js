@@ -2052,8 +2052,25 @@ function updateNGp3DisplayStuff(){
 		document.getElementById("qc6effdesc").textContent = (player.aarexModifications.ngp3c?"RG Gluons make y":"Y")+"our achievement bonus "+(player.aarexModifications.ngp3c?"boost":"boosts")+" Meta Dimensions."
 		document.getElementById("qc7effdesc").textContent = (tmp.ngp3c?"Quark Energy gain is multiplied by 10, OS_TS_1-4 are 25% weaker, and t":"T")+"he free tickspeed upgrade threshold increases slower."
 		document.getElementById("qc8effdesc").textContent = tmp.ngp3c?"BR Gluons make Normal, Infinity, Replicated, Time, & Meta Condenser costs scale slower.":"You gain extra replicated galaxies faster after 100."
+		document.getElementById('bigripqc8warning').style.display = tmp.ngp3c?"none":"";
         document.getElementById('autoReset').textContent="Auto: O"+(tmp.qu.autoOptions.replicantiReset?"N":"FF")
         document.getElementById("nanofieldtabbtn").style.display=player.masterystudies.includes("d12")?"":"none"
+		document.getElementById("bigripupg7ts").textContent = tmp.ngp3c?"181":"192"
+		document.getElementById("bigripupg8special").textContent = tmp.ngp3c?"Double Space Shard gain, and e":"E"
+		document.getElementById("bigripupg9tt").textContent = tmp.ngp3c?"5,750":"1,350"
+		document.getElementById("bigripupg9special").textContent = tmp.ngp3c?"quintuple Space Shard gain, ":""
+		document.getElementById("bru13desc").textContent = tmp.ngp3c?"Time Condensers are 50% stronger.":"Replicantis boost Time Dimensions at a greatly reduced rate."
+		document.getElementById("bigripupg14ts").textContent = tmp.ngp3c?"203":"101"
+		document.getElementById("bigripupg15special").textContent = tmp.ngp3c?", and multiply Eternal Matter gain by your normal galaxies":""
+		document.getElementById("bigripupg16desc").textContent = tmp.ngp3c?"Dilated time boosts Eternal Matter gain":"Dilated time boosts the Seventh Time Dimension"
+		document.getElementById("bigripupg17targ").textContent = tmp.ngp3c?"fourth":"first"
+		document.getElementById("bigripupg17special").textContent = tmp.ngp3c?", and it is unaffected by Obscurements":""
+		document.getElementById("breakEternityBtn").setAttribute("ach-tooltip", tmp.ngp3c?("Remove the disability of normal galaxies, and you can gain Time Shards at a very reduced rate. You can gain Eternal Matter (based on your Time Shards) by Eternitying. Normal tickspeed upgrades do nothing. Normal galaxies don't get cancelled, but their cost is way higher."):("Remove the disabilities of normal galaxies and Time Dimensions, but all TD boosts do not work except TS11, TS171, and 'Infinite Time' reward. You can gain Eternal Matter (based on your Time Shards) by Eternitying. Normal tickspeed upgrades do nothing if you are not in EC10. Normal galaxies don’t get cancelled, but their cost is way higher."));
+		document.getElementById("beu1desc").textContent = tmp.ngp3c?"Strengthen all Time Condensers based on your Eternity Points and Eternal Matter.":"Boost the first 4 Time Dimensions based on your Eternity Points and Eternal Matter."
+		document.getElementById("beu4desc").textContent = tmp.ngp3c?"The reduction to Timeshard gain is 5% weaker, plus 10% weaker for each upgrade bought in this row":"Boost Time Dimensions 4 - 6 based on your Eternity Points and Space Shards"
+		document.getElementById("beu4effdiv").style.display = tmp.ngp3c?"none":""
+		document.getElementById("beu5effectdesc").textContent = tmp.ngp3c?"Boost the Break Eternity buyable":"Boost the tickspeed reduction"
+		document.getElementById("breakUpg7obsc").textContent = tmp.ngp3c?" (unaffected by Obscurements)":""
         document.getElementById("ghostifyAnimBtn").textContent="Ghostify: O"+(player.options.animations.ghostify?"N":"FF")
         for (var u=5;u<13;u++) {
                 if (u%3==1) document.getElementById("neutrinoUpg"+u).parentElement.parentElement.style.display=u>player.ghostify.times+2?"none":""
@@ -2174,8 +2191,8 @@ function updateNGModeMessage(){
         if (infiniteCheck) ngModeMessages = ["I'm terribly sorry, but there has been an Infinite bug detected within your save file, which is why said save file will get reset. Luckily, you can export your save before this reset. Thanks! :)"]
         if (forceToQuantumAndRemove) {
                 quantum(false, true, 0)
-                ngModeMessages = ["Due to balancing changes, you are forced to quantum and reset your TT and your best TP, but you are given  " + shorten(setTTAfterQuantum) + " TT as compensation."]
-                player.timestudy.theorem = setTTAfterQuantum
+                ngModeMessages = ["Due to balancing changes, you are forced to quantum and reset your TT and your best TP, but you are given  " + shorten(setTTAfterQuantum||0) + " TT as compensation."]
+                player.timestudy.theorem = setTTAfterQuantum||0
                 player.dilation.bestTP = new Decimal(0)
                 document.getElementById('bestTP').textContent = "Your best ever Tachyon particles was 0."
         }
@@ -2912,6 +2929,7 @@ function conToDeciGhostify(){
                 tmp.qu.bigRip.bestThisRun = new Decimal(tmp.qu.bigRip.bestThisRun)
                 tmp.qu.bigRip.totalAntimatter = new Decimal(tmp.qu.bigRip.totalAntimatter)
                 tmp.qu.bigRip.spaceShards = new Decimal(tmp.qu.bigRip.spaceShards)
+				if (tmp.ngp3c)  tmp.qu.bigRip.tss = new Decimal(tmp.qu.bigRip.tss)
                 tmp.qu.breakEternity.eternalMatter = new Decimal(tmp.qu.breakEternity.eternalMatter)
                 player.ghostify.times = nP(player.ghostify.times)
                 player.ghostify.ghostParticles = new Decimal(player.ghostify.ghostParticles)

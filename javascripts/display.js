@@ -672,10 +672,18 @@ function breakEternityDisplay(){
 		if (u == 8) document.getElementById("breakUpg8Mult").textContent = (getBreakUpgMult(8) * 100 - 100).toFixed(1)
 		else if (u != 7) document.getElementById("breakUpg" + u + "Mult").textContent = shortenMoney(getBreakUpgMult(u))
 	}
+	if (tmp.ngp3c && tmp.qu.breakEternity.upgrades.includes(5)) {
+		document.getElementById("breakUpg7Mult").textContent = shortenDimensions(getBreakUpgMult(7));
+		document.getElementById("breakUpg7MultIncrease").textContent = shortenDimensions(getBE7Base())
+	}
 	if (tmp.qu.bigRip.active) {
 		document.getElementById("eterShortcutEM").textContent=shortenDimensions(tmp.qu.breakEternity.eternalMatter)
 		document.getElementById("eterShortcutEP").textContent=shortenDimensions(player.eternityPoints)
 		document.getElementById("eterShortcutTP").textContent=shortenMoney(player.dilation.tachyonParticles)
+		if (tmp.ngp3c) {
+			document.getElementById("eterShortcutEM2").textContent=shortenDimensions(tmp.qu.breakEternity.eternalMatter)
+			document.getElementById("eterShortcutTP2").textContent=shortenMoney(player.dilation.tachyonParticles)
+		}
 	}
 }
 

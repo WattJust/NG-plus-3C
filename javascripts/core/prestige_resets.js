@@ -606,7 +606,7 @@ function getToDOnGhostifyData(){
 
 function getBigRipOnGhostifyData(nBRU){
 	var bm = player.ghostify.milestones
-	return {
+	let data = {
 		active: false,
 		conf: tmp.qu.bigRip.conf,
 		times: 0,	
@@ -618,6 +618,8 @@ function getBigRipOnGhostifyData(nBRU){
 		spaceShards: new Decimal(0),
 		upgrades: bm ? nBRU : []
 	}
+	if (tmp.ngp3c) data.tss = new Decimal(0);
+	return data;
 }
 
 function getBreakEternityDataOnGhostify(nBEU, bm){

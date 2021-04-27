@@ -497,14 +497,15 @@ function respecTimeStudies(force, presetLoad) {
 			player.timestudy.ers_studies = [null,0,0,0,0,0,0]
 		} else {
 			var bru7activated = isBigRipUpgradeActive(7)
+			let tsToKeep = tmp.ngp3c?181:192
 			for (var i = 0; i < all.length; i++) {
-				if (player.timestudy.studies.includes(all[i]) && (!bru7activated || all[i] !== 192)) {
+				if (player.timestudy.studies.includes(all[i]) && (!bru7activated || all[i] !== tsToKeep)) {
 					player.timestudy.theorem += studyCosts[i]
 					gotAch=false
 				}
 			}
 			if (player.masterystudies) if (player.timestudy.studies.length>1) player.quantum.wasted = false
-			player.timestudy.studies = bru7activated ? [192] : []
+			player.timestudy.studies = bru7activated ? [tsToKeep] : []
 			var ECCosts = [null, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1]
 			player.timestudy.theorem += ECCosts[player.eternityChallUnlocked]
 			

@@ -14,7 +14,7 @@ function updateTemp() {
 		if (tmp.qu.breakEternity.unlocked) updateBreakEternityUpgradesTemp()
 		if (player.masterystudies.includes("d14")) updateBigRipUpgradesTemp()
 		if (tmp.nrm !== 1 && player.quantum.bigRip.active) {
-			if (!player.dilation.active && tmp.qu.bigRip.upgrades.includes(14)) tmp.nrm = tmp.nrm.pow(tmp.bru[14])
+			if (!player.dilation.active && tmp.qu.bigRip.upgrades.includes(14) && !tmp.ngp3c) tmp.nrm = tmp.nrm.pow(tmp.bru[14])
 			if (tmp.nrm.log10() > 1e9) tmp.nrm = Decimal.pow(10, 1e9 * Math.pow(tmp.nrm.log10() / 1e9, 2/3))
 		}
 		if (player.masterystudies.includes("d13")) updateTS431ExtraGalTemp()
@@ -413,9 +413,10 @@ function updateNeutrinoUpgradesTemp(){
 function updateBreakEternityUpgrade1Temp(){
 	var ep = player.eternityPoints
 	var em = tmp.qu.breakEternity.eternalMatter
-	var log1 = ep.div("1e1280").add(1).log10()
+	var log1 = ep.div(tmp.ngp3c?"1e8300":"1e1280").add(1).log10()
 	var log2 = em.times(10).max(1).log10()
-	tmp.beu[1] = Decimal.pow(10, Math.pow(log1, 1/3) * 0.5 + Math.pow(log2, 1/3)).max(1)
+	let b = Math.pow(log1, 1/3) * 0.5 + Math.pow(log2, 1/3)
+	tmp.beu[1] = tmp.ngp3c ? (Math.pow(Math.log10(b+1), 3)*5+1) : Decimal.pow(10, b).max(1)
 }
 
 function updateBreakEternityUpgrade2Temp(){
@@ -427,9 +428,9 @@ function updateBreakEternityUpgrade2Temp(){
 function updateBreakEternityUpgrade3Temp(){
 	var ep = player.eternityPoints
 	var nerfUpgs = !tmp.be && hasBosonicUpg(24)
-	var log = ep.div("1e1370").add(1).log10()
+	var log = ep.div(tmp.ngp3c?"1e8150":"1e1370").add(1).log10()
 	if (nerfUpgs) log /= 2e6
-	var exp = Math.pow(log, 1/3) * 0.5
+	var exp = Math.pow(log, tmp.ngp3c?(1/5):(1/3)) * 0.5
 	if (!tmp.ngp3l) exp = softcap(exp, "beu3_log")
 	tmp.beu[3] = Decimal.pow(10, exp)
 }
@@ -448,11 +449,11 @@ function updateBreakEternityUpgrade5Temp(){
 	var ep = player.eternityPoints
 	var ts = player.timeShards
 	var log1 = ep.div("1e2230").add(1).log10()
-	var log2 = ts.div(1e90).add(1).log10()
+	var log2 = ts.div(tmp.ngp3c?1e20:1e90).add(1).log10()
 	var exp = Math.pow(log1, 1/3) + Math.pow(log2, 1/3)
-	if (player.aarexModifications.ngudpV && exp > 100) exp = Math.log10(exp) * 50
+	if ((player.aarexModifications.ngudpV||tmp.ngp3c) && exp > 100) exp = player.aarexModifications.ngudpV?(Math.log10(exp) * 50):(Math.pow(Math.log10(exp), 4) * 6.25)
 	if (!tmp.ngp3l && exp > 999) exp = 333 * Math.log10(exp + 1)
-	exp *= 4
+	exp *= tmp.ngp3c?0.5:4
 	tmp.beu[5] = Decimal.pow(10, exp)
 }
 
@@ -504,12 +505,12 @@ function updateBreakEternityUpgradesTemp() {
 	updateBreakEternityUpgrade1Temp()
 	updateBreakEternityUpgrade2Temp()
 	updateBreakEternityUpgrade3Temp()
-	updateBreakEternityUpgrade4Temp()
+	if (!tmp.ngp3c) updateBreakEternityUpgrade4Temp()
 	updateBreakEternityUpgrade5Temp()
 	updateBreakEternityUpgrade6Temp()
 
 	//Upgrade 7: EP Mult
-	tmp.beu[7] = Decimal.pow(1e9, tmp.qu.breakEternity.epMultPower)
+	tmp.beu[7] = Decimal.pow(getBE7Base(), tmp.qu.breakEternity.epMultPower)
 
 	if (player.ghostify.ghostlyPhotons.unl) {
 		updateBreakEternityUpgrade8Temp()
@@ -522,11 +523,20 @@ function updateBRU1Temp() {
 	tmp.bru[1] = 1
 	if (!tmp.qu.bigRip.active) return
 	let exp = 1
-	if (tmp.qu.bigRip.upgrades.includes(17)) exp = tmp.bru[17]
+	if (tmp.qu.bigRip.upgrades.includes(17) && !tmp.ngp3c) exp = tmp.bru[17]
 	if (ghostified && player.ghostify.neutrinos.boosts > 7) exp *= tmp.nb[8]
 	exp *= player.infinityPoints.max(1).log10()
 	exp = softcap(exp, "bru1_log", tmp.ngp3l ? 1 : 2)
 	tmp.bru[1] = Decimal.pow(10, exp) // BRU1
+}
+
+function updateBRU4Temp() {
+	tmp.bru[4] = 1
+	if (!tmp.qu.bigRip.active) return;
+	let eff = player.replicanti.amount.pow(0.34).max(1);
+	let exp = 1;
+	if (tmp.qu.bigRip.upgrades.includes(17) && tmp.ngp3c) exp = tmp.bru[17]
+	tmp.bru[4] = eff.pow(exp);
 }
 
 function updateBRU8Temp() {
@@ -548,22 +558,27 @@ function updateBRU14Temp() {
 }
 
 function updateBRU15Temp() {
-	let r = Math.sqrt(player.eternityPoints.add(1).log10()) * 3.55
+	let mult = tmp.ngp3c ? 4.77 : 3.55
+	let r = Math.sqrt(player.eternityPoints.add(1).log10()) * mult
 	if (r > 1e4 && !tmp.ngp3l) r = Math.sqrt(r * 1e4)
 	tmp.bru[15] = r
 }
 
 function updateBRU16Temp() {
-	tmp.bru[16] = player.dilation.dilatedTime.div(1e100).pow(0.155).max(1)
+	tmp.bru[16] = player.dilation.dilatedTime.div(1e100).pow(tmp.ngp3c?0.0277:0.155).max(1)
+	if (tmp.ngp3c) tmp.bru[16] = Decimal.pow(10, Math.sqrt(tmp.bru[16].log10()));
 }
 
 function updateBRU17Temp() {
-	tmp.bru[17] = !tmp.ngp3l && ghostified ? 3 : 2.9
+	let r = !tmp.ngp3l && ghostified ? 3 : 2.9
+	if (tmp.ngp3c) r -= 1
+	tmp.bru[17] = r;
 }
 
 function updateBigRipUpgradesTemp(){
 	updateBRU17Temp()
 	updateBRU1Temp()
+	updateBRU4Temp()
 	updateBRU8Temp()
 	updateBRU14Temp()
 	updateBRU15Temp()

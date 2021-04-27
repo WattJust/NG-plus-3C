@@ -6,29 +6,33 @@ function quantum(auto, force, challid, bigRip = false, quick) {
 	var headstart = player.aarexModifications.newGamePlusVersion > 0 && !tmp.ngp3
 	if (player.aarexModifications.quantumConf&&!(auto||force)) if (!confirm(player.masterystudies?"Quantum will reset everything Eternity resets, and "+(headstart?"other things like Dilation":"including Time Studies, Eternity Challenges, Dilation, "+(tmp.ngp3?"Meta Dimensions, and Mastery Studies":"and Meta Dimensions"))+". You will gain a quark and unlock various upgrades.":"WARNING! Quantum wasn't fully implemented in NG++, so if you go Quantum now, you will gain quarks, but they'll have no use. Everything up to and including Eternity features will be reset.")) return
 	if (!quantumed) if (!confirm("Are you sure you want to do this? You will lose everything you have!")) return
-	var pc = challid - 8
+	var pc = challid - 8 
+	var cond_br = challid == 13 && tmp.ngp3c
 	if (tmp.ngp3) {
 		tmp.preQCMods=tmp.qu.qcsMods.current
 		tmp.qu.qcsMods.current=[]
 		if (challid > 0) {
 			var abletostart=false
 			if (pc > 0) {
-				if (tmp.qu.pairedChallenges.order[pc]) if (tmp.qu.pairedChallenges.order[pc].length > 1) abletostart = true
+				if (tmp.qu.pairedChallenges.order[pc] && !cond_br) if (tmp.qu.pairedChallenges.order[pc].length > 1) abletostart = true;
+				if (cond_br && player.masterystudies.includes("d14")) abletostart = true;
 			} else if (!pcFocus) abletostart = true
 			if (abletostart) {
-				if (pc > 0) if (tmp.qu.pairedChallenges.completed + 1 < pc) return
-				if (tmp.qu.electrons.amount < getQCCost(challid) || !inQC(0)) return
+				if (pc > 0 && !cond_br) if (tmp.qu.pairedChallenges.completed + 1 < pc) return
+				if (tmp.qu.electrons.amount < (cond_br?NGP3C_BR_COST:getQCCost(challid)) || !inQC(0)) return
 				if (bigRip) {
-					var qc1 = tmp.qu.pairedChallenges.order[pc][0]
-					var qc2 = tmp.qu.pairedChallenges.order[pc][1]
-					var qc1st = Math.min(qc1, qc2)
-					var qc2st = Math.max(qc1, qc2)
-					if (qc1st != 6 || qc2st != 8) return
-					if (tmp.qu.bigRip.conf && !auto) if (!confirm("Big Ripping the universe starts PC6+8, however, only dilation upgrades boost dilation except upgrades that multiply TP gain until you buy the eleventh upgrade, certain resources like Time Theorems and Time Studies will be changed, and only certain upgrades work in Big Rip. If you can beat PC6+8, you will be able to unlock the next layer. You can give your Time Theorems and Time Studies back by undoing Big Rip.")) return
+					if (!cond_br) {
+						var qc1 = tmp.qu.pairedChallenges.order[pc][0]
+						var qc2 = tmp.qu.pairedChallenges.order[pc][1]
+						var qc1st = Math.min(qc1, qc2)
+						var qc2st = Math.max(qc1, qc2)
+						if (qc1st != 6 || qc2st != 8) return
+					};
+					if (tmp.qu.bigRip.conf && !auto) if (!confirm("Big Ripping the universe starts "+(cond_br?"QC6+7+8":"PC6+8")+", however, only dilation upgrades boost dilation except upgrades that multiply TP gain until you buy the eleventh upgrade, certain resources like Time Theorems and Time Studies will be changed, and only certain upgrades work in Big Rip. If you can beat "+(cond_br?"QC6+7+8":"PC6+8")+", you will be able to unlock the next layer. You can give your Time Theorems and Time Studies back by undoing Big Rip.")) return
 				} else if (pc > 0) {
 					if (player.options.challConf || (tmp.qu.pairedChallenges.completions.length < 1 && !ghostified)) if (!confirm("You will start a Quantum Challenge, but as a Paired Challenge, there will be two challenges at once. Completing it boosts the rewards of the Quantum Challenges that you chose in this Paired Challenge. You will keep electrons & sacrificed galaxies, but they don't work in this Challenge.")) return
 				} else if (player.options.challConf || (QCIntensity(1) == 0 && !ghostified)) if (!confirm("You will do a Quantum reset, but you will not gain quarks, you keep your electrons & sacrificed galaxies, and you can't buy electron upgrades. You have to reach the set goal of antimatter while getting the meta-antimatter requirement to Quantum to complete this challenge. Electrons and banked eternities have no effect in Quantum Challenges and your electrons and sacrificed galaxies don't reset until you end the challenge.")) return
-				tmp.qu.electrons.amount -= getQCCost(challid)
+				tmp.qu.electrons.amount -= cond_br?NGP3C_BR_COST:getQCCost(challid)
 				if (!quick) for (var m = 0; m < qcm.on.length; m++) if (ranking >= qcm.reqs[qcm.on[m]] || !qcm.reqs[qcm.on[m]]) tmp.qu.qcsMods.current.push(qcm.on[m])
 			} else if (pcFocus && pc < 1) {
 				if (!assigned.includes(challid)) {
@@ -411,6 +415,7 @@ function quantumReset(force, auto, challid, bigRip, implode = false) {
 	if (tmp.ngp3) {
 		if (!bigRip && tmp.qu.bigRip.active && force) {
 			tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.add(getSpaceShardsGain())
+			tmp.qu.bigRip.tss = tmp.qu.bigRip.tss.add(getSpaceShardsGain())
 			if (player.ghostify.milestones < 8) tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.round()
 			if (player.matter.gt("1e5000")) giveAchievement("Really?")
 		}
@@ -576,6 +581,7 @@ function quantumReset(force, auto, challid, bigRip, implode = false) {
 		document.getElementById('rg4toggle').style.display = dontshowrg4 ? "none" : ""
 		updateElectrons()
 		updateBankedEter()
+		updateInQCs()
 		updateQuantumChallenges()
 		updateQCTimes()
 		updatePCCompletions()

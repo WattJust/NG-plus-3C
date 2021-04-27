@@ -28,12 +28,14 @@ function unstoreTT() {
 
 function getSpaceShardsGain() {
 	let ret = tmp.qu.bigRip.active ? tmp.qu.bigRip.bestThisRun : player.money
-	ret = Decimal.pow(ret.add(1).log10() / 2000, 1.5).times(player.dilation.dilatedTime.add(1).pow(0.05))
+	ret = Decimal.pow(ret.add(1).log10() / (tmp.ngp3c?2e4:2000), 1.5).times(player.dilation.dilatedTime.add(1).pow(0.05))
 	if (!tmp.qu.bigRip.active || tmp.be) {
 		if (tmp.qu.breakEternity.upgrades.includes(3)) ret = ret.times(getBreakUpgMult(3))
 		if (tmp.qu.breakEternity.upgrades.includes(6)) ret = ret.times(getBreakUpgMult(6))
 	}
 	if (hasNU(9)) ret = ret.times(Decimal.max(getEternitied(), 1).pow(0.1))
+	if (tmp.ngp3c && isBigRipUpgradeActive(8)) ret = ret.times(2);
+	if (tmp.ngp3c && isBigRipUpgradeActive(9)) ret = ret.times(5);
 
 	let log = ret.log10()
 	let log4log = Math.log10(log) / Math.log10(4)
@@ -46,13 +48,21 @@ function getSpaceShardsGain() {
 	ret = Decimal.pow(10, log)
 
 	if (isNaN(ret.e)) return new Decimal(0)
-	return ret.floor()
+	ret = ret.floor();
+	if (tmp.ngp3c) ret = ret.sub(tmp.qu.bigRip.tss.div(3));
+	return ret;
 }
 
 let bigRipUpgCosts = [0, 2, 3, 5, 20, 30, 45, 60, 150, 300, 2000, 1e9, 3e14, 1e17, 3e18, 3e20, 5e22, 1e32, 1e145, 1e150, Number.MAX_VALUE]
+
+function getBigRipUpgCost(id) {
+	if (id==16 && tmp.ngp3c) return 1e21;
+	else return bigRipUpgCosts[id]
+}
+
 function buyBigRipUpg(id) {
-	if (tmp.qu.bigRip.spaceShards.lt(bigRipUpgCosts[id]) || tmp.qu.bigRip.upgrades.includes(id)) return
-	tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.sub(bigRipUpgCosts[id])
+	if (tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(id)) || tmp.qu.bigRip.upgrades.includes(id)) return
+	tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.sub(getBigRipUpgCost(id))
 	if (player.ghostify.milestones < 8) tmp.qu.bigRip.spaceShards=tmp.qu.bigRip.spaceShards.round()
 	tmp.qu.bigRip.upgrades.push(id)
 	document.getElementById("spaceShards").textContent = shortenDimensions(tmp.qu.bigRip.spaceShards)
@@ -62,7 +72,7 @@ function buyBigRipUpg(id) {
 		if (tmp.qu.bigRip.active) tweakBigRip(9, true)
 	}
 	for (var u = 1; u <= getMaxBigRipUpgrades(); u++) {
-		document.getElementById("bigripupg" + u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(bigRipUpgCosts[u]) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
+		document.getElementById("bigripupg" + u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(id)) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
 	}
 }
 
@@ -75,7 +85,7 @@ function tweakBigRip(id, reset) {
 	if (!tmp.qu.bigRip.upgrades.includes(9)) {
 		if (id == 3) player.timestudy.theorem += 5
 		if (id == 5) player.timestudy.theorem += 20
-		if (id == 7 && !player.timestudy.studies.includes(192)) player.timestudy.studies.push(192)
+		if (id == 7 && !player.timestudy.studies.includes(tmp.ngp3c?181:192)) player.timestudy.studies.push(tmp.ngp3c?181:192)
 	}
 	if (id == 9) {
 		if (reset) player.timestudy = {
@@ -85,7 +95,7 @@ function tweakBigRip(id, reset) {
 			epcost: new Decimal(1),
 			studies: []
 		}
-		if (!tmp.qu.bigRip.upgrades.includes(12)) player.timestudy.theorem += 1350
+		if (!tmp.qu.bigRip.upgrades.includes(12)) player.timestudy.theorem += tmp.ngp3c?5750:1350
 	}
 	if (id == 10) {
 		if (!player.dilation.studies.includes(1)) player.dilation.studies.push(1)
@@ -112,9 +122,9 @@ function tweakBigRip(id, reset) {
 function isBigRipUpgradeActive(id, bigRipped) {
 	if (player.masterystudies == undefined) return false
 	if (bigRipped === undefined ? !tmp.qu.bigRip.active : !bigRipped) return false
-	if (id == 1) if (!tmp.qu.bigRip.upgrades.includes(17)) for (var u = 3; u < 18; u++) if (tmp.qu.bigRip.upgrades.includes(u)) return false
+	if (id == 1) if (!(tmp.qu.bigRip.upgrades.includes(17)&&!tmp.ngp3c)) for (var u = 3; u < 18; u++) if (tmp.qu.bigRip.upgrades.includes(u)) return false
 	if (id > 2 && id != 4 && id < 9) if (tmp.qu.bigRip.upgrades.includes(9) && (id != 8 || !hasNU(11))) return false
-	if (id == 4) if (tmp.qu.bigRip.upgrades.includes(11)) return false
+	if (id == 4) if (tmp.qu.bigRip.upgrades.includes(11) && !(tmp.ngp3c && tmp.qu.bigRip.upgrades.includes(17))) return false
 	return tmp.qu.bigRip.upgrades.includes(id)
 }
 
@@ -130,12 +140,14 @@ function updateBreakEternity() {
 		document.getElementById("breakEternityNoBigRip").style.display = tmp.qu.bigRip.active ? "none" : ""
 		document.getElementById("breakEternityBtn").textContent = (tmp.qu.breakEternity.break ? "FIX" : "BREAK") + " ETERNITY"
 		for (var u = 1; u < (player.ghostify.ghostlyPhotons.unl ? 11 : 8); u++) document.getElementById("breakUpg" + u + "Cost").textContent = shortenDimensions(getBreakUpgCost(u))
-		document.getElementById("breakUpg7MultIncrease").textContent = shortenDimensions(1e9)
+		document.getElementById("breakUpg7MultIncrease").textContent = shortenDimensions(getBE7Base())
 		document.getElementById("breakUpg7Mult").textContent = shortenDimensions(getBreakUpgMult(7))
-		document.getElementById("breakUpgRS").style.display = tmp.qu.bigRip.active ? "" : "none"
+		document.getElementById("breakUpgRS").style.display = (tmp.qu.bigRip.active&&!tmp.ngp3c) ? "" : "none"
+		document.getElementById("beEM").style.display = (tmp.qu.bigRip.active&&tmp.ngp3c) ? "" : "none"
+		document.getElementById("beTP").style.display = (tmp.qu.bigRip.active&&tmp.ngp3c) ? "" : "none"
 	} else {
 		document.getElementById("breakEternityReq").style.display = ""
-		document.getElementById("breakEternityReq").textContent = "You need to get " + shorten(new Decimal("1e1200")) + " EP before you can Break Eternity."
+		document.getElementById("breakEternityReq").textContent = "You need to get " + shorten(new Decimal(tmp.ngp3c?NGP3C_BE_REQ:"1e1200")) + " EP before you can Break Eternity."
 		document.getElementById("breakEternityNoBigRip").style.display = "none"
 		document.getElementById("breakEternityShop").style.display = "none"
 	}
@@ -158,7 +170,7 @@ function breakEternity() {
 }
 
 function getEMGain() {
-	let log = player.timeShards.div(1e9).log10() * 0.25
+	let log = player.timeShards.div(tmp.ngp3c?2e10:1e9).log10() * 0.25
 	if (log > 15) log = Math.sqrt(log * 15)
 	
 	let log2log = Math.log10(log) / Math.log10(2)
@@ -169,13 +181,23 @@ function getEMGain() {
 		log = Math.pow(2, log2log)
 	}
 	
-	return Decimal.pow(10, log).floor()
+	if (tmp.ngp3c && isBigRipUpgradeActive(15)) log += Math.log10(player.galaxies+1);
+	if (tmp.ngp3c && isBigRipUpgradeActive(16)) log += Math.log10(tmp.bru[16].max(1));
+	
+	return Decimal.pow(10, log).floor();
 }
 
 var breakUpgCosts = [1, 1e3, 2e6, 2e11, 8e17, 1e45, null, 1e290, new Decimal("1e350"), new Decimal("1e375")]
 function getBreakUpgCost(id) {
-	if (id == 7) return Decimal.pow(2, tmp.qu.breakEternity.epMultPower).times(1e5)
+	if (id == 6 && tmp.ngp3c) return 4.5e23
+	if (id == 7) return getBE7Cost();
 	return breakUpgCosts[id - 1]
+}
+
+function getBE7Cost() {
+	let b = tmp.qu.breakEternity.epMultPower;
+	if (b>=75) b = Math.pow(b, 2)/75;
+	return Decimal.pow(2, b).times(1e5);
 }
 
 function buyBreakUpg(id) {
@@ -191,16 +213,17 @@ function buyBreakUpg(id) {
 }
 
 function getBreakUpgMult(id) {
+	if (tmp.beu[id]===undefined) return new Decimal(0); 
 	return tmp.beu[id]
 }
 
 function maxBuyBEEPMult() {
 	let cost = getBreakUpgCost(7)
 	if (!tmp.qu.breakEternity.eternalMatter.gte(cost)) return
-	let toBuy = Math.floor(tmp.qu.breakEternity.eternalMatter.div(cost).add(1).log(2))
-	let toSpend = Decimal.pow(2,toBuy).sub(1).times(cost).min(tmp.qu.breakEternity.eternalMatter)
-	tmp.qu.breakEternity.epMultPower += toBuy
-	tmp.qu.breakEternity.eternalMatter = tmp.qu.breakEternity.eternalMatter.sub(toSpend)
+	let toBuy = tmp.qu.breakEternity.eternalMatter.div(cost).add(1).log(2)
+	if (toBuy+tmp.qu.breakEternity.epMultPower>=75) toBuy = Math.sqrt((toBuy+tmp.qu.breakEternity.epMultPower)*75)-tmp.qu.breakEternity.epMultPower;
+	tmp.qu.breakEternity.epMultPower += Math.floor(toBuy)
+	tmp.qu.breakEternity.eternalMatter = tmp.qu.breakEternity.eternalMatter.sub(cost)
 	if (player.ghostify.milestones < 15) tmp.qu.breakEternity.eternalMatter = tmp.qu.breakEternity.eternalMatter.round()
 	document.getElementById("eternalMatter").textContent = shortenDimensions(tmp.qu.breakEternity.eternalMatter)
 	document.getElementById("breakUpg7Mult").textContent = shortenDimensions(getBreakUpgMult(7))

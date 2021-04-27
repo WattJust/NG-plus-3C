@@ -3,11 +3,11 @@
 function getBreakEternityTDMult(tier){
 	var ret = tmp.it
 	if (player.timestudy.studies.includes(11) && tier == 1) ret = ret.times(tsMults[11]())
-	if (tmp.qu.breakEternity.upgrades.includes(1) && tier < 5) ret = ret.times(getBreakUpgMult(1))
-	if (tmp.qu.breakEternity.upgrades.includes(4) && tier > 3 && tier < 7) ret = ret.times(getBreakUpgMult(4))
-	if (tmp.qu.bigRip.upgrades.includes(13)) ret = ret.times(player.replicanti.amount.max(1).pow(1e-6))
+	if (tmp.qu.breakEternity.upgrades.includes(1) && tier < 5 && !tmp.ngp3c) ret = ret.times(getBreakUpgMult(1))
+	if (tmp.qu.breakEternity.upgrades.includes(4) && tier > 3 && tier < 7 && !tmp.ngp3c) ret = ret.times(getBreakUpgMult(4))
+	if (tmp.qu.bigRip.upgrades.includes(13) && !tmp.ngp3c) ret = ret.times(player.replicanti.amount.max(1).pow(1e-6))
 	if (tier == 6 && player.ghostify.ghostlyPhotons.unl) ret = ret.times(tmp.le[6])
-	if (tier == 7 && tmp.qu.bigRip.upgrades.includes(16)) ret = ret.times(tmp.bru[16])
+	if (tier == 7 && tmp.qu.bigRip.upgrades.includes(16) && !tmp.ngp3c) ret = ret.times(tmp.bru[16])
 	if (tier == 8 && player.achievements.includes("ng3p62") && !tmp.ngp3l) ret = ret.pow(Math.log10(player.ghostify.time/10+1)/100+1)
 	if (ret.lt(0)) ret = new Decimal(0)
 	return dilates(ret)
@@ -71,7 +71,7 @@ function calcVanillaTSTDMult(tier){
 
 function getTimeDimensionPower(tier) {
 	if (player.currentEternityChall == "eterc11") return new Decimal(1)
-	if (tmp.be) return getBreakEternityTDMult(tier)
+	if (tmp.be && !tmp.ngp3c) return getBreakEternityTDMult(tier)
 	var dim = player["timeDimension" + tier]
 
 	if ((player.currentEternityChall == "eterc13" || inQC("8c")) && player.aarexModifications.ngp3c) return tmp.cnd.time[tier];
@@ -199,7 +199,7 @@ function updateTimeShards() {
 	document.getElementById("itmult").textContent = tmp.ngp3 && player.achievements.includes('r105') ? 'Your "Infinite Time" multiplier is currently ' + shorten(tmp.it) + 'x.':''
 	document.getElementById("timeShardAmount").textContent = shortenMoney(player.timeShards)
 	document.getElementById("tickThreshold").textContent = shortenMoney(player.tickThreshold)
-	if (player.currentEternityChall == "eterc7" || inQC("8c")) document.getElementById("timeShardsPerSec").textContent = "You are getting " + shortenDimensions(p) + " Eighth Infinity Dimensions per second."
+	if (player.currentEternityChall == "eterc7" || inQC("8c")) document.getElementById("timeShardsPerSec").textContent = "You are getting " + shortenDimensions(p) + " Eighth Infinity Dimensions"+(tmp.be?(" and "+shortenDimensions(p.root(getBreakEternityTimeshardRoot()))+" Timeshards per second."):" per second.");
 	else document.getElementById("timeShardsPerSec").textContent = "You are getting " + shortenDimensions(p) + " Timeshards per second."
 }
 

@@ -38,26 +38,33 @@ function updateQuantumChallenges() {
 
 			var sc1t = Math.min(sc1, sc2)
 			var sc2t = Math.max(sc1, sc2)
-			if (player.masterystudies.includes("d14")) {
+			if (player.masterystudies.includes("d14") && !tmp.ngp3c) {
 				document.getElementById(property + "br").style.display = ""
 				document.getElementById(property + "br").textContent = sc1t != 6 || sc2t != 8 ? "QC6 & 8" : tmp.qu.bigRip.active ? "Big Ripped" : tmp.qu.pairedChallenges.completed + 1 < pc ? "Locked" : "Big Rip"
 				document.getElementById(property + "br").className = sc1t != 6 || sc2t != 8 ? "lockedchallengesbtn" : tmp.qu.bigRip.active ? "onchallengebtn" : tmp.qu.pairedChallenges.completed + 1 < pc ? "lockedchallengesbtn" : "bigripbtn"
 			} else document.getElementById(property + "br").style.display = "none"
 		}
 	}
+	document.getElementById("brngp3cdiv").style.display = (player.masterystudies.includes("d14") && tmp.ngp3c)?"":"none";
+	if (player.masterystudies.includes("d14") && tmp.ngp3c) {
+		document.getElementById("brngp3c").textContent = sc1t != 6 || sc2t != 8 ? "QC6+7+8" : tmp.qu.bigRip.active ? "Big Ripped" : tmp.qu.pairedChallenges.completed + 1 < pc ? "Locked" : "Big Rip"
+		document.getElementById("brngp3c").className = tmp.qu.bigRip.active ? "onchallengebtn" : "bigripbtn"
+		document.getElementById("brngp3ccost").textContent = "Cost: "+getFullExpansion(NGP3C_BR_COST)+" electrons"
+		document.getElementById("brngp3cgoal").textContent = "GOal: "+shortenCosts(NGP3C_BR_GOAL)+" antimatter"
+	}
 	if (player.masterystudies.includes("d14")) {
 		var max = getMaxBigRipUpgrades()
 		document.getElementById("spaceShards").textContent = shortenDimensions(tmp.qu.bigRip.spaceShards)
 		for (var u = 18; u <= 20; u++) document.getElementById("bigripupg" + u).parentElement.style.display = u > max ? "none" : ""
 		for (var u = 1; u <= max; u++) {
-			document.getElementById("bigripupg" + u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(bigRipUpgCosts[u]) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
-			document.getElementById("bigripupg" + u + "cost").textContent = shortenDimensions(new Decimal(bigRipUpgCosts[u]))
+			document.getElementById("bigripupg" + u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(u)) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
+			document.getElementById("bigripupg" + u + "cost").textContent = shortenDimensions(new Decimal(getBigRipUpgCost(u)))
 		}
 	}
 	for (var qc = 1; qc <= 8; qc++) {
 		var property = "qc" + qc
 		document.getElementById(property + "div").style.display = (qc < 2 || QCIntensity(qc - 1)) ? "inline-block" : "none"
-		document.getElementById(property).textContent = ((!assigned.includes(qc) && pcFocus) ? "Choose" : inQC(qc, true) ? "Running" : QCIntensity(qc) ? (assigned.includes(qc) ? "Assigned" : "Completed") : "Start") + (assigned.includes(qc) ? " (PC" + assignedNums[qc] + ")" : "")
+		document.getElementById(property).textContent = ((!assigned.includes(qc) && pcFocus) ? "Choose" : inQC(qc, true) ? "Running" : QCIntensity(qc) ? (assigned.includes(qc) ? "Assigned" : "Completed") : "Start") + (assigned.includes(qc) ? ((tmp.ngp3c && tmp.qu.bigRip.active && qc>=6)?" (BR)":(" (PC" + assignedNums[qc] + ")")) : "")
 		document.getElementById(property).className = (!assigned.includes(qc) && pcFocus) ? "challengesbtn" : inQC(qc, true) ? "onchallengebtn" : QCIntensity(qc) ? "completedchallengesbtn" : "challengesbtn"
 		document.getElementById(property + "cost").textContent = "Cost: " + getFullExpansion(getQCCost(qc)) + " electrons"
 		document.getElementById(property + "goal").textContent = "Goal: " + shortenCosts(Decimal.pow(10, getQCGoal(qc))) + " antimatter"
@@ -89,6 +96,8 @@ function updateInQCs() {
 		else if (data.length == 0) data = [0]
 		tmp.inQCs = data
 	}
+	
+	if (tmp.qu) if (tmp.qu.bigRip.active && tmp.ngp3c) tmp.inQCs = [6,7,8];
 }
 
 function getQCGoal(num, bigRip) {
@@ -102,6 +111,7 @@ function getQCGoal(num, bigRip) {
 		var data = tmp.inQCs
 		if (data[0]) c1 = data[0]
 		if (data[1]) c2 = data[1]
+		if (tmp.ngp3c && data[2]) bigRip = true;
 	} else if (num < 9) {
 		c1 = num
 	} else if (tmp.qu.pairedChallenges.order[num - 8]) {
@@ -116,9 +126,11 @@ function getQCGoal(num, bigRip) {
 	if (cs.includes(2) && cs.includes(6)) mult *= 1.7
 	if (cs.includes(3) && cs.includes(7)) mult *= 2.68
 	if (!tmp.ngp3l && cs.includes(3) && cs.includes(6)) mult *= 3
+	if (tmp.ngp3c && cs.includes(6) && cs.includes(8) && !bigRip) mult *= 8
 	let div = 1e11
 	if (tmp.ngp3c) {
 		div = 2e9;
+		if (bigRip) div *= 3.09
 		if (cs.some(x => x>4)) {
 			if (c1>4) div /= 1.5
 			if (c2>4) div /= 1.5

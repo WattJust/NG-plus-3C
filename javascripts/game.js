@@ -868,7 +868,7 @@ function getBrandNewTodData(){
 }
 
 function getBrandNewBigRipData(){
-	return {
+	let data = {
 		active: false,
 		conf: true,
 		times: 0,
@@ -879,6 +879,8 @@ function getBrandNewBigRipData(){
 		spaceShards: 0,
 		upgrades: []
 	}
+	if (tmp.ngp3c) data.tss = 0;
+	return data;
 }
 
 function getBrandNewElectronData(){
@@ -2662,12 +2664,14 @@ function gainedEternityPoints() {
 	if (player.galacticSacrifice !== undefined && player.galacticSacrifice.upgrades.includes(51)) ret = ret.times(galMults.u51())
 	if (tmp.ngp3) {
 		if (player.quantum.bigRip.active) {
-			if (isBigRipUpgradeActive(5)) ret = ret.times(tmp.qu.bigRip.spaceShards.max(1))
+			if (isBigRipUpgradeActive(6)) ret = ret.times(tmp.qu.bigRip.spaceShards.max(1))
 			if (isBigRipUpgradeActive(8)) ret = ret.times(tmp.bru[8])
 		}
-		if (tmp.be) ret = ret.times(getBreakUpgMult(7))
+		if (tmp.be && !tmp.ngp3c) ret = ret.times(getBreakUpgMult(7))
 	}
 	if (player.aarexModifications.ngp3c) ret = softcap(ret, "ngp3cEP")
+	
+	if (tmp.be && tmp.ngp3c) ret = ret.times(getBreakUpgMult(7))
 	if (player.timestudy.studies.includes(172) && player.aarexModifications.ngp3c) ret = ret.times(ts172Eff())
 	if (uEPM) ret = ret.times(player.epmult)
 	return ret.floor()
@@ -3898,7 +3902,7 @@ function eternity(force, auto, presetLoad, dilated) {
 		updateBreakEternity()
 	}
 	addEternityTime(array)
-	var forceRespec = doCheckECCompletionStuff()
+	var forceRespec = doCheckECCompletionStuff()&&!(tmp.ngp3c&&tmp.be)
 	for (var i = 0; i < player.challenges.length; i++) {
 		if (!player.challenges[i].includes("post") && getEternitied() > 1) temp.push(player.challenges[i])
 	}
@@ -4777,7 +4781,7 @@ function doGhostifyUnlockStuff(){
 	player.ghostify.reached = true
 	if (document.getElementById("welcome").style.display != "flex") document.getElementById("welcome").style.display = "flex"
 	else player.aarexModifications.popUpId = ""
-	document.getElementById("welcomeMessage").innerHTML = "You are finally able to complete PC6+8 in Big Rip! However, because of the unstability of this universe, the only way to go further is to become a ghost. This allows you to pass Big Rip universes and unlock new stuff in Ghostify in exchange for everything that you have. Therefore, this is the sixth layer of NG+3."
+	document.getElementById("welcomeMessage").innerHTML = "You are finally able to complete "+(tmp.ngp3c?"QC6+7+8":"PC6+8")+" in Big Rip! However, because of the unstability of this universe, the only way to go further is to become a ghost. This allows you to pass Big Rip universes and unlock new stuff in Ghostify in exchange for everything that you have. Therefore, this is the sixth layer of NG+3."
 }
 
 function doReachAMGoalStuff(chall){
@@ -4811,7 +4815,7 @@ function doNGP3UnlockStuff(){
 	}
 	var inEasierModeCheck = !inEasierMode()
 	if (player.masterystudies && (player.masterystudies.includes("d14")||player.achievements.includes("ng3p51")) && !metaSave.ngp4 && !inEasierModeCheck) doNGP4UnlockStuff()
-	if (player.eternityPoints.gte("1e1200") && tmp.qu.bigRip.active && !tmp.qu.breakEternity.unlocked) doBreakEternityUnlockStuff()
+	if (player.eternityPoints.gte(tmp.ngp3c?NGP3C_BE_REQ:"1e1200") && tmp.qu.bigRip.active && !tmp.qu.breakEternity.unlocked) doBreakEternityUnlockStuff()
 	if (player.money.gte(Decimal.pow(10, 6e9)) && tmp.qu.bigRip.active && !player.ghostify.ghostlyPhotons.unl) doPhotonsUnlockStuff()
 	if (canUnlockBosonicLab() && !player.ghostify.wzb.unl) doBosonsUnlockStuff()
 	if (!tmp.ng3l) unlockHiggs()
@@ -5435,8 +5439,11 @@ function otherDimsUpdating(diff){
 	if (player.currentEternityChall !== "eterc7" && !inQC("8c")) player.infinityPower = player.infinityPower.plus(DimensionProduction(1).times(diff))
    	else if (!inNC(4) && player.currentChallenge !== "postc1") player.seventhAmount = player.seventhAmount.plus(DimensionProduction(1).times(diff))
 
-   	if (player.currentEternityChall == "eterc7" || inQC("8c")) player.infinityDimension8.amount = player.infinityDimension8.amount.plus(getTimeDimensionProduction(1).times(diff))
-   	else {
+   	if (player.currentEternityChall == "eterc7" || inQC("8c")) {
+		let p = getTimeDimensionProduction(1);
+		player.infinityDimension8.amount = player.infinityDimension8.amount.plus(p.times(diff))
+		if (tmp.be) player.timeShards = player.timeShards.plus(p.root(getBreakEternityTimeshardRoot()).times(diff)).max(p.root(getBreakEternityTimeshardRoot()).times(0))
+	} else {
 		if (ECTimesCompleted("eterc7") > 0) player.infinityDimension8.amount = player.infinityDimension8.amount.plus(DimensionProduction(9).times(diff))
 		player.timeShards = player.timeShards.plus(getTimeDimensionProduction(1).times(diff)).max(getTimeDimensionProduction(1).times(0))
 	}
@@ -5877,11 +5884,13 @@ function bigRipUpgradeUpdating(){
 	if (player.ghostify.milestones>7) {
 		document.getElementById("spaceShards").textContent=shortenDimensions(tmp.qu.bigRip.spaceShards)
 		for (var u=1;u<=getMaxBigRipUpgrades();u++) {
-			document.getElementById("bigripupg"+u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(bigRipUpgCosts[u]) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
-			document.getElementById("bigripupg"+u+"cost").textContent = shortenDimensions(new Decimal(bigRipUpgCosts[u]))
+			document.getElementById("bigripupg"+u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(u)) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
+			document.getElementById("bigripupg"+u+"cost").textContent = shortenDimensions(new Decimal(getBigRipUpgCost(u)))
 		}
 	}
 	document.getElementById("bigripupg1current").textContent=shortenDimensions(tmp.bru[1])
+	document.getElementById("bigripupg4current").textContent=shortenDimensions(tmp.bru[4])
+	document.getElementById("bigripupg6current").textContent=shortenDimensions(tmp.qu.bigRip.active?tmp.qu.bigRip.spaceShards.max(1):1)
 	document.getElementById("bigripupg8current").textContent=shortenDimensions(tmp.bru[8])+(Decimal.gte(tmp.bru[8],Number.MAX_VALUE)&&!hasNU(11)?"x (cap)":"x")
 	document.getElementById("bigripupg14current").textContent=tmp.bru[14].toFixed(2)
 	var bru15effect = tmp.bru[15]
@@ -6020,7 +6029,10 @@ function setTachyonParticles(x) {
 }
 
 function passiveQuantumLevelStuff(diff){
-	if (tmp.qu.bigRip.active || hasBosonicUpg(24)) tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.add(getSpaceShardsGain().times(diff / 100))
+	if (tmp.qu.bigRip.active || hasBosonicUpg(24)) {
+		tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.add(getSpaceShardsGain().times(diff / 100))
+		if (tmp.ngp3c && tmp.qu.bigRip.tss) tmp.qu.bigRip.tss = tmp.qu.bigRip.tss.add(getSpaceShardsGain().times(diff / 100))
+	}
 	if (!tmp.qu.bigRip.active) {
 		tmp.qu.quarks = tmp.qu.quarks.add(quarkGain().sqrt().times(diff))
 		var p = ["rg", "gb", "br"]

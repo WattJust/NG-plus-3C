@@ -87,7 +87,7 @@ var masteryStudies = {
 			return tmp.qu.nanofield.rewards >= 16 && (!tmp.ngp3c || Object.values(tmp.qu.usedQuarks).every(x => Decimal.gte(x, 1e90)))
 		},
 		14: function() {
-			return tmp.ngp3c?(tmp.qu.tod.r.spin.max(tmp.qu.tod.g.spin).max(tmp.qu.tod.b.spin).gte(5e25)&&false):player.achievements.includes("ng3p34")
+			return tmp.ngp3c?(tmp.qu.tod.r.spin.max(tmp.qu.tod.g.spin).max(tmp.qu.tod.b.spin).gte(5e25)):player.achievements.includes("ng3p34")
 		}
 	},
 	unlockReqDisplays: {
@@ -113,7 +113,7 @@ var masteryStudies = {
 			return getFullExpansion(16) + " Nanofield rewards"+(tmp.ngp3c?(" & "+shortenCosts(1e90)+" of all colored quarks"):"")
 		},
 		14: function() {
-			return tmp.ngp3c?(shortenCosts(5e25)+" of any Quark Spin, & wait for a future update..."):"Get 'The Challenging Day' achievement"
+			return tmp.ngp3c?(shortenCosts(5e25)+" of any Quark Spin"):"Get 'The Challenging Day' achievement"
 		}
 	},
 	types: {t: "time", ec: "ec", d: "dil"},

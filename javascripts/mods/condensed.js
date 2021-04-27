@@ -1,7 +1,4 @@
-function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity, 4: Eternity, 5: Quantum, 6: Ghostify
-	if (!player.aarexModifications.ngp3c) return;
-	// Load Stuff
-	let preVer = player.aarexModifications.ngp3c||0
+function loadCondensedVars() {
 	if (player.condensed === undefined) {
 		player.condensed = {
 			normal: [null, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -27,6 +24,14 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		player.infchallengeTimes.push(600*60*24*31)
 	}
 	if (player.condensed.obsc === undefined) player.condensed.obsc = {}
+	if (tmp.qu.bigRip.tss === undefined) tmp.qu.bigRip.tss = new Decimal(0);
+}
+
+function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity, 4: Eternity, 5: Quantum, 6: Ghostify
+	if (!player.aarexModifications.ngp3c) return;
+	// Load Stuff
+	let preVer = player.aarexModifications.ngp3c||0
+	loadCondensedVars();
 	
 	// Reset Stuff
 	if (resetNum>=1) {
@@ -62,8 +67,9 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		tmp.qu.replicants.limitCost = getReplicantLimitBaseCost();
 		tmp.qu.replicants.hatchSpeedCost = getHatchSpeedBaseCost();
 	}
+	if (preVer<1.24) tmp.qu.bigRip.tss = new Decimal(0);
 	
-	player.aarexModifications.ngp3c = 1.23;
+	player.aarexModifications.ngp3c = 1.24;
 }
 
 const CONDENSER_START = {
@@ -388,6 +394,8 @@ function getTimeCondenserPow() {
 	if (player.timestudy.studies.includes(195)) ret = ret.times(50)
 	if (player.dilation.upgrades.includes("ngp3c1")) ret = ret.times(getDil26Mult())
 	if (player.masterystudies.includes("t267")) ret = ret.times(1.5)
+	if (tmp.ngp3c && tmp.be && tmp.qu.breakEternity.upgrades.includes(1)) ret = ret.times(getBreakUpgMult(1))
+	if (tmp.qu.bigRip.upgrades.includes(13) && tmp.qu.bigRip.active) ret = ret.times(1.5)
 	return ret;
 }
 
@@ -491,6 +499,7 @@ function ts202Eff() {
 function ts203Eff() {
 	let cond = player.condensed.time.reduce((a,c) => (a||0)+(c||0));
 	let eff = Decimal.pow(1e50, Math.sqrt(cond))
+	if (!player.dilation.active && tmp.qu.bigRip.upgrades.includes(14) && tmp.qu.bigRip.active) eff = eff.pow(tmp.bru[14])
 	return eff;
 }
 
@@ -923,4 +932,20 @@ function maxNanoCondense(x) {
 	if (res.lt(cost)) return;
 	player.condensed.nano[x] = Math.max(player.condensed.nano[x], getNanoCondenserTarget(x))
 	tmp.qu.nanofield.energy = tmp.qu.nanofield.energy.sub(cost);
+}
+
+const NGP3C_BR_COST = 1.65e5;
+const NGP3C_BR_GOAL = Decimal.pow(10, 504693932.039);
+const NGP3C_BE_REQ = new Decimal("1e8300");
+
+function getBreakEternityTimeshardRoot() {
+	let rt = 35;
+	if (tmp.ngp3c && tmp.qu.breakEternity.upgrades.includes(4)) rt = Math.pow(rt, 0.95-0.1*tmp.qu.breakEternity.upgrades.filter(x => x>=4&&x<=6).length);
+	return rt;
+}
+
+function getBE7Base() {
+	let base = new Decimal(1e9);
+	if (tmp.qu.breakEternity.upgrades.includes(5) && tmp.ngp3c && tmp.be) base = base.times(getBreakUpgMult(5));
+	return base;
 }

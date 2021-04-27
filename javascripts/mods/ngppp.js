@@ -498,6 +498,11 @@ function getGHPMult() {
 
 ghostified = false
 function ghostify(auto, force) {
+	if (tmp.ngp3c) {
+		alert("Sorry, you are at the current end of NG+3 Condensed, and so you cannot become a ghost just yet... You just gotta wait for a future update :(");
+		return;
+	}
+	
 	if (!force&&(!isQuantumReached()||!tmp.qu.bigRip.active||implosionCheck)) return
 	if (!auto && !force && player.aarexModifications.ghostifyConf && !confirm("Becoming a ghost resets everything Quantum resets, and also resets your banked stats, best TP & MA, quarks, gluons, electrons, Quantum Challenges, Replicants, Nanofield, and Tree of Decay to gain a Ghost Particle. Are you ready for this?")) {
 		denyGhostify()
