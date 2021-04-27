@@ -1119,7 +1119,7 @@ function doNGp3v199tov19995(){
                         }
                 }
                 player.masterystudies=newMS
-                if (oldLength > newMS.length) forceToQuantumAndRemove = true
+                if (oldLength > newMS.length && !tmp.ngp3c) forceToQuantumAndRemove = true
                 tmp.qu.replicants.quantumFoodCost = Decimal.times(tmp.qu.replicants.quantumFoodCost, 2)
                 tmp.qu.replicants.limitDim=1
                 tmp.qu.emperorDimensions = {}
@@ -1179,7 +1179,7 @@ function doNGp3v19995tov21(){
                         },
                         upgrades: {}
                 }
-                if (tmp.qu.nanofield.rewards>16) {
+                if (tmp.qu.nanofield.rewards>16 && !tmp.ngp3c) {
                         var newMS=[]
                         for (var m=0;m<player.masterystudies.length;m++) {
                                 var d=player.masterystudies[m].split("d")
@@ -1773,7 +1773,7 @@ function doNGp3Init2(){
                         tmp.qu.nanofield.producingCharge = false
                 }
                 if (tmp.qu.autobuyer.peakTime === undefined) tmp.qu.autobuyer.peakTime = 0
-                if (tmp.qu.nanofield.rewards>17&&tmp.qu.tod.upgrades[1]==undefined&&!player.ghostify.reached&&!player.aarexModifications.ngp4V) {
+                if (tmp.qu.nanofield.rewards>17&&tmp.qu.tod.upgrades[1]==undefined&&!player.ghostify.reached&&!player.aarexModifications.ngp4V&&!tmp.ngp3c) {
                         var newMS=[]
                         for (var m=0;m<player.masterystudies.length;m++) {
                                 var d=player.masterystudies[m].split("d")
@@ -2189,7 +2189,7 @@ function updateNGModeMessage(){
         if (player.aarexModifications.aau) ngModeMessages.push("You have applied the AAU 'mod', made by Apeirogon. This will unbalance many areas of the game, as you get all achievements available in your save. It is not recommended to choose this 'mod' for this reason, unless you want fast gameplay.")
         if (inflationCheck) ngModeMessages = ["I'm terribly sorry, but it seems there has been an inflation problem in your save, which is why this save file has been reset."]
         if (infiniteCheck) ngModeMessages = ["I'm terribly sorry, but there has been an Infinite bug detected within your save file, which is why said save file will get reset. Luckily, you can export your save before this reset. Thanks! :)"]
-        if (forceToQuantumAndRemove) {
+        if (forceToQuantumAndRemove && !tmp.ngp3c) {
                 quantum(false, true, 0)
                 ngModeMessages = ["Due to balancing changes, you are forced to quantum and reset your TT and your best TP, but you are given  " + shorten(setTTAfterQuantum||0) + " TT as compensation."]
                 player.timestudy.theorem = setTTAfterQuantum||0
