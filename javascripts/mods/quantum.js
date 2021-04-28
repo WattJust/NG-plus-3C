@@ -407,7 +407,10 @@ function quantumReset(force, auto, challid, bigRip, implode = false) {
 			player.masterystudies = newMS
 			respecUnbuyableTimeStudies()
 		}
-		if (!bigRip && tmp.qu.bigRip.active) if (player.galaxies == 9 && player.replicanti.galaxies == 9 && player.timeDimension4.amount.round().eq(9)) giveAchievement("We can really afford 9.")
+		if (!bigRip && tmp.qu.bigRip.active) {
+			if (tmp.ngp3c) if (player.galaxies >= 900) giveAchievement("We can really afford 9.")
+			else if (player.galaxies == 9 && player.replicanti.galaxies == 9 && player.timeDimension4.amount.round().eq(9)) giveAchievement("We can really afford 9.")
+		}
 	} else tmp.qu.gluons = 0;
 	if (player.tickspeedBoosts !== undefined) player.tickspeedBoosts = 0
 	if (player.achievements.includes("r104")) player.infinityPoints = new Decimal(2e25);

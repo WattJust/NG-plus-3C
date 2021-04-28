@@ -357,7 +357,7 @@ function setR17Tooltip(){
 	//ACHIEVEMENT ROW 17
 	internal.setAttribute('ach-tooltip', "Reach " + shortenCosts(new Decimal("1e333")) + " MA without having 2nd Meta Dimensions and Meta-Dimension Boosts." + (tmp.ngp3l?"":" Reward: 1st Meta Dimensions are stronger based on meta antimatter.") )
 	truth.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, tmp.ngp3c?7.88e11:7.88e13)) + " antimatter without having completed any paired challenges.")
-	cantGet.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 6.2e11)) + " antimatter in Eternity Challenge 11.")
+	cantGet.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, tmp.ngp3c?1.9e10:6.2e11)) + " antimatter in Eternity Challenge 11.")
 	noDil.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 2e6)) + " replicanti without having Tachyon particles. Reward: You start Quantums with the square root of your best TP as your Tachyon particle amount.")
 	dontWant.setAttribute('ach-tooltip', "Reach " + shorten(Decimal.pow(Number.MAX_VALUE, 1000)) + " IP while dilated, in QC2, and without having studies and First Dimensions during your current Eternity.")
 	noparadox.setAttribute('ach-tooltip', "Quantum without any dilation upgrades." + (tmp.ngp3l ? "" : " Reward: The sum of your best Quantum Challenge times boosts Quark gain."))
@@ -390,7 +390,7 @@ function setR19Tooltip(){
 	//ng3p51/////
 	//ng3p52/////
 	let gofast = document.getElementById("Gonna go fast")
-	//ng3p54/////
+	let affordNine = document.getElementById("We can really afford 9.")
 	let timeBreak = document.getElementById("Time Breaker")
 	let immunity = document.getElementById("Time Immunity")
 	let notSmart = document.getElementById("You're not really smart.")
@@ -398,6 +398,7 @@ function setR19Tooltip(){
 
 	//ACHIEVEMENT ROW 19
 	gofast.setAttribute('ach-tooltip', "Get "+shorten(Decimal.pow(10, 1185))+" EP first, and then square your EP by disabling dilation while Big Ripped." + (tmp.ngp3l ? "" : " Reward: Space shards multiply quark gain."))
+	affordNine.setAttribute('ach-tooltip', (tmp.ngp3c?("Undo Big Rip with at least 900 normal galaxies"):("Undo the big rip with exactly 9 galaxies, 9 replicated galaxies, and 9 Fourth Time Dimensions"))+". Reward: Gain a multiplier to replicants based on spins.");
 	immunity.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 8e7)) + " antimatter with one normal galaxy while in Eternity Challenge 7 and big ripped." + (tmp.ngp3l ? "" : " Reward: Infinite Time is 3% stronger."))
 	notSmart.setAttribute('ach-tooltip', "Get "+shorten(1e215)+" Time Shards without having Time Study 11 while Big Ripped." + (tmp.ngp3l ? "" : " Reward: Meta Dimensions get a multiplier based on time shards."))
 	timeBreak.setAttribute('ach-tooltip', "Break Eternity. Reward: "+(tmp.ngp3c?"Galaxies don't reset Condensers":"Galaxies don't reset Dimension Boosts") + (!tmp.ngp3l ? ", and Quantum Challenges now cost 0 electrons" : "") + ".")

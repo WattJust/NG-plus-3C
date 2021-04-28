@@ -72,7 +72,7 @@ function buyBigRipUpg(id) {
 		if (tmp.qu.bigRip.active) tweakBigRip(9, true)
 	}
 	for (var u = 1; u <= getMaxBigRipUpgrades(); u++) {
-		document.getElementById("bigripupg" + u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(id)) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
+		document.getElementById("bigripupg" + u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(u)) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
 	}
 }
 

@@ -283,6 +283,7 @@ var masteryStudies = {
 		},
 		390: function() {
 			if (!tmp.cnd) return 1;
+			if (!tmp.cnd.emp) return 1;
 			let ret = Decimal.pow(10, Math.sqrt(tmp.cnd.emp[1].times(tmp.cnd.emp[2]).plus(1).log10())).pow(5e6)
 			return ret;
 		},
