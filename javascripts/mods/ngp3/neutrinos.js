@@ -12,7 +12,7 @@ function updateNeutrinoBoostDisplay(){
 	if (player.ghostify.neutrinos.boosts >= 3) document.getElementById("neutrinoBoost3").textContent = tmp.nb[3].toFixed(2)
 	if (player.ghostify.neutrinos.boosts >= 4) document.getElementById("neutrinoBoost4").textContent = (tmp.nb[4] * 100 - 100).toFixed(1)
 	if (player.ghostify.neutrinos.boosts >= 5) document.getElementById("neutrinoBoost5").textContent = (tmp.nb[5] * 100).toFixed(1)
-	if (player.ghostify.neutrinos.boosts >= 6) document.getElementById("neutrinoBoost6").textContent = tmp.nb[6] < 10.995 ? (tmp.nb[6] * 100 - 100).toFixed(1) : getFullExpansion(Math.floor(tmp.nb[6] * 100 - 100))
+	if (player.ghostify.neutrinos.boosts >= 6) document.getElementById("neutrinoBoost6").textContent = tmp.ngp3c ? (tmp.nb[6] * 100).toFixed(1) : (tmp.nb[6] < 10.995 ? (tmp.nb[6] * 100 - 100).toFixed(1) : getFullExpansion(Math.floor(tmp.nb[6] * 100 - 100)))
 	if (player.ghostify.neutrinos.boosts >= 7) {
 		document.getElementById("neutrinoBoost7").textContent = (tmp.nb[7] * 100).toFixed(1)
 		document.getElementById("preNeutrinoBoost7Eff").textContent = (getTreeUpgradeEfficiency("noNB") * 100).toFixed(1)
@@ -35,11 +35,21 @@ function updateNeutrinoUpgradeDisplay(){
 	document.getElementById("neutrinoUpg3Pow").textContent = shorten(tmp.nu[1])
 	document.getElementById("neutrinoUpg4Pow").textContent = shorten(tmp.nu[2])
 	if (player.ghostify.times > 4) document.getElementById("neutrinoUpg7Pow").textContent = shorten(tmp.nu[3])
-	if (player.ghostify.times > 9) document.getElementById("neutrinoUpg12").setAttribute('ach-tooltip',
-		"Normal galaxy effect: " + shorten(tmp.nu[4].normal) + "x to quark spin production, "+
-		"Replicated galaxy effect: " + shorten(tmp.nu[4].replicated) + "x to EC14 reward, "+
-		"Free galaxy effect: " + shorten(tmp.nu[4].free) + "x to IC3 reward"
-	)
+	if (player.ghostify.times > 9) {
+		let tooltip;
+		if (tmp.ngp3c) {
+			tooltip = "Normal Condenser effect: "+shorten(tmp.nu[4].normal)+"x to quark spin production, "+
+			"Infinity Condenser effect: "+shorten(tmp.nu[4].inf)+"x to the 2nd preon effect, "+
+			"Time Condenser effect: "+shorten(tmp.nu[4].time)+"x to OoMs between replicate slowdown, "+
+			"Meta Condenser effect: "+shorten(tmp.nu[4].meta)+"x to the start of OS_IP_4, "+
+			"Emperor Condenser effect: "+shorten(tmp.nu[4].emp)+"x to TS321's effect";
+		} else {
+			tooltip = "Normal galaxy effect: " + shorten(tmp.nu[4].normal) + "x to quark spin production, "+
+			"Replicated galaxy effect: " + shorten(tmp.nu[4].replicated) + "x to EC14 reward, "+
+			"Free galaxy effect: " + shorten(tmp.nu[4].free) + "x to IC3 reward";
+		}
+		document.getElementById("neutrinoUpg12").setAttribute('ach-tooltip', tooltip)
+	}
 	if (player.ghostify.ghostlyPhotons.unl) {
 		document.getElementById("neutrinoUpg14Pow").textContent=shorten(tmp.nu[5])
 		document.getElementById("neutrinoUpg15Pow").textContent=shorten(tmp.nu[6])
@@ -89,6 +99,7 @@ function onNotationChangeNeutrinos() {
 function getNeutrinoGain() {
 	let ret = Decimal.pow(5, player.ghostify.neutrinos.multPower - 1)
 	if (player.ghostify.ghostlyPhotons.unl) ret = ret.times(tmp.le[5])
+	if (hasNU(7) && tmp.ngp3c) ret = ret.times(tmp.nu[3])
 	if (hasNU(14)) ret = ret.times(tmp.nu[5])
 	if (isNanoEffectUsed("neutrinos")) ret = ret.times(tmp.nf.effects.neutrinos)
 	return ret
@@ -105,6 +116,7 @@ function buyNeutrinoUpg(id) {
 		document.getElementById("workerReplWhat").textContent="babies"
 	}
 	if (id == 5) updateElectrons(true)
+	if (id == 10 && tmp.ngp3c) document.getElementById("neutrinoBoost4Effect").textContent = tmp.ngp3c ? ("They make "+(hasNU(10)?"Replicated & ":"")+"Electron Condensers stronger by ") : "They make Infinite Time reward stronger by "
 }
 
 function updateNeutrinoBoosts() {
@@ -158,17 +170,32 @@ var neutrinoBoosts = {
 		1: function(nt) {
 			let nb1mult = .75
 			if (tmp.newNGP3E) nb1mult = .8
+			if (tmp.ngp3c) nb1mult *= 2.5
 			if (isLEBoostUnlocked(7)) nb1mult *= tmp.leBonus[7]
 			let nb1neutrinos = nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10()
-			return Math.log10(1+nb1neutrinos)*nb1mult
+			if (tmp.ngp3c) {
+				if (hasNU(9)) nb1neutrinos += nt[0].add(1).log10();
+				nb1neutrinos = Decimal.pow(nb1neutrinos, 3);
+			}
+			return Decimal.add(1, nb1neutrinos).log10()*nb1mult
 		},
 		2: function(nt) {
 			let nb2neutrinos = Math.pow(nt[0].add(1).log10(),2)+Math.pow(nt[1].add(1).log10(),2)+Math.pow(nt[2].add(1).log10(),2)
+			if (hasNU(9) && tmp.ngp3c) nb2neutrinos += Math.pow(nt[1].add(1).log10(), 2);
 			let nb2 = Math.pow(nb2neutrinos, .25) * 1.5
 			return nb2 
 		},
 		3: function(nt) {
-			if (tmp.ngp3l) { //NG+3L
+			if (tmp.ngp3c) { //NG+3C
+				let nb3neutrinos = Math.sqrt(
+					Math.pow(nt[0].max(1).log10(), 2) +
+					Math.pow(nt[1].max(1).log10(), 2) +
+					Math.pow(nt[2].max(1).log10(), 2)
+				)
+				if (hasNU(9)) nb3neutrinos += nt[2].max(1).log10()/3;
+				let nb3 = nb3neutrinos * 3
+				return nb3;
+			} else if (tmp.ngp3l) { //NG+3L
 				let nb3Neutrinos = Math.pow(Math.log10(Math.max(nt[0].max(1).log10()-5,1))/Math.log10(5),2)+Math.pow(Math.log10(Math.max(nt[1].max(1).log10()-5,1))/Math.log10(5),2)+Math.pow(Math.log10(Math.max(nt[2].max(1).log10()-5,1))/Math.log10(5),2)
 				let nb3 = Math.pow(nb3Neutrinos / 3, .25) + 3
 				if (nb3 > 6) nb3 = 3 + Math.log2(nb3 + 2)
@@ -185,26 +212,32 @@ var neutrinoBoosts = {
 		},
 		4: function(nt) {
 			var nb4neutrinos = Math.pow(nt[0].add(1).log10(),2)+Math.pow(nt[1].add(1).log10(),2)+Math.pow(nt[2].add(1).log10(),2)
+			if (hasNU(9) && tmp.ngp3c) nb4neutrinos += Math.pow(nt[0].add(1).log10(), 2);
 			var nb4 = Math.pow(nb4neutrinos, .25) * 0.07 + 1
 			if (tmp.ngp3l && nb4 > 10) nb4 = 6 + Math.log2(nb4 + 6)
 			return nb4
 		},
 		5: function(nt) {
 			var nb5neutrinos = nt[0].max(1).log10()+nt[1].max(1).log10()+nt[2].max(1).log10()
-			return Math.min(nb5neutrinos / 33, 1)
+			if (hasNU(9) && tmp.ngp3c) nb5neutrinos += nt[1].add(1).log10();
+			return Math.min(nb5neutrinos / 33, tmp.ngp3c?(1/0):1)
 		},
 		6: function(nt) {
 			var nb6neutrinos = Math.pow(nt[0].add(1).log10(), 2) + Math.pow(nt[1].add(1).log10(), 2) + Math.pow(nt[2].add(1).log10(), 2)
+			if (hasNU(9) && tmp.ngp3c) nb6neutrinos += Math.pow(nt[2].add(1).log10(), 2);
 			var nb6exp1 = .25
 			if (tmp.newNGP3E) nb6exp1 = .26
-			let nb6 = Math.pow(Math.pow(nb6neutrinos, nb6exp1) * 0.525 + 1, tmp.qu.bigRip.active ? 0.5 : 1)
-			if (isLEBoostUnlocked(9)) nb6 *= tmp.leBonus[7]
+			let nb6;
+			if (tmp.ngp3c) nb6 = .75-.75/(Math.log10(Math.pow(nb6neutrinos, nb6exp1 * (tmp.qu.bigRip.active ? 0.5 : 1) * (isLEBoostUnlocked(9) ? tmp.leBonus[7] : 1)) * 0.525 + 1)+1)
+			else nb6 = Math.pow(Math.pow(nb6neutrinos, nb6exp1) * 0.525 + 1, tmp.qu.bigRip.active ? 0.5 : 1);
+			if (isLEBoostUnlocked(9) && !tmp.ngp3c) nb6 *= tmp.leBonus[7]
 			return nb6
 		},
 		7: function(nt) {
 			let nb7exp = .5
 			if (tmp.newNGP3E) nb7exp = .6
 			let nb7neutrinos = nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10()
+			if (hasNU(9) && tmp.ngp3c) nb7neutrinos += nt[0].add(1).log10();
 			let nb7 = Math.pow(Math.log10(1 + nb7neutrinos), nb7exp)*2.35
 			if (!tmp.ngp3l) {
 				if (nb7 > 4) nb7 = 2 * Math.log2(nb7)
@@ -214,6 +247,7 @@ var neutrinoBoosts = {
 		},
 		8: function(nt) {
 			let nb8neutrinos = Math.pow(nt[0].add(1).log10(),2)+Math.pow(nt[1].add(1).log10(),2)+Math.pow(nt[2].add(1).log10(),2)
+			if (hasNU(9) && tmp.ngp3c) nb8neutrinos += Math.pow(nt[1].add(1).log10(), 2);
 			let nb8exp = .25
 			if (tmp.newNGP3E) nb8exp = .27
 			var nb8 = Math.pow(nb8neutrinos, nb8exp) / 10 + 1
@@ -222,18 +256,28 @@ var neutrinoBoosts = {
 		},
 		9: function(nt) {
 			var nb9 = (nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10())/10
-			if (tmp.ngp3l && nb9 > 4096) nb9 = Math.pow(Math.log2(nb9) + 4, 3)
-			if (isLEBoostUnlocked(9)) nb9 *= tmp.leBonus[7]
-			return nb9
+			if (hasNU(9) && tmp.ngp3c) nb9 += nt[2].add(1).log10()/15;
+			if ((tmp.ngp3l||tmp.ngp3c) && nb9 > 4096) nb9 = Math.pow(Math.log2(nb9) + 4, 3)
+
+			if (tmp.ngp3c) {
+				nb9 = Decimal.pow(10, Decimal.pow(nb9, 6.5));
+				if (isLEBoostUnlocked(9)) nb9 = nb9.times(tmp.leBonus[7]);
+				return nb9;
+			} else {
+				if (isLEBoostUnlocked(9)) nb9 *= tmp.leBonus[7]
+				return nb9
+			}
 		},
 		10: function(nt) {
 			let nb10neutrinos = nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10()
+			if (hasNU(9) && tmp.ngp3c) nb10neutrinos += nt[0].add(1).log10();
 			let nb10 = Math.max(nb10neutrinos - 3e3, 0) / 75e4
 			if (!tmp.ngp3l && nb10 > 0.1) nb10 = Math.log10(nb10 * 100) / 10
 			return nb10
 		},
 		11: function(nt) {
 			let nb11neutrinos = nt[0].add(nt[1]).add(nt[2]).add(1).log10()
+			if (hasNU(9) && tmp.ngp3c) nb11neutrinos += nt[1].add(1).log10()/5;
 			let nb11exp = Math.sqrt(nb11neutrinos)
 			let nb11 = Decimal.pow(1.15, nb11exp)
 			return nb11

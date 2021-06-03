@@ -6,6 +6,7 @@ function loadCondensedVars() {
 			time: [null, 0, 0, 0, 0, 0, 0, 0, 0],
 			meta: [null, 0, 0, 0, 0, 0, 0, 0, 0],
 			emp: [null, 0, 0, 0, 0, 0, 0, 0, 0],
+			autoEmp: false,
 			nano: [null, 0, 0, 0, 0, 0, 0, 0, 0],
 			repl: 0,
 			elec: 0,
@@ -18,6 +19,7 @@ function loadCondensedVars() {
 	if (player.condensed.meta === undefined) player.condensed.meta = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	if (player.condensed.elec === undefined) player.condensed.elec = 0
 	if (player.condensed.emp === undefined) player.condensed.emp = [null, 0, 0, 0, 0, 0, 0, 0, 0]
+	if (player.condensed.autoEmp === undefined) player.condensed.autoEmp = false;
 	if (player.condensed.nano === undefined) player.condensed.nano = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	if (player.infchallengeTimes[9] === undefined) {
 		player.infchallengeTimes.push(600*60*24*31)
@@ -46,9 +48,9 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		player.condensed.meta = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	}
 	if (resetNum>=6) {
-		player.condensed.elec = 0
+		if (resetNum>6 || player.ghostify.milestones<=2) player.condensed.elec = 0
 		player.condensed.emp = [null, 0, 0, 0, 0, 0, 0, 0, 0]
-		player.condensed.nano = [null, 0, 0, 0, 0, 0, 0, 0, 0]
+		if (resetNum>6 || !player.achievements.includes("ng3p66")) player.condensed.nano = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	}
 	
 	if (preVer<1.1) {
@@ -68,8 +70,13 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		tmp.qu.replicants.hatchSpeedCost = getHatchSpeedBaseCost();
 	}
 	if (preVer<1.24) tmp.qu.bigRip.tss = new Decimal(0);
-	
-	player.aarexModifications.ngp3c = 1.24;
+	if (preVer<1.25) player.condensed.autoEmp = false;
+
+	player.aarexModifications.ngp3c = 1.25;
+}
+
+function getTotalCondensers(type) {
+	return player.condensed[type].filter(x => x!=null).reduce((a,c) => a+c);
 }
 
 const CONDENSER_START = {
@@ -137,6 +144,7 @@ function getCondenserPow() {
 function getFreeCondensers() {
 	let c = 0;
 	if (player.masterystudies.includes("d13")) c += getTreeUpgradeEffect(9);
+	if (ghostified && player.ghostify.neutrinos.boosts >= 3) c += tmp.nb[3];
 	return c;
 }
 
@@ -225,6 +233,7 @@ function getExtraInfConds() {
 	if (player.timestudy.studies.includes(44)) cond+=3
 	if (player.dilation.upgrades.includes("ngp3c2")) cond += getDil36Mult()
 	if (player.masterystudies.includes("d13")) cond += getTreeUpgradeEffect(9);
+	if (ghostified && player.ghostify.neutrinos.boosts >= 3) cond += tmp.nb[3];
 	return cond
 }
 
@@ -345,6 +354,7 @@ function getReplCondPow() {
 	if (player.timestudy.studies.includes(43)) pow *= ts43Eff()
 	if (player.dilation.upgrades.includes(8)) pow *= 1.15
 	if (player.masterystudies.includes("t267")) pow *= 1.5
+	if (ghostified && player.ghostify.neutrinos.boosts>3 && hasNU(10)) pow *= tmp.nb[4]
 	return pow;
 }
 
@@ -404,6 +414,7 @@ function getFreeTimeConds() {
 	if (player.dilation.upgrades.includes("ngp3c2")) cond += getDil36Mult()
 	if (player.dilation.upgrades.includes("ngpp4")) cond++;
 	if (player.masterystudies.includes("d13")) cond += getTreeUpgradeEffect(9);
+	if (ghostified && player.ghostify.neutrinos.boosts >= 3) cond += tmp.nb[3];
 	return cond;
 }
 
@@ -552,6 +563,12 @@ const OBSCUREMENTS = {
 		osID: "TD",
 		res() { return getTimeDimensionPower(1) },
 	},
+	ec13: {
+		title: "EC13's Second Effect",
+		scID: "EC13",
+		osID: "EC13",
+		res() { return getECReward(13, true) },
+	},
 	dt: {
 		title: "Dilated Time Gain",
 		scID: "DT",
@@ -590,6 +607,7 @@ function updateObscurements() {
 		}
 		html += "<h3>"+data.title+"</h3><br><ul style='list-style-type: none;'>"
 		for (let j=0;j<scData.length;j++) {
+			if (j==0 && data.scID=="NDs" && hasNU(6)) continue;
 			let newData = scData[j]
 			let start = (typeof newData.start == "function") ? newData.start() : newData.start
 			if (!player.condensed.obsc[data.osID].includes(j+1)) {
@@ -599,6 +617,7 @@ function updateObscurements() {
 			html += "<li>OS_"+data.osID+"_"+(j+1)+": Starts at "+shorten(start)
 			if (newData.func=="pow") html += ", ^"+shorten((typeof newData.pow == "function") ? newData.pow() : newData.pow)
 			else if (newData.func=="expPow") html += ", exponent ^"+shorten((typeof newData.pow == "function") ? newData.pow() : newData.pow)
+			else if (newData.func=="log") html += ", logged ^"+shorten((typeof newData.pow == "function") ? newData.pow() : newData.pow)
 			html += "</li>"
 		}
 		html += "</ul><br><br>"
@@ -684,6 +703,7 @@ function getFreeMetaConds() {
 	let cond = 0
 	if (player.dilation.upgrades.includes("ngpp4")) cond++;
 	if (player.masterystudies.includes("d13")) cond += getTreeUpgradeEffect(9);
+	if (ghostified && player.ghostify.neutrinos.boosts >= 3) cond += tmp.nb[3];
 	return cond;
 }
 
@@ -744,9 +764,15 @@ function elecCondense(max=false) {
 	if (!max) tmp.qu.electrons.amount -= cost;
 }
 
+function getElecCondPow() {
+	let pow = 1;
+	if (ghostified && player.ghostify.neutrinos.boosts>3) pow *= tmp.nb[4]
+	return pow;
+}
+
 function getElecCondEff() {
 	let e = tmp.qu.electrons.amount;
-	let c = player.condensed.elec;
+	let c = player.condensed.elec * getElecCondPow();
 	if (c<=2) return Math.pow(Math.log(e+1)/Math.log(2)+1, c)
 	else return Math.pow(Math.log(e+1)/Math.log(2)+1, 2)*Math.sqrt(c-1)
 }
@@ -761,6 +787,7 @@ function getCondPreonEff() {
 function getCondPreonEffMult() {
 	let mult = 5;
 	if (player.masterystudies.includes("t345")) mult *= getMTSMult(345)
+	if (hasNU(12) && tmp.qu.bigRip.active) mult *= tmp.nu[4].inf;
 	return mult;
 }
 
@@ -811,6 +838,7 @@ function getEmpCondenserTarget(x) {
 
 function getEmpCondenserPow() {
 	let pow = new Decimal(1)
+	if (player.ghostify.milestones>=8) pow = pow.times(1.25);
 	return pow
 }
 
@@ -873,6 +901,7 @@ const NANO_CONDENSER_BASE = {
 
 function getNanoCondenserCostScaling() {
 	let s = 1
+	if (player.achievements.includes("ng3p66")) s -= 0.25;
 	return s
 }
 

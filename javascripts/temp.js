@@ -193,7 +193,7 @@ function updateInfiniteTimeTemp() {
 	var x = (3 - getTickspeed().log10()) * 0.000005
 	if (tmp.ngp3) {
 		if (!tmp.ngp3l && player.achievements.includes("ng3p56")) x *= 1.03
-		if (ghostified && player.ghostify.neutrinos.boosts>3) x *= tmp.nb[4]
+		if (ghostified && player.ghostify.neutrinos.boosts>3 && !tmp.ngp3c) x *= tmp.nb[4]
 		if (tmp.be && !player.dilation.active && tmp.qu.breakEternity.upgrades.includes(8)) x *= getBreakUpgMult(8)
 		if (isLEBoostUnlocked(8)) x *= tmp.leBonus[8]
 		x = softcap(x, "inf_time_log_1")
@@ -354,6 +354,9 @@ function updateNeutrinoBoostsTemp() {
 	var nt = []
 	for (var g = 0; g < 3; g++) nt[g] = player.ghostify.neutrinos[(["electron","mu","tau"])[g]]
 	for (var nb = 1; nb <= player.ghostify.neutrinos.boosts; nb++) tmp.nb[nb] = neutrinoBoosts.boosts[nb](nt)
+	tmp.nbc[1] = tmp.ngp3c?1:2;
+	tmp.nbc[2] = tmp.ngp3c?3:4;
+	tmp.nbc[8] = tmp.ngp3c?4e19:1e35;
 }
 
 function updateNU1Temp(){
@@ -374,20 +377,35 @@ function updateNU3Temp(){
 function updateNU4Temp(){
 	let nu4base = 50
 	if (tmp.ngp3l) nu4base = 20
-	tmp.nu[2] = Decimal.pow(nu4base, Math.pow(Math.max(-getTickspeed().div(1e3).log10() / 4e13 - 4, 0), 1/4))
+	if (tmp.ngp3c) nu4base = 5
+	let nu4req = 4e13;
+	if (tmp.ngp3c) nu4req = 2e11;
+	let nu4sub = 4;
+	if (tmp.ngp3c) nu4sub = 1;
+	tmp.nu[2] = Decimal.pow(nu4base, Math.pow(Math.max(-getTickspeed().div(1e3).log10() / nu4req - nu4sub, 0), 1/4))
 }
 
 function updateNU7Temp(){
 	var nu7 = tmp.qu.colorPowers.g.add(1).log10()/400
-	if (nu7 > 40) nu7 = Math.sqrt(nu7*10)+20
+	if (nu7 > (tmp.ngp3c?3:40)) nu7 = Math.sqrt(nu7*(tmp.ngp3c?(4/3):10))+(tmp.ngp3c?1:20)
 	tmp.nu[3] = Decimal.pow(10,nu7) 
 }
 
-function updateNU12Temp(){
-	tmp.nu[4] = { 
-		normal: Math.sqrt(player.galaxies * .0035 + 1),
-		free: player.dilation.freeGalaxies * .035 + 1,
-		replicated: Math.sqrt(getTotalRG()) * (tmp.ngp3l ? .035 : .0175) + 1 //NU12 
+function updateNU12Temp(){ // NU12
+	if (tmp.ngp3c) {
+		tmp.nu[4] = {
+			normal: Math.pow(getTotalCondensers("normal") * .000035 + 1, 1/3),
+			inf: Math.sqrt(Math.log10(getTotalCondensers("inf") + 1) / 10 + 1),
+			time: Math.pow(getTotalCondensers("time") / 777 + 1, 1/7),
+			meta: Decimal.pow(1e77, getTotalCondensers("meta")),
+			emp: Decimal.pow(100, Math.sqrt(getTotalCondensers("emp")))
+		}
+	} else {
+		tmp.nu[4] = { 
+			normal: Math.sqrt(player.galaxies * .0035 + 1),
+			free: player.dilation.freeGalaxies * .035 + 1,
+			replicated: Math.sqrt(getTotalRG()) * (tmp.ngp3l ? .035 : .0175) + 1
+		}
 	}
 }
 
@@ -408,12 +426,23 @@ function updateNeutrinoUpgradesTemp(){
 	updateNU4Temp()
 	updateNU7Temp()
 	updateNU12Temp()
+	
+	tmp.nuc[1] = tmp.ngp3c?1e5:1e6
+	tmp.nuc[2] = tmp.ngp3c?4e5:1e7
+	tmp.nuc[3] = tmp.ngp3c?1e6:1e8
+	tmp.nuc[4] = tmp.ngp3c?6e6:2e8
+	tmp.nuc[5] = tmp.ngp3c?2e7:5e8
+	tmp.nuc[6] = tmp.ngp3c?7.5e7:2e9
+	tmp.nuc[7] = tmp.ngp3c?2e8:5e9
+	tmp.nuc[8] = tmp.ngp3c?1.5e9:7.5e9
+	tmp.nuc[10] = tmp.ngp3c?1.5e11:7e12
+	tmp.nuc[12] = tmp.ngp3c?2e33:1e55
 }
 
 function updateBreakEternityUpgrade1Temp(){
 	var ep = player.eternityPoints
 	var em = tmp.qu.breakEternity.eternalMatter
-	var log1 = ep.div(tmp.ngp3c?"1e8300":"1e1280").add(1).log10()
+	var log1 = ep.div(tmp.ngp3c?(ghostified?"1e8250":"1e8300"):"1e1280").add(1).log10()
 	var log2 = em.times(10).max(1).log10()
 	let b = Math.pow(log1, 1/3) * 0.5 + Math.pow(log2, 1/3)
 	tmp.beu[1] = tmp.ngp3c ? (Math.pow(Math.log10(b+1), 3)*5+1) : Decimal.pow(10, b).max(1)
@@ -524,7 +553,7 @@ function updateBRU1Temp() {
 	if (!tmp.qu.bigRip.active) return
 	let exp = 1
 	if (tmp.qu.bigRip.upgrades.includes(17) && !tmp.ngp3c) exp = tmp.bru[17]
-	if (ghostified && player.ghostify.neutrinos.boosts > 7) exp *= tmp.nb[8]
+	if (ghostified && player.ghostify.neutrinos.boosts > 7 && !tmp.ngp3c) exp *= tmp.nb[8]
 	exp *= player.infinityPoints.max(1).log10()
 	exp = softcap(exp, "bru1_log", tmp.ngp3l ? 1 : 2)
 	tmp.bru[1] = Decimal.pow(10, exp) // BRU1

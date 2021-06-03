@@ -726,7 +726,8 @@ function replicantiDisplay() {
 	if (player.replicanti.unl) {
 		let replGalOver = getMaxRG() - player.replicanti.gal
 		let chance = Decimal.times(tmp.rep.chance, 100)
-		document.getElementById("replicantiamount").textContent = shortenDimensions(player.replicanti.amount)+(player.aarexModifications.ngp3c?(" / ")+shortenDimensions(getReplicantiCap()):"")
+		let showReplLimit = tmp.ngp3c?(!(hasNU(12) && tmp.qu.bigRip.active)):false;
+		document.getElementById("replicantiamount").textContent = shortenDimensions(player.replicanti.amount)+(showReplLimit?(" / ")+shortenDimensions(getReplicantiCap()):"")
 		document.getElementById("replicantimult").textContent = shorten(getIDReplMult())
 		
 		var chanceDisplayEnding = (isChanceAffordable() && player.infinityPoints.lt(Decimal.pow(10,1e10)) ? "<br>+1% Cost: " + shortenCosts(player.replicanti.chanceCost) + " IP" : "")

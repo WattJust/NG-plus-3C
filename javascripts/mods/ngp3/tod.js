@@ -128,14 +128,14 @@ function showBranchTab(tabName) {
 }
 
 function getUnstableGainDiv(over=false) {
-	if (tmp.ngp3c) return "1e80"
+	if (tmp.ngp3c) return (player.ghostify.milestones > 7 && tmp.ngp3c)?"100":"1e80"
 	else return over?"1e420":"1e300"
 }
 
 function getUnstableGain(branch) {
 	let ret = tmp.qu.usedQuarks[branch].div(getUnstableGainDiv(true)).add(1).log10()
 	if (ret < 2 && !tmp.ngp3c) ret = Math.max(tmp.qu.usedQuarks[branch].div(getUnstableGainDiv()).div(99).log10() / 60,0)
-	let power = getBranchUpgLevel(branch, 2) - getRDPower(branch)
+	let power = getBU2Power(branch) - getRDPower(branch)
 	ret = Decimal.pow(2, power).times(ret)
 	if (ret.gt(1)) ret = Decimal.pow(ret, Math.pow(2, power + 1))
 	return ret.times(Decimal.pow(2, getRDPower(branch) + 1)).min(Decimal.pow(10, Math.pow(2, 51)))
@@ -164,6 +164,7 @@ function getBranchSpeedText(){
 	if (hasNU(4)) if (tmp.nu[2].gt(1)) text += "Fourth Neutrino Upgrade: " + shorten(tmp.nu[2]) + "x, "
 	if (!tmp.ngp3l) if (player.achievements.includes("ng3p48")) if (player.meta.resets > 1) text += "'Are you currently dying?' reward: " + shorten (Math.sqrt(player.meta.resets + 1)) + "x, "
 	if (player.ghostify.milestones >= 14) text += "Brave Milestone 14: " + shorten(getMilestone14SpinMult()) + "x, "
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) text += "Ghostify Bonus: 5x, "
 	if (todspeed) if (todspeed > 1) text += "ToD Speed: " + shorten(todspeed) + "x, "
 	if (text == "") return "No multipliers currently"
 	return text.slice(0, text.length-2)
@@ -178,6 +179,7 @@ function getBranchSpeed() { // idea: when you hold shift you can see where the m
 		if (player.achievements.includes("ng3p48")) x = x.times(Math.sqrt(player.meta.resets + 1))
 	}
 	if (player.ghostify.milestones >= 14) x = x.times(getMilestone14SpinMult())
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) x = x.times(5);
 	return x
 }
 
@@ -237,6 +239,7 @@ function getQuarkSpinProduction(branch) {
 		if (branch == "b") {
 			if (GUBought("br8")) ret = ret.times(getGU8Effect("br"))
 		}
+		if (player.ghostify.milestones > 7) ret = ret.times(50);
 	}
 	return ret
 }
@@ -579,14 +582,17 @@ function getRDPower(branch) {
 
 function getBU1Power(branch) {
 	let x = getBranchUpgLevel(branch,1)
-	if (tmp.ngp3c && x>=10) x = Math.sqrt(x*10)
+	if (tmp.ngp3c) {
+		if (x>=100) x = Math.pow(x*1e4, 1/3);
+		if (x>=10) x = Math.sqrt(x*10);
+	}
 	let s = Math.floor(Math.sqrt(0.25 + 2 * x / 120) - 0.5)
 	return s * 120 + (x - s * (s + 1) * 60)/(s + 1)
 }
 
 function getBU2Power(branch) {
 	let x = getBranchUpgLevel(branch, 2)
-	if (tmp.ngp3c && x>=5) x = Math.sqrt(x*5)
+	if (tmp.ngp3c && x>=95) x = Math.pow(x*9025, 1/3);
 	if (player.achievements.includes("ng3p94")) x += getRadioactiveDecays(branch)
 	return x
 }

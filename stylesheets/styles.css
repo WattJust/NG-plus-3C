@@ -986,6 +986,10 @@ button {
 	width: 257.5px
 }
 
+.tallbtn {
+    width: 200px;
+}
+
 .scrollablemenu {
 	display: block !important;
 	min-height: 250px;

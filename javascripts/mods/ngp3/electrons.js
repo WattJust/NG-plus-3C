@@ -96,6 +96,7 @@ function getElectronUpgCostScalingExp(u) {
 }
 
 function getElectronUpgIncrease(u) {
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) return 0.3;
 	return 0.25
 }
 

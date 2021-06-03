@@ -146,7 +146,7 @@ function quarkGain() {
 	let logBoost = tmp.ngp3l ? 1.2 : 2
 	let logBoostExp = tmp.ngp3l ? 2 : 1.5
 	if (log > logBoost) log = Math.pow(log / logBoost, logBoostExp) * logBoost
-	if (log > 738 && !hasNU(8)) log = Math.sqrt(log * 738)
+	if (log > 738 && !(hasNU(8) && !tmp.ngp3c)) log = Math.sqrt(log * 738)
 	if (!tmp.ngp3l) log += getNGP3p1totalQKMult()
 
 	var dlog = Math.log10(log)

@@ -2,11 +2,17 @@ presets={}
 
 // Time studies
 
+function getTTManualMult() {
+	let mult = 1;
+	if (tmp.ngp3c && player.achievements.includes("ng3p61")) mult = 5;
+	return mult;
+}
+
 function buyWithAntimatter() {
 	if (player.money.gte(player.timestudy.amcost)) {
 		player.money = player.money.minus(player.timestudy.amcost)
 		player.timestudy.amcost = player.timestudy.amcost.times(new Decimal("1e17000"))
-		player.timestudy.theorem += 1
+		player.timestudy.theorem += getTTManualMult()
 		updateTimeStudyButtons(true)
 		return true
 	} else return false
@@ -16,7 +22,7 @@ function buyWithIP() {
 	if (player.infinityPoints.gte(player.timestudy.ipcost)) {
 		player.infinityPoints = player.infinityPoints.minus(player.timestudy.ipcost)
 		player.timestudy.ipcost = player.timestudy.ipcost.times(1e70)
-		player.timestudy.theorem += 1
+		player.timestudy.theorem += getTTManualMult()
 		updateTimeStudyButtons(true)
 		return true
 	} else return false
@@ -30,7 +36,7 @@ function buyWithEP() {
 	if (player.eternityPoints.gte(player.timestudy.epcost)) {
 		player.eternityPoints = player.eternityPoints.minus(player.timestudy.epcost)
 		player.timestudy.epcost = player.timestudy.epcost.times(1.7)
-		player.timestudy.theorem += 1
+		player.timestudy.theorem += getTTManualMult()
 		updateTimeStudyButtons(true)
 		updateEternityUpgrades()
 		return true
@@ -42,23 +48,24 @@ function canBuyTTWithEP() {
 }
 
 function maxTheorems() {
+	let mult = getTTManualMult();
 	var gainTT = Math.floor((player.money.log10() - player.timestudy.amcost.log10()) / 17000 + 1)
 	if (gainTT > 0) {
-		player.timestudy.theorem += gainTT
+		player.timestudy.theorem += gainTT * mult
 		player.timestudy.amcost = player.timestudy.amcost.times(Decimal.pow("1e17000", gainTT))
 		player.money = player.money.sub(player.timestudy.amcost.div("1e17000"))
 	}
 	
 	gainTT = Math.floor((player.infinityPoints.log10() - player.timestudy.ipcost.log10()) / 70 + 1)
 	if (gainTT > 0) {
-		player.timestudy.theorem += gainTT
+		player.timestudy.theorem += gainTT * mult
 		player.timestudy.ipcost = player.timestudy.ipcost.times(Decimal.pow("1e70", gainTT))
 		player.infinityPoints = player.infinityPoints.sub(player.timestudy.ipcost.div("1e70"))
 	}
 	
 	gainTT = Math.floor(player.eternityPoints.div(player.timestudy.epcost).plus(1).log(1.7))
 	if (gainTT > 0 && canBuyTTWithEP()) {
-		player.timestudy.theorem += gainTT
+		player.timestudy.theorem += gainTT * mult
 		player.eternityPoints = player.eternityPoints.sub(Decimal.pow(1.7, gainTT).sub(1).times(player.timestudy.epcost))
 		if (!break_infinity_js && isNaN(player.eternityPoints.logarithm)) player.eternityPoints = new Decimal(0)
 		player.timestudy.epcost = player.timestudy.epcost.times(Decimal.pow(1.7, gainTT))

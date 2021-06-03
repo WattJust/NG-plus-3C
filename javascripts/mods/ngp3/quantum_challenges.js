@@ -270,7 +270,11 @@ let qcRewards = {
 				let br = player.quantum.gluons.br
 				if (br.gte(1e10)) br = Decimal.mul(br.log10(), 1e9)
 				let ret = 1-1/(br.plus(1).log10()*comps*1.1+1)
-				if (ret>=0.95) ret = 0.95;
+				if (ret>=0.95) {
+					if (hasNU(6)) {
+						ret = Math.min(ret, 0.99);
+					} else ret = 0.95;
+				}
 				return ret;
 			} else return comps + 2
 		}

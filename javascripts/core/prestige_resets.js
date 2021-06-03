@@ -51,7 +51,7 @@ function nanofieldResetOnQuantum(){
 
 function doQuantumResetStuff(bigRip, challid){
 	var headstart = player.aarexModifications.newGamePlusVersion > 0 && !tmp.ngp3
-	var oheHeadstart = bigRip ? tmp.qu.bigRip.upgrades.includes(2) : speedrunMilestonesReached > 0
+	var oheHeadstart = (bigRip ? tmp.qu.bigRip.upgrades.includes(2) : speedrunMilestonesReached > 0) || tmp.ngp3c&&ghostified
 	var keepABnICs = oheHeadstart || bigRip || player.achievements.includes("ng3p51")
 	var turnSomeOn = !bigRip || player.quantum.bigRip.upgrades.includes(1)
 	var bigRipChanged = tmp.ngp3 && bigRip != player.quantum.bigRip.active
@@ -101,7 +101,7 @@ function doQuantumResetStuff(bigRip, challid){
 	player.postC4Tier = 0
 	player.postC3Reward = new Decimal(1)
 	player.eternityPoints = new Decimal(0)
-	player.eternities = headstart ? player.eternities : bigRip ? (tmp.qu.bigRip.upgrades.includes(2) ? 1e5 : 0) : speedrunMilestonesReached > 17 ? 1e13 : oheHeadstart ? 2e4 : player.achievements.includes("ng3p12") ? Math.max(Math.floor(720*3600*10/player.quantum.best),10000) : 0
+	player.eternities = headstart ? player.eternities : tmp.ngp3c&&ghostified ? 1e13 : (bigRip ? (tmp.qu.bigRip.upgrades.includes(2) ? 1e5 : 0) : speedrunMilestonesReached > 17 ? 1e13 : oheHeadstart ? 2e4 : player.achievements.includes("ng3p12") ? Math.max(Math.floor(720*3600*10/player.quantum.best),10000) : 0)
 	player.eternitiesBank = tmp.ngp3 ? nA(player.eternitiesBank, bankedEterGain) : undefined
 	player.thisEternity = 0
 	player.bestEternity = headstart ? player.bestEternity : 9999999999
@@ -779,25 +779,26 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
 	player.postC4Tier = 0
 	player.postC3Reward = new Decimal(1)
 	player.eternityPoints = new Decimal(0)
-	player.eternities = bm ? 1e13 : 0
+	player.eternities = bm||tmp.ngp3c ? 1e13 : 0
 	player.eternitiesBank = 0
 	player.thisEternity = 0
 	player.bestEternity = 9999999999
 	player.eternityUpgrades = bm ? [1, 2, 3, 4, 5, 6] : []
+	if (tmp.ngp3c && bm) player.eternityUpgrades = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 	player.epmult = new Decimal(1)
 	player.epmultCost = new Decimal(500)
 	player.infDimensionsUnlocked = resetInfDimUnlocked()
 	player.infinityPower = new Decimal(1)
 	/* function */ completelyResetInfinityDimensions()
 	/* function */ completelyResetTimeDimensions()
-	player.infDimBuyers = bm ? player.infDimBuyers : [false, false, false, false, false, false, false, false]
+	player.infDimBuyers = bm||tmp.ngp3c ? player.infDimBuyers : [false, false, false, false, false, false, false, false]
 	player.timeShards = new Decimal(0)
 	player.tickThreshold = new Decimal(1)
 	player.totalTickGained = 0
 	player.challengeTarget = 0
 	player.replicanti = {
-		amount: new Decimal(bm ? 1 : 0),
-		unl: bm > 0,
+		amount: new Decimal(bm||tmp.ngp3c ? 1 : 0),
+		unl: (bm > 0)||tmp.ngp3c,
 		chance: 0.01,
 		chanceCost: new Decimal(player.galacticSacrifice !== undefined ? 1e90 : 1e150),
 		interval: 1000,
@@ -806,7 +807,7 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
 		galaxies: 0,
 		galCost: new Decimal(player.galacticSacrifice != undefined ? 1e110 : 1e170),
 		galaxybuyer: player.replicanti.galaxybuyer,
-		auto: bm ? player.replicanti.auto : [false, false, false]
+		auto: bm||tmp.ngp3c ? player.replicanti.auto : [false, false, false]
 	}
 	player.timestudy = bm ? player.timestudy : {
 		theorem: 0,
@@ -821,7 +822,7 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
 	player.etercreq = 0
 	player.autoIP = new Decimal(0)
 	player.autoTime = 1e300
-	player.infMultBuyer = bm ? player.infMultBuyer : false
+	player.infMultBuyer = bm||tmp.ngp3c ? player.infMultBuyer : false
 	player.autoEterMode = bm ? player.autoEterMode : "amount"
 	player.peakSpent = 0
 	player.respec = false
@@ -1049,8 +1050,9 @@ function doQuantumGhostifyResetStuff(implode, bm){
 	updateSpeedruns()
 	updateColorCharge()
 	updateColorDimPowers()
-	updateGluonsTabOnUpdate("prestige")
 	updateQuantumWorth("quick")
+	updateQuarksTabOnUpdate("prestige")
+	updateGluonsTabOnUpdate("prestige")
 	updateBankedEter()
 	updateQuantumChallenges()
 	updatePCCompletions()

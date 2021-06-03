@@ -28,14 +28,15 @@ function unstoreTT() {
 
 function getSpaceShardsGain() {
 	let ret = tmp.qu.bigRip.active ? tmp.qu.bigRip.bestThisRun : player.money
-	ret = Decimal.pow(ret.add(1).log10() / (tmp.ngp3c?2e4:2000), 1.5).times(player.dilation.dilatedTime.add(1).pow(0.05))
+	ret = Decimal.pow(ret.add(1).log10() / ((tmp.ngp3c&&!ghostified)?2e4:2000), 1.5).times(player.dilation.dilatedTime.add(1).pow(0.05))
 	if (!tmp.qu.bigRip.active || tmp.be) {
 		if (tmp.qu.breakEternity.upgrades.includes(3)) ret = ret.times(getBreakUpgMult(3))
 		if (tmp.qu.breakEternity.upgrades.includes(6)) ret = ret.times(getBreakUpgMult(6))
 	}
-	if (hasNU(9)) ret = ret.times(Decimal.max(getEternitied(), 1).pow(0.1))
+	if (hasNU(9) && !tmp.ngp3c) ret = ret.times(Decimal.max(getEternitied(), 1).pow(0.1))
 	if (tmp.ngp3c && isBigRipUpgradeActive(8)) ret = ret.times(2);
 	if (tmp.ngp3c && isBigRipUpgradeActive(9)) ret = ret.times(5);
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) ret = ret.times(5);
 
 	let log = ret.log10()
 	let log4log = Math.log10(log) / Math.log10(4)
@@ -170,7 +171,7 @@ function breakEternity() {
 }
 
 function getEMGain() {
-	let log = player.timeShards.div(tmp.ngp3c?2e10:1e9).log10() * 0.25
+	let log = player.timeShards.div((tmp.ngp3c&&!ghostified)?2e10:1e9).log10() * 0.25
 	if (log > 15) log = Math.sqrt(log * 15)
 	
 	let log2log = Math.log10(log) / Math.log10(2)
@@ -183,6 +184,7 @@ function getEMGain() {
 	
 	if (tmp.ngp3c && isBigRipUpgradeActive(15)) log += Math.log10(player.galaxies+1);
 	if (tmp.ngp3c && isBigRipUpgradeActive(16)) log += Math.log10(tmp.bru[16].max(1));
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) log += Math.log10(5);
 	
 	return Decimal.pow(10, log).floor();
 }
@@ -220,9 +222,9 @@ function getBreakUpgMult(id) {
 function maxBuyBEEPMult() {
 	let cost = getBreakUpgCost(7)
 	if (!tmp.qu.breakEternity.eternalMatter.gte(cost)) return
-	let toBuy = tmp.qu.breakEternity.eternalMatter.div(cost).add(1).log(2)
-	if (toBuy+tmp.qu.breakEternity.epMultPower>=75) toBuy = Math.sqrt((toBuy+tmp.qu.breakEternity.epMultPower)*75)-tmp.qu.breakEternity.epMultPower;
-	tmp.qu.breakEternity.epMultPower += Math.floor(toBuy)
+	let toBuy = tmp.qu.breakEternity.eternalMatter.div(1e5).add(1).log(2)
+	if (toBuy+tmp.qu.breakEternity.epMultPower>=75) toBuy = Math.sqrt(toBuy*75);
+	tmp.qu.breakEternity.epMultPower = Math.max(tmp.qu.breakEternity.epMultPower, Math.floor(toBuy+1));
 	tmp.qu.breakEternity.eternalMatter = tmp.qu.breakEternity.eternalMatter.sub(cost)
 	if (player.ghostify.milestones < 15) tmp.qu.breakEternity.eternalMatter = tmp.qu.breakEternity.eternalMatter.round()
 	document.getElementById("eternalMatter").textContent = shortenDimensions(tmp.qu.breakEternity.eternalMatter)

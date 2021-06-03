@@ -100,7 +100,7 @@ function getGalaxyRequirement(offset = 0, display) {
 			if (GUBought("rg6")) speed *= 0.867
 			if (GUBought("gb6")) speed /= 1 + Math.pow(player.infinityPower.plus(1).log10(), 0.25) / 2810
 			if (GUBought("br6")) speed /= 1 + player.meta.resets / 340
-			if (ghostified && player.ghostify.neutrinos.boosts > 5) speed /= tmp.nb[6]
+			if (ghostified && player.ghostify.neutrinos.boosts > 5 && !tmp.ngp3c) speed /= tmp.nb[6]
 			if (hasBosonicUpg(45)) speed /= tmp.blu[45]
 			if (player.achievements.includes("ng3p98")) speed *= 0.9
 			amount += getDistantAdd(tmp.grd.galaxies-distantStart+1)*speed
@@ -112,7 +112,7 @@ function getGalaxyRequirement(offset = 0, display) {
 		}
 
 		let remoteStart = getRemoteScalingStart()
-		if (tmp.grd.galaxies >= remoteStart && !tmp.be && !hasNU(6)) {
+		if (tmp.grd.galaxies >= remoteStart && !tmp.be && !(hasNU(6) && !tmp.ngp3c)) {
 			let speed2 = tmp.grd.speed
 			if (GUBought("rg7")) speed2 *= 0.9
 			if (GUBought("gb7")) speed2 /= 1+Math.log10(1+player.infinityPoints.max(1).log10())/100

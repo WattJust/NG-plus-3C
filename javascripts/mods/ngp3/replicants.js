@@ -313,7 +313,11 @@ function updateEmperorDimensions() {
 	}
 	document.getElementById("totalWorkers").textContent = shortenDimensions(tmp.twr)
 	document.getElementById("totalQuarkProduction").textContent = shorten(production.workersTotal)
-	if (player.ghostify.milestones > 7) updateReplicants("display")
+	document.getElementById("autoEmpCondContainer").style.display = (tmp.ngp3c && player.ghostify.milestones>7)?"":"none";
+	if (player.ghostify.milestones > 7) {
+		updateReplicants("display")	
+		if (tmp.ngp3c) document.getElementById("autoEmpCond").textContent = "Auto-Condensers: "+(player.condensed.autoEmp?"ON":"OFF");
+	}
 }
 
 function maxReduceHatchSpeed() {

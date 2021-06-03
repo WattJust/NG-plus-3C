@@ -2076,8 +2076,22 @@ function updateNGp3DisplayStuff(){
                 if (u%3==1) document.getElementById("neutrinoUpg"+u).parentElement.parentElement.style.display=u>player.ghostify.times+2?"none":""
                 else document.getElementById("neutrinoUpg"+u).style.display=u>player.ghostify.times+2?"none":""
         }
-        document.getElementById("neutrinoBoost3Effect").textContent = tmp.ngp3l ? "They increase the limit of 14th dilation upgrade from 3.00x to" : "They remove the limit of 14th dilation upgrade and then boost that upgrade by "
-        document.getElementById("gphUnl").textContent="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10,6e9))+" antimatter while your universe is Big Ripped first."
+        document.getElementById("neutrinoBoost3Effect").textContent = tmp.ngp3c ? "They provide " : (tmp.ngp3l ? "They increase the limit of 14th dilation upgrade from 3.00x to" : "They remove the limit of 14th dilation upgrade and then boost that upgrade by ")
+        document.getElementById("neutrinoBoost3Suffix").textContent = tmp.ngp3c ? " free Normal, Infinity, Time, and Meta Condensers" : "x"
+        document.getElementById("neutrinoBoost4Effect").textContent = tmp.ngp3c ? ("They make "+(hasNU(10)?"Replicated & ":"")+"Electron Condensers stronger by ") : "They make Infinite Time reward stronger by "
+        document.getElementById("neutrinoBoost5Effect").textContent = tmp.ngp3c ? "They exponentially improve the Blue Power boost by " : "They reduce the nerf to red power boost over 130% by "
+        document.getElementById("neutrinoBoost6Effect").textContent = tmp.ngp3c ? "They reduce Dilation rebuyable upgrade cost scaling by " : "They slow down Distant Antimatter Galaxies by "
+        document.getElementById("neutrinoBoost8Effect").textContent = tmp.ngp3c ? "make Dilation Condensers " : "make the first Big Rip upgrade "
+        document.getElementById("neutrinoBoost9Effect").textContent = tmp.ngp3c ? "multiply the start of OS_EC13_1 by " : "multiply the IC3 reward for each tickspeed purchase by "
+        document.getElementById("neutrinoUpg12Affected").textContent = tmp.ngp3c ? "dimension-related condenser" : "galaxy"
+        document.getElementById("neutrinoUpg12Suffix").textContent = tmp.ngp3c ? ", and remove the Replicanti limit in Big Rips" : ""
+        document.getElementById("neutrinoUpg5CondEff").textContent = tmp.ngp3c ? ", and gain 1% of Eternitied stat gain every second" : ""
+        document.getElementById("neutrinoUpg6Effect").textContent = tmp.ngp3c ? "Disable OS_ND_1, and QC8's reward limit is increased by 4%." : "Disable Remote Antimatter Galaxies scaling!"
+        document.getElementById("neutrinoUpg7AdditionalEffect").textContent = tmp.ngp3c ? ", Neutrino," : ""
+        document.getElementById("neutrinoUpg8Effect").textContent = tmp.ngp3c ? "QK Multi Upgrades multiply the start of OS_QK_1." : "Disable the meta-antimatter boost nerf to quark gain."
+        document.getElementById("neutrinoUpg9Effect").textContent = tmp.ngp3c ? "Neutrino types further boost all Neutrino Boosts in their column." : "Eternities and Space Shards boost each other."
+        document.getElementById("neutrinoUpg10Effect").textContent = tmp.ngp3c ? "Neutrino Boost 4 affects Replicated Condensers." : "Banked eternities are counted in Quantum Challenges."
+        document.getElementById("gphUnl").innerHTML="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9))+" antimatter while your universe is Big Ripped first"+(tmp.ngp3c?" <b>(COMING SOON!)</b>":".")
         document.getElementById("lightBoost4Type").textContent=tmp.ngp3l?"preon":"total green power"
         updateBLUnlockDisplay()
         document.getElementById("bpc68").textContent=shortenMoney(tmp.qu.pairedChallenges.pc68best)

@@ -11,7 +11,8 @@ function updateQuantumWorth(mode) {
 			if (!tmp.ngp3l) colorCharge.qwBonus = quantumWorth.pow(.8).div(100)
 		}
 		if (player.ghostify.times) {
-			var automaticCharge = Math.max(Math.log10(quantumWorth.add(1).log10() / 150) / Math.log10(2), 0) + Math.max(tmp.qu.bigRip.spaceShards.add(1).log10() / 20 - 0.5, 0)
+			var automaticCharge = Math.max(Math.log10(quantumWorth.add(1).log10() / (tmp.ngp3c?100:150)) / Math.log10(2), 0) + Math.max(tmp.qu.bigRip.spaceShards.add(1).log10() / 20 - 0.5, 0)
+			if (tmp.ngp3c) automaticCharge *= 1.25;
 			player.ghostify.automatorGhosts.power = Math.max(automaticCharge, player.ghostify.automatorGhosts.power)
 			if (mode != "quick") {
 				document.getElementById("automaticCharge").textContent = automaticCharge.toFixed(2)
@@ -151,7 +152,7 @@ colorCharge = {
 colorShorthands = {r:'red',
 	g:'green',
 	b:'blue'}
-
+	
 function updateColorCharge() {
 	if (!tmp.ngp3) return
 	var colors = ['r','g','b']
@@ -217,7 +218,7 @@ function updateColorPowers(log) {
 	//Red
 	colorBoosts.r=Math.pow(log.r,player.dilation.active?2/3:0.5)/10+1
 	if (colorBoosts.r>1.3) colorBoosts.r=Math.sqrt(colorBoosts.r*1.3)
-	if (colorBoosts.r>2.3&&(!player.dilation.active||getTreeUpgradeLevel(2)>7||ghostified)) colorBoosts.r=Math.pow(colorBoosts.r/2.3,0.5*(ghostified&&player.ghostify.neutrinos.boosts>4?1+tmp.nb[5]:1))*2.3
+	if (colorBoosts.r>2.3&&(!player.dilation.active||getTreeUpgradeLevel(2)>7||ghostified)) colorBoosts.r=Math.pow(colorBoosts.r/2.3,0.5*((ghostified&&player.ghostify.neutrinos.boosts>4&&!tmp.ngp3c)?1+tmp.nb[5]:1))*2.3
 	if (player.dilation.active && colorBoosts.r>=12 && tmp.ngp3c) colorBoosts.r = Math.log10(colorBoosts.r-2)+11
 
 	//Green
@@ -250,6 +251,7 @@ function updateColorPowers(log) {
 		if (bLog.lt(100)) bLog = bLog.toNumber()
 		else bLog = Math.min(bLog.toNumber(), bLog.log10() * (40 + 10 * bLog.sub(90).log10()))
 	}
+	if (ghostified && player.ghostify.neutrinos.boosts>4 && tmp.ngp3c) bLog *= 1+tmp.nb[5];
 	if (bLog < 0) bLog = 0
 	colorBoosts.b = Decimal.pow(10,bLog)
 

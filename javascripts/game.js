@@ -1617,7 +1617,7 @@ function getInfinitiedGain() {
 function getEternitied() {
 	let banked = player.eternitiesBank
 	let total = player.eternities
-	if (banked && (inQC(0) || hasNU(10))) total = nA(total, player.eternitiesBank)
+	if (banked && (inQC(0) || (hasNU(10) && !tmp.ngp3c))) total = nA(total, player.eternitiesBank)
 	return total
 }
 
@@ -2730,7 +2730,7 @@ function onNotationChange() {
 		updateBreakEternity()
 		onNotationChangeNeutrinos()
 		updateBosonicStuffCosts()
-		if (!player.ghostify.ghostlyPhotons.unl) document.getElementById("gphUnl").textContent="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10,6e9))+" antimatter while your universe is Big Ripped first."
+		if (!player.ghostify.ghostlyPhotons.unl) document.getElementById("gphUnl").textContent="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9))+" antimatter while your universe is Big Ripped first."
 		else if (!player.ghostify.wzb.unl) updateBLUnlockDisplay()
 		else if (!tmp.ngp3l && !tmp.hb.unl) updateHiggsUnlockDisplay()
 	}
@@ -4108,8 +4108,8 @@ function challengesCompletedOnEternity(bigRip) {
 function gainEternitiedStat() {
 	let ret = 1
 	if (ghostified) {
-		ret = Math.pow(10, 2 / (Math.log10(getEternitied() + 1) / 10 + 1))
-		if (hasNU(9)) ret = nM(ret, tmp.qu.bigRip.spaceShards.max(1).pow(.1))
+		if (!tmp.ngp3c) ret = Math.pow(10, 2 / (Math.log10(getEternitied() + 1) / 10 + 1))
+		if (hasNU(9) && !tmp.ngp3c) ret = nM(ret, tmp.qu.bigRip.spaceShards.max(1).pow(.1))
 	}
 	if (player.timestudy.studies.includes(34) && player.aarexModifications.ngp3c) ret = nM(ret, 10)
 	if (player.timestudy.studies.includes(35) && player.aarexModifications.ngp3c) ret = nM(ret, ts35Eff())
@@ -4469,7 +4469,8 @@ function getECReward(x, alt=false) {
 		if (!pc) return 1;
 		let chance = tmp.rep.chance;
 		if (Decimal.gte(chance, 5e3)) chance = Decimal.pow(10, Math.pow(Decimal.log10(chance)*Math.pow(Math.log10(5e3), 4), 0.2))
-		return Decimal.pow(10, Math.pow(Decimal.mul(chance, c).plus(1).log10(), 2)).pow(6e3+2e3*c).times(Decimal.add(tmp.rep.chance, 1));
+		let eff = Decimal.pow(10, Math.pow(Decimal.mul(chance, c).plus(1).log10(), 2)).pow(6e3+2e3*c).times(Decimal.add(tmp.rep.chance, 1));
+		return tmp.ngp3c?softcap(eff, "ngp3cEC13"):eff;
 	}
 	if (x == 14 && !alt) return getIC3EffFromFreeUpgs()
 	if (x == 14 && alt) {
@@ -4807,7 +4808,7 @@ function doNGP3UnlockStuff(){
 	let MAbool = player.meta.bestAntimatter.lt(getQuantumReq())
 	let DONEbool = !tmp.qu.nonMAGoalReached.includes(chall)
 	let TIMEbool = player.quantum.time > 10
-	if (chall && player.money.gt(Decimal.pow(10, getQCGoal())) && MAbool && DONEbool && TIMEbool) {
+	if (chall && player.money.gt(Decimal.pow(10, getQCGoal())) && MAbool && DONEbool && TIMEbool && !tmp.ngp3c) {
 		doReachAMGoalStuff(chall)
 	}
 	if (!player.ghostify.reached && tmp.qu.bigRip.active) if (tmp.qu.bigRip.bestThisRun.gte(Decimal.pow(10, getQCGoal(undefined, true)))) {
@@ -4815,8 +4816,8 @@ function doNGP3UnlockStuff(){
 	}
 	var inEasierModeCheck = !inEasierMode()
 	if (player.masterystudies && (player.masterystudies.includes("d14")||player.achievements.includes("ng3p51")) && !metaSave.ngp4 && !inEasierModeCheck) doNGP4UnlockStuff()
-	if (player.eternityPoints.gte(tmp.ngp3c?NGP3C_BE_REQ:"1e1200") && tmp.qu.bigRip.active && !tmp.qu.breakEternity.unlocked) doBreakEternityUnlockStuff()
-	if (player.money.gte(Decimal.pow(10, 6e9)) && tmp.qu.bigRip.active && !player.ghostify.ghostlyPhotons.unl) doPhotonsUnlockStuff()
+	if (player.eternityPoints.gte(tmp.ngp3c?(ghostified?NGP3C_BE_REQ.div(1e50):NGP3C_BE_REQ):"1e1200") && tmp.qu.bigRip.active && !tmp.qu.breakEternity.unlocked) doBreakEternityUnlockStuff()
+	if (player.money.gte(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9)) && tmp.qu.bigRip.active && !player.ghostify.ghostlyPhotons.unl && !tmp.ngp3c) doPhotonsUnlockStuff()
 	if (canUnlockBosonicLab() && !player.ghostify.wzb.unl) doBosonsUnlockStuff()
 	if (!tmp.ng3l) unlockHiggs()
 }
@@ -4903,15 +4904,19 @@ function doPerSecondNGP3Stuff(){
 			break;
 		} 
 	}
+	if (tmp.ngp3c && player.condensed.autoEmp && player.ghostify.milestones > 7) for (let i=1;i<=8;i++) maxEmpCondense(i);
 	if (isAutoGhostActive(8)) buyMaxQuantumFood()
 	if (isAutoGhostActive(7)) maxQuarkMult()
 	doNGP3UnlockStuff()
 	notifyGhostifyMilestones()
-	if (tmp.qu.autoOptions.assignQK && player.ghostify.milestones > 7) assignAll(true) 
 	
-	if (tmp.ngp3l) return 
+	if (tmp.ngp3l) {
+		if (tmp.qu.autoOptions.assignQK && player.ghostify.milestones > 7) assignAll(true) 
+		return 
+	}
 
 	if (player.achievements.includes("ng3p43")) if (player.ghostify.milestones >= 8) maxUpgradeColorDimPower()
+	if (tmp.qu.autoOptions.assignQK && player.ghostify.milestones > 7) assignAll(true) 
 	givePerSecondNeuts()
 }
 
@@ -5078,6 +5083,13 @@ function passiveInfinitiesUpdating(diff){
 		player.infinitied = nA(player.infinitied||0, x);
 	}
 	player.partInfinitied = Math.max(Math.min(new Decimal(tempPA||0).toNumber(), 1), 0);
+}
+
+function passiveEternitiesUpdating(diff) {
+	if (!tmp.ngp3c) return;
+	if (hasNU(5)) {
+		player.eternities = nA(player.eternities, nM(gainEternitiedStat(), diff/100));
+	}
 }
 
 function infinityRespeccedDMUpdating(diff){
@@ -6037,7 +6049,7 @@ function passiveQuantumLevelStuff(diff){
 		tmp.qu.quarks = tmp.qu.quarks.add(quarkGain().sqrt().times(diff))
 		var p = ["rg", "gb", "br"]
 		for (var i = 0; i < 3; i++) {
-			var r = tmp.qu.usedQuarks[p[i][0]].min(tmp.qu.usedQuarks[p[i][1]])
+			var r = tmp.qu.usedQuarks[p[i][0]].min(tmp.qu.usedQuarks[p[i][1]]).min(tmp.ngp3c?tmp.qu.quarkEnergy.div(3):(1/0));
 			if (player.achievements.includes("ng3p71")) r = r.div(100)
 			else r = r.sqrt()
 			tmp.qu.gluons[p[i]] = tmp.qu.gluons[p[i]].add(r.times(diff))
@@ -6100,6 +6112,7 @@ function gameLoop(diff) {
 	checkMatter(diff)
 	passiveIPupdating(diff)
 	passiveInfinitiesUpdating(diff)
+	passiveEternitiesUpdating(diff)
 	requiredInfinityUpdating(diff)
 	normalChallPowerUpdating(diff)
 	passiveIPperMUpdating(diff)

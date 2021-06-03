@@ -135,7 +135,7 @@ function getIC3EffFromFreeUpgs() {
 		if (player.currentEternityChall=='eterc14') x = 5
 		else {
 			x = ECTimesCompleted("eterc14") * (tmp.ngp3l ? 2 : 4)
-			if (hasNU(12)) if (tmp.qu.bigRip.active) x *= tmp.nu[4].replicated
+			if (hasNU(12) && !tmp.ngp3c) if (tmp.qu.bigRip.active) x *= tmp.nu[4].replicated
 		}
 	}
 	if (player.galacticSacrifice !== undefined) x++

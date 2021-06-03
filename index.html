@@ -1849,6 +1849,7 @@
 				<p>You have <span id="quantumFoodAmountED">0</span> quantum food.</p>
 				<button class='gluonupgrade storebtn' id='buyQuantumFoodED' onclick='buyQuantumFood()' style="width: 210px"></button><br>
 				<button class='storebtn' id='buyMaxQuantumFoodED' onclick='buyMaxQuantumFood()' style="width: 210px">Buy maximum quantum food</button>
+				<span id="autoEmpCondContainer" style="display: none;"><br><button id="autoEmpCond" class="storebtn tallbtn" onclick="if (player.ghostify.milestones>=8) player.condensed.autoEmp = !player.condensed.autoEmp;">Auto-Condensers: OFF</button><br></span>
 				<table class="table" id="empDimTable">
 					<tr style="font-size: 15px">
 						<td>Total: </td>
@@ -2549,7 +2550,7 @@
 								<div id="Faster than a potato^286078" class="achievement achievementlocked" style="background-image: url(images/93.png)" ach-tooltip="Get more than 1e8,296,262 ticks per second."><br></div>
 							</td>
 							<td>
-								<div id="I told you already, time is relative" class="achievement achievementlocked" style="background-image: url(images/94.png)" ach-tooltip="Dilate time."><br></div>
+								<div id="I told you already, time is relative" class="achievement achievementlocked" style="background-image: url(images/94.png)"><br></div>
 							</td>
 							<td>
 								<div id="Now you're thinking with dilation!" class="achievement achievementlocked" style="background-image: url(images/95.png)" ach-tooltip="Eternity for 1e600 EP in 1 minute or less while dilated."><br></div>
@@ -2827,7 +2828,7 @@
 								<div id="Are these another..." class="achievement achievementlocked" style="background-image: url(images/177.png)"></div>
 							</td>
 							<td>
-								<div id="... references to EC8?" class="achievement achievementlocked" style="background-image: url(images/178.png)" ach-tooltip="Get at least 2 Radioactive Decays of every color with at most 10 gains of Unstable Quarks. Reward: Gain 1 level of Branch upgrade 2 per 1 Radioactive Decay."></div>
+								<div id="... references to EC8?" class="achievement achievementlocked" style="background-image: url(images/178.png)"></div>
 							</td>
 							<td>
 								<div id="Bosonic Semipowerment" class="achievement achievementlocked" style="background-image: url(images/179.png)" ach-tooltip="Reach 50% of Light Empowerment requirement without buying Bosonic Upgrades, but after getting a Higgs Boson. Reward: Light Empowerments are 1 Ultraviolet Light cheaper."></div>
@@ -5222,17 +5223,17 @@
 					<tr class="neutrinoBoosts" id="neutrinoBoostRow1">
 						<td>They increase TP gain formula exponent from <span id="preNeutrinoBoost1"></span> to <span class="neutrinos" id="neutrinoBoost1">1.0</span>.</td>
 						<td id="neutrinoBoostCell2">They strengthen the effect of "replicate chance boosts itself" stronger from <span id="preNeutrinoBoost2"></span> to <span class="neutrinos" id="neutrinoBoost2">1.0</span>.<br>(The effect exponent is increased from <span id="preNeutrinoBoost2Exp"></span> to <span class="neutrinos" id="neutrinoBoost2Exp" style="font-size:25px"></span>)</td>
-						<td id="neutrinoBoostCell3"><span id="neutrinoBoost3Effect"></span> <span class="neutrinos" id="neutrinoBoost3">3.00</span>x.</td>
+						<td id="neutrinoBoostCell3"><span id="neutrinoBoost3Effect"></span> <span class="neutrinos" id="neutrinoBoost3">3.00</span><span id="neutrinoBoost3Suffix">x</span>.</td>
 					</tr>
 					<tr class="neutrinoBoosts" id="neutrinoBoostRow2">
-						<td>They make Infinite Time reward stronger by <span class="neutrinos" id="neutrinoBoost4">0.0</span>%.</td>
-						<td id="neutrinoBoostCell5">They reduce the nerf to red power boost over 130% by <span class="neutrinos" id="neutrinoBoost5">100.0</span>%.</td>
-						<td id="neutrinoBoostCell6">They slow down Distant Antimatter Galaxies by <span class="neutrinos" id="neutrinoBoost6">0.0</span>%.<br>(Nerfed in Big Rip runs)</td>
+						<td><span id="neutrinoBoost4Effect"></span><span class="neutrinos" id="neutrinoBoost4">0.0</span>%.</td>
+						<td id="neutrinoBoostCell5"><span id="neutrinoBoost5Effect"></span><span class="neutrinos" id="neutrinoBoost5">100.0</span>%.</td>
+						<td id="neutrinoBoostCell6"><span id="neutrinoBoost6Effect"></span><span class="neutrinos" id="neutrinoBoost6">0.0</span>%.<br>(Nerfed in Big Rip runs)</td>
 					</tr>
 					<tr class="neutrinoBoosts" id="neutrinoBoostRow3">
 						<td>In Big Rips, they make Tree upgrades <span class="neutrinos" id="neutrinoBoost7">0.0</span>% more effective. (<span id="preNeutrinoBoost7Eff">100.0</span>% to <span class="neutrinos" id="neutrinoBoost7Eff" style="font-size:25px">100.0</span>%)</td>
-						<td id="neutrinoBoostCell8">In Big Rips, they make the first Big Rip upgrade <span class="neutrinos" id="neutrinoBoost8">0.0</span>% stronger.</td>
-						<td id="neutrinoBoostCell9">In Big Rips, they multiply the IC3 reward for each tickspeed purchase by <span class="neutrinos" id="neutrinoBoost9">1.00</span>x.</td>
+						<td id="neutrinoBoostCell8">In Big Rips, they <span id="neutrinoBoost8Effect"></span><span class="neutrinos" id="neutrinoBoost8">0.0</span>% stronger.</td>
+						<td id="neutrinoBoostCell9">In Big Rips, they <span id="neutrinoBoost9Effect"></span><span class="neutrinos" id="neutrinoBoost9">1.00</span>x.</td>
 					</tr>
 					<tr class="neutrinoBoosts" id="neutrinoBoostRow4">
 						<td>They decrease free tickspeed upgrade threshold by -<span class="neutrinos" id="neutrinoBoost10"></span>.</td>
@@ -5251,18 +5252,18 @@
 					</tr>
 					<tr>
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg4" onclick="buyNeutrinoUpg(4)" style="font-size: 10px">Gain quark spins faster and all branches are faster based on your tickspeed.<br>Currently: <span id="neutrinoUpg4Pow">1.0</span>x<br>Cost: <span id="neutrinoUpg4Cost"></span> of any neutrinos</button></td>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg5" onclick="buyNeutrinoUpg(5)">Triple the Electron gain.<br>Cost: <span id="neutrinoUpg5Cost"></span> of any neutrinos</button></td>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg6" onclick="buyNeutrinoUpg(6)">Disable Remote Antimatter Galaxies scaling!<br>Cost: <span id="neutrinoUpg6Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg5" onclick="buyNeutrinoUpg(5)">Triple the Electron gain<span id="neutrinoUpg5CondEff"></span>.<br>Cost: <span id="neutrinoUpg5Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg6" onclick="buyNeutrinoUpg(6)"><span id="neutrinoUpg6Effect"></span><br>Cost: <span id="neutrinoUpg6Cost"></span> of any neutrinos</button></td>
 					</tr>
 					<tr>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg7" onclick="buyNeutrinoUpg(7)" style="font-size: 10px">Green power boosts odd Emperor Dimensions and preon charge production.<br>Currently: <span id="neutrinoUpg7Pow"></span>x<br>Cost: <span id="neutrinoUpg7Cost"></span> of any neutrinos</button></td>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg8" onclick="buyNeutrinoUpg(8)">Disable the meta-antimatter boost nerf to quark gain.<br>Cost: <span id="neutrinoUpg8Cost"></span> of any neutrinos</button></td>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg9" onclick="buyNeutrinoUpg(9)">Eternities and Space Shards boost each other.<br>Cost: <span id="neutrinoUpg9Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg7" onclick="buyNeutrinoUpg(7)" style="font-size: 10px">Green power boosts odd Emperor Dimensions<span id="neutrinoUpg7AdditionalEffect"></span> and preon charge production.<br>Currently: <span id="neutrinoUpg7Pow"></span>x<br>Cost: <span id="neutrinoUpg7Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg8" onclick="buyNeutrinoUpg(8)"><span id="neutrinoUpg8Effect"></span><br>Cost: <span id="neutrinoUpg8Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg9" onclick="buyNeutrinoUpg(9)"><span id="neutrinoUpg9Effect"></span><br>Cost: <span id="neutrinoUpg9Cost"></span> of any neutrinos</button></td>
 					</tr>
 					<tr>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg10" onclick="buyNeutrinoUpg(10)">Banked eternities are counted in Quantum Challenges.<br>Cost: <span id="neutrinoUpg10Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg10" onclick="buyNeutrinoUpg(10)"><span id="neutrinoUpg10Effect"></span><br>Cost: <span id="neutrinoUpg10Cost"></span> of any neutrinos</button></td>
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg11" onclick="buyNeutrinoUpg(11)">8th Big Rip upgrade is never repealed and capped.<br>Cost: <span id="neutrinoUpg11Cost"></span> of any neutrinos</button></td>
-						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg12" onclick="buyNeutrinoUpg(12)" style="font-size: 10px">In Big Rips, each galaxy type boosts differently.<br>Hover to see your current effects<br>Cost: <span id="neutrinoUpg12Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg12" onclick="buyNeutrinoUpg(12)" style="font-size: 9px">In Big Rips, each <span id="neutrinoUpg12Affected"></span> type boosts differently<span id="neutrinoUpg12Suffix"></span>.<br>Hover to see your current effects<br>Cost: <span id="neutrinoUpg12Cost"></span> of any neutrinos</button></td>
 					</tr>
 					<tr id="gphRow">
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg13" onclick="buyNeutrinoUpg(13)">100 RG upgrade doesn't nerf the 100 BR upgrade.<br>Cost: <span id="neutrinoUpg13Cost"></span> of any neutrinos</button></td>
@@ -5426,12 +5427,12 @@
 					<tr id="braveRow1">
 						<td><div id="braveMilestone1" class="achievement achievementlocked"></div></td>
 						<td><div id="braveMilestone2" class="achievement achievementlocked" ach-tooltip="Reward: Colored quarks do not cancel, you keep your gluon upgrades, you can quick Big Rip (as long as you have the electron requirement for PC6+8), and completing an Eternity Challenge doesn't respec your time studies."></div></td>
-						<td><div id="braveMilestone3" class="achievement achievementlocked" ach-tooltip="Reward: You keep Electron upgrades."></div></td>
+						<td><div id="braveMilestone3" class="achievement achievementlocked"></div></td>
 						<td><div id="braveMilestone4" class="achievement achievementlocked" ach-tooltip="Reward: Tachyon particles don't reset on Quantum except when entering a QC, unstabilizing quarks don't reset colored quarks, and you start with 5 purchases of the 1st branch upgrade in each colored branch."></div></td>
 						<td><div id="braveMilestone5" class="achievement achievementlocked" ach-tooltip="Reward: Meta-Dimension Boosts don't reset on Quantum except when entering a QC or exiting Big Rip."></div></td>
 						<td><div id="braveMilestone6" class="achievement achievementlocked" ach-tooltip="Reward: Normal replicants don't reset on Quantum except when entering a QC or exiting Big Rip."></div></td>
 						<td><div id="braveMilestone7" class="achievement achievementlocked" ach-tooltip="Reward: Start with 10 worker replicants on Ghostify, and you keep Neutrinos."></div></td>
-						<td><div id="braveMilestone8" class="achievement achievementlocked" ach-tooltip="Reward: You produce ^0.5 of quarks, ^0.5 of gluons and 1% of Space Shards gained on Quantum per second."></div></td>
+						<td><div id="braveMilestone8" class="achievement achievementlocked"></div></td>
 					</tr>
 					<tr id="braveRow2">
 						<td><div id="braveMilestone9" class="achievement achievementlocked" ach-tooltip="Reward: Start Ghostifies with 10 of each one of the first 2 Emperor Dimensions."></div></td>

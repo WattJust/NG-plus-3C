@@ -432,7 +432,7 @@ function updateMetaDimensions () {
 function getDil15Bonus() {
 	let x = 1
 	let max = 3
-	if (ghostified && player.ghostify.neutrinos.boosts >= 3) {
+	if (ghostified && player.ghostify.neutrinos.boosts >= 3 && !tmp.ngp3c) {
 		if (tmp.ngp3l) max = tmp.nb[3]
 		else {
 			x = tmp.nb[3]

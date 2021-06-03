@@ -121,15 +121,15 @@ var masteryStudies = {
 	timeStudies: [],
 	timeStudyEffects: {
 		251: function(){
-			if (player.ghostify.neutrinos.upgrades.includes(6)) return 0
+			if (player.ghostify.neutrinos.upgrades.includes(6) && !tmp.ngp3c) return 0
 			return Math.floor(player.resets / (player.aarexModifications.ngp3c?500:3e3))
 		},
 		252: function(){
-			if (player.ghostify.neutrinos.upgrades.includes(6)) return 0
+			if (player.ghostify.neutrinos.upgrades.includes(6) && !tmp.ngp3c) return 0
 			return Math.floor(player.dilation.freeGalaxies / 7)
 		},
 		253: function(){
-			if (player.ghostify.neutrinos.upgrades.includes(6)) return 0
+			if (player.ghostify.neutrinos.upgrades.includes(6) && !tmp.ngp3c) return 0
 			if (tmp.ngp3l) return Math.floor(extraReplGalaxies / 9) * 20
 			return Math.floor(getTotalRG()/4)
 		},
@@ -178,7 +178,7 @@ var masteryStudies = {
 			return Decimal.pow(10, Math.pow(tmp.rm.max(1).log10(), 0.25) / 15 * (tmp.newNGP3E ? 2 : 1))
 		},
 		301: function(){
-			if (player.ghostify.neutrinos.upgrades.includes(6)) return 0
+			if (player.ghostify.neutrinos.upgrades.includes(6) && !tmp.ngp3c) return 0
 			return Math.floor(extraReplGalaxies / 4.15)
 		},
 		303: function(){
@@ -217,7 +217,7 @@ var masteryStudies = {
 		},
 		345: function() {
 			let mult = Math.pow(2, Math.sqrt(Math.log10(player.money.plus(1).log10()/250e9+1)))
-			if (tmp.twr.gte(9)) mult *= 1.1;
+			if (tmp.twr) if (tmp.twr.gte(9)) mult *= 1.1;
 			let ret = mult*Math.sqrt(player.galaxies/20)/10+1
 			if (ret>=6) ret = Math.log10(ret)*6/Math.log10(6)
 			return ret;
@@ -238,11 +238,13 @@ var masteryStudies = {
 		},
 		355: function() {
 			let base = new Decimal(10)
-			if (tmp.twr.lt(10)) {
-				base = base.times(Decimal.pow(1.25, Decimal.pow(tmp.twr, 1.225)))
-				if (tmp.twr.gte(8)) base = base.times(tmp.twr.sub(5))
-				if (tmp.twr.gte(9)) base = base.times(2)
-			} else base = base.times(Decimal.pow(1.25, tmp.twr.log10()+Math.pow(10, 1.225)-1)).times(10)
+			if (tmp.twr) {
+				if (tmp.twr.lt(10)) {
+					base = base.times(Decimal.pow(1.25, Decimal.pow(tmp.twr, 1.225)))
+					if (tmp.twr.gte(8)) base = base.times(tmp.twr.sub(5))
+					if (tmp.twr.gte(9)) base = base.times(2)
+				} else base = base.times(Decimal.pow(1.25, tmp.twr.log10()+Math.pow(10, 1.225)-1)).times(10)
+			}
 			let ret = Decimal.pow(base, Math.sqrt(tmp.qu.replicants.quarks.div(10).plus(1).log10()))
 			if (ret.gte(1e45)) ret = Decimal.pow(10, Math.sqrt(ret.log10()*45))
 			return ret;
@@ -346,7 +348,7 @@ var masteryStudies = {
 			var log = eff.log10()
 
 			let log2log = Math.log10(log) / Math.log10(2)
-			let start = 9 //Starts at e512
+			let start = tmp.ngp3c?3:9 //Starts at e512 in normal, e8 in NG+3C
 			if (log2log > start) {
 				let capped = Math.floor(Math.log10(Math.max(log2log + 2 - start, 1)) / Math.log10(2))
 				log2log = (log2log - Math.pow(2, capped) - start + 2) / Math.pow(2, capped) + capped + start - 1
@@ -751,6 +753,7 @@ function buyMasteryStudy(type, id, quick=false) {
 	if (type == "t") {
 		addSpentableMasteryStudies(id)
 		if (id == 302 && !tmp.ngp3c) maybeShowFillAll()
+		if (id == 432 && tmp.ngp3c) player.ghostify.reference = 0;
 		if (quick) {
 			masteryStudies.costMult *= getMasteryStudyCostMult(id)
 			masteryStudies.latestBoughtRow = Math.max(masteryStudies.latestBoughtRow, Math.floor(id / 10))
@@ -784,7 +787,7 @@ function buyMasteryStudy(type, id, quick=false) {
 		}
 		if (id == 383) updateColorCharge()
 		if (!tmp.ngp3l) {
-			if (!hasNU(6) && (id == 251 || id == 252 || id == 253 || id == 301)) {
+			if (!(hasNU(6) && !tmp.ngp3c) && (id == 251 || id == 252 || id == 253 || id == 301)) {
 				player.galaxies = 1
 			}
 			if (!inQC(5) && (id == 261 || (id == 331&&!tmp.ngp3c))) {
@@ -888,7 +891,7 @@ function updateMasteryStudyTextDisplay() {
 		document.getElementById("ds" + id + "Cost").textContent = "Cost: " + shorten(masteryStudies.costs.dil[id]) + " Time Theorems"
 		if (req) document.getElementById("ds" + id + "Req").innerHTML = ghostified || !req ? "" : "<br>Requirement: " + req
 	}
-	if (quantumed) document.getElementById("321effect").textContent=shortenCosts(new Decimal("1e430"))
+	if (quantumed) document.getElementById("321effect").textContent=shortenCosts(getTS321SetMPT())
 }
 
 var occupied
@@ -983,6 +986,10 @@ function recordUpDown(x) {
 	if (upDown.times>=200) giveAchievement("Up and Down and Up and Down...")
 }
 
-
+function getTS321SetMPT() {
+	let mpt = new Decimal("1e430");
+	if (hasNU(12) && tmp.qu.bigRip.active && tmp.ngp3c) mpt = mpt.times(tmp.nu[4].emp);
+	return mpt;
+}
 
 

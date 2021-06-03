@@ -142,10 +142,9 @@ function maxAllDilUpgs() {
 		var id = "r" + MAX_DIL_UPG_PRIORITIES[i]
 		if (isDilUpgUnlocked(id)) {
 			if (id == "r1") {	
-				var cost = Decimal.pow(10, player.dilation.rebuyables[1] + 5)
+				var cost = Decimal.pow(10, player.dilation.rebuyables[1] * getRebuyableDilUpgCostScaling(1) + 5)
 				if (player.dilation.dilatedTime.gte(cost)) {
 					var toBuy = Math.floor(player.dilation.dilatedTime.div(cost).times(9).add(1).log10())
-					var toSpend = Decimal.pow(10, toBuy).sub(1).div(9).times(cost)
 					player.dilation.dilatedTime = player.dilation.dilatedTime.sub(player.dilation.dilatedTime.min(cost))
 					player.dilation.rebuyables[1] += toBuy
 					update = true
@@ -153,11 +152,10 @@ function maxAllDilUpgs() {
 			} else if (id == "r2") {
 				if (canBuyGalaxyThresholdUpg()) {
 					if (speedrunMilestonesReached > 21) {
-						var cost = Decimal.pow(10,player.dilation.rebuyables[2] * 2 + 6)
+						var cost = Decimal.pow(10,player.dilation.rebuyables[2] * getRebuyableDilUpgCostScaling(2) * 2 + 6)
 						if (player.dilation.dilatedTime.gte(cost)) {
 							var toBuy = Math.floor(player.dilation.dilatedTime.div(cost).times(99).add(1).log(100))
 							if (!(tmp.ngp3c && player.masterystudies.includes("t394"))) toBuy = Math.min(toBuy, 60 - player.dilation.rebuyables[2])
-							var toSpend = Decimal.pow(100,toBuy).sub(1).div(99).times(cost)
 							player.dilation.dilatedTime = player.dilation.dilatedTime.sub(player.dilation.dilatedTime.min(cost))
 							player.dilation.rebuyables[2] += toBuy
 							resetDilationGalaxies()
@@ -476,6 +474,7 @@ function getGHPGain() {
 	if (!tmp.ngp3l && !ghostified) return new Decimal(1)
 	let log = tmp.qu.bigRip.bestThisRun.log10() / getQCGoal(undefined,true) - 1
 	if (log < 0) return new Decimal(0)
+	if (tmp.ngp3c) log += Math.log2(log+1);
 	if (tmp.ngp3l) {
 		log *= 2
 	} else if (player.achievements.includes("ng3p58")) { 
@@ -497,12 +496,7 @@ function getGHPMult() {
 }
 
 ghostified = false
-function ghostify(auto, force) {
-	if (tmp.ngp3c) {
-		alert("Sorry, you are at the current end of NG+3 Condensed, and so you cannot become a ghost just yet... You just gotta wait for a future update :(");
-		return;
-	}
-	
+function ghostify(auto, force) {	
 	if (!force&&(!isQuantumReached()||!tmp.qu.bigRip.active||implosionCheck)) return
 	if (!auto && !force && player.aarexModifications.ghostifyConf && !confirm("Becoming a ghost resets everything Quantum resets, and also resets your banked stats, best TP & MA, quarks, gluons, electrons, Quantum Challenges, Replicants, Nanofield, and Tree of Decay to gain a Ghost Particle. Are you ready for this?")) {
 		denyGhostify()
@@ -629,6 +623,8 @@ function updateBraveMilestones() {
 	if (ghostified) {
 		for (var m = 1; m < 17;m++) document.getElementById("braveMilestone" + m).className = "achievement achievement" + (player.ghostify.milestones < m ? "" : "un") + "locked"
 		for (var r = 1; r < 3; r++) document.getElementById("braveRow" + r).className = player.ghostify.milestones < r * 8 ? "" : "completedrow"
+		document.getElementById("braveMilestone3").setAttribute("ach-tooltip", "Reward: You keep Electron upgrades"+(tmp.ngp3c?" & Electron Condensers":"."))
+		document.getElementById("braveMilestone8").setAttribute("ach-tooltip", "Reward: You produce ^0.5 of quarks, ^0.5 of gluons and 1% of Space Shards gained on Quantum per second."+(tmp.ngp3c?" Unlock Auto-Emperor Condensers, Emperor Condensers are 25% stronger, Unstable Quarks can be gained much sooner (100 colored quarks), and Quark Spin gain is multiplied by 50.":""))
 	}
 }
 

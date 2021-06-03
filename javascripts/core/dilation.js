@@ -82,10 +82,12 @@ function getDilUpgPower(x) {
 	let r = player.dilation.rebuyables[x] || 0
 	if (player.aarexModifications.nguspV) r += exDilationUpgradeStrength(x)
 	else if (player.exdilation != undefined && !player.aarexModifications.ngudpV) r *= exDilationUpgradeStrength(x)
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) r *= 1.2;
 	if (player.dilation.upgrades.includes("ngp3c8") && player.aarexModifications.ngp3c && x!=3) r *= getDil85Mult()
 	if (x==6) {
 		if (player.masterystudies.includes("t267")) r *= 1.5
 		r *= getECReward(14, true)
+		if (ghostified && player.ghostify.neutrinos.boosts > 7 && tmp.qu.bigRip.active) r *= tmp.nb[8]
 	}
 	return r
 }
@@ -393,11 +395,17 @@ function getDilUpgCost(id) {
 	return cost
 }
 
+function getRebuyableDilUpgCostScaling(id) {
+	let s = 1;
+	if (tmp.ngp3c && id==6) if (player.masterystudies.includes("t352")) s *= 1-getMTSMult(352)
+	if (ghostified && player.ghostify.neutrinos.boosts > 5 && tmp.ngp3c) s *= 1-tmp.nb[6]
+	return s;
+}
+
 function getRebuyableDilUpgCost(id) {
 	var costGroup = DIL_UPG_COSTS["r"+id]
 	if (id == 4 && player.galacticSacrifice !== undefined && !tmp.ngp3l) costGroup = DIL_UPG_COSTS.r4_ngmm
-	var amount = player.dilation.rebuyables[id] || 0
-	if (tmp.ngp3c && id==6) if (player.masterystudies.includes("t352")) amount *= 1-getMTSMult(352)
+	var amount = (player.dilation.rebuyables[id] || 0) * getRebuyableDilUpgCostScaling(id)
 	let cost = new Decimal(costGroup[0]).times(Decimal.pow(costGroup[1],amount))
 	if (player.aarexModifications.nguspV) {
 		if (id > 3) cost = cost.times(1e7)

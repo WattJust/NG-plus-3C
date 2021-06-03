@@ -351,6 +351,11 @@ function giveAchievement(name, noUpdate) {
 		updateAutoEterMode()
 		loadAutoBuyerSettings()
 	}
+    if (name == "I told you already, time is relative" && tmp.ngp3c) {
+        for (let i = 1; i <= 8; i++) {
+            for (let c = 1; c <= 9; c++) if (!player.achievements.includes(("r" + c) + i) && !(i>5 && c==9)) player.achievements.push(("r" + c) + i);
+        }
+    }
 	if (name == "Kee-hee-hee!" && (player.achievements.includes("ng3p18") || player.achievements.includes("ng3p37"))) {
                 setAndMaybeShow('bestTPOverGhostifies', true, '"Your best-ever Tachyon particles was "+shorten(player.dilation.bestTPOverGhostifies)+"."')
                 if (!tmp.ngp3l) {

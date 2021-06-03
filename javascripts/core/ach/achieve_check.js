@@ -217,7 +217,7 @@ function ngP3AchieveCheck(){
 	let ableToGetRid2 = checkEmpty && player.dilation.active
 	let ableToGetRid3 = ableToGetRid2 && (tmp.qu.electrons.amount == 0 || tmp.ngp3c)
 	let ableToGetRid4 = ableToGetRid2 && inQC(2)
-	let ableToGetRid5 = ableToGetRid4 && player.dontWant
+	let ableToGetRid5 = ableToGetRid4 && (player.dontWant||tmp.ngp3c)
 	let ableToGetRid6 = ableToGetRid2 && inQC(6) && inQC(8, true)
 	let noTree = false
 	let minUQ = getMinimumUnstableQuarks()
@@ -237,18 +237,20 @@ function ngP3AchieveCheck(){
 	if (player.money.log10() >= (tmp.ngp3c?7.88e11:7.88e13) && tmp.qu.pairedChallenges.completed == 0) giveAchievement("The truth of anti-challenged")
 	if (player.money.log10() >= (tmp.ngp3c?1.9e10:6.2e11) && player.currentEternityChall == "eterc11") giveAchievement("I can’t get my multipliers higher!")
 	if (player.replicanti.amount.log10() >= 2e6 && player.dilation.tachyonParticles.eq(0)) giveAchievement("No dilation means no production.")
-	if (player.infinityPoints.gte(Decimal.pow(Number.MAX_VALUE, 1000)) && ableToGetRid5) giveAchievement("I don't want you to live anymore.")
+	if (player.infinityPoints.gte(Decimal.pow(Number.MAX_VALUE, tmp.ngp3c?2222:1000)) && ableToGetRid5) giveAchievement("I don't want you to live anymore.")
 	if (player.dilation.dilatedTime.log10() >= 411 && tmp.qu.notrelative) giveAchievement("Time is not relative")
-	if (!player.achievements.includes("ng3p42")) {
-		for (d = 2; d < 9; d++) {
-			if (player[TIER_NAMES[d]+"Amount"].gt(0) || player["infinityDimension"+d].amount.gt(0) || player["timeDimension"+d].amount.gt(0) || player.meta[d].amount.gt(0)) break
-			else if (player.money.log10() >= 1.6e12 && d == 8) giveAchievement("ERROR 404: DIMENSIONS NOT FOUND")
+	if (!tmp.ngp3c) {
+		if (!player.achievements.includes("ng3p42")) {
+			for (d = 2; d < 9; d++) {
+				if (player[TIER_NAMES[d]+"Amount"].gt(0) || player["infinityDimension"+d].amount.gt(0) || player["timeDimension"+d].amount.gt(0) || player.meta[d].amount.gt(0)) break
+				else if (player.money.log10() >= 1.6e12 && d == 8) giveAchievement("ERROR 404: DIMENSIONS NOT FOUND")
+			}
 		}
-	}
+	} else if (player.money.log10() >= 1.6e11 && player.timeDimension1.amount.eq(0)) giveAchievement("ERROR 404: DIMENSIONS NOT FOUND");
 	if (player.money.log10() >= 8e6 && inQC(6) && inQC(8, true)) giveAchievement("Impossible expectations")
 	if (player.timestudy.theorem >= 1.1e7 && tmp.qu.wasted) giveAchievement("Studies are wasted")
 	if (tmp.qu.replicants.requirement.gte("1e12500000")) giveAchievement("Stop blocking me!")
-	if (player.infinityPoints.gte(Decimal.pow(10, 2.75e5)) && ableToGetRid6) giveAchievement("Are you currently dying?")
+	if (player.infinityPoints.gte(Decimal.pow(10, tmp.ngp3c?1.15e5:2.75e5)) && ableToGetRid6) giveAchievement("Are you currently dying?")
 	if (tmp.qu.nanofield.rewards >= 21 && noTree) giveAchievement("But I don't want to grind!")
 	if (player.replicanti.amount.log10() >= (player.aarexModifications.ngudpV ? 268435456 : 36e6)) giveAchievement("Will it be enough?")
 	if (tmp.qu.bigRip.active) {
@@ -256,8 +258,8 @@ function ngP3AchieveCheck(){
 		let ableToGetRid8 = ableToGetRid7 && !tmp.qu.breakEternity.did
 		let ableToGetRid9 = ableToGetRid8 && noTree
 		let ableToGetRid10 = ableToGetRid9 && inQCModifier("ad")
-		if (player.currentEternityChall == "eterc7" && player.galaxies == 1 && player.money.log10() >= 8e7) giveAchievement("Time Immunity")
-		if (!player.timestudy.studies.includes(11) && player.timeShards.log10() >= 215) giveAchievement("You're not really smart.")
+		if ((player.currentEternityChall == "eterc7" || tmp.ngp3c) && player.galaxies == 1 && player.money.log10() >= (tmp.ngp3c?4.8e7:8e7)) giveAchievement("Time Immunity")
+		if (!player.timestudy.studies.includes(11) && player.timeShards.log10() >= (tmp.ngp3c?48:215)) giveAchievement("You're not really smart.")
 		if (ableToGetRid7 && player.infinityPoints.log10() >= 3.5e5) giveAchievement("And so your life?")
 		if (tmp.qu.breakEternity.eternalMatter.gte(9.999999e99)) giveAchievement("This achievement doesn't exist 4")
 		if (ableToGetRid8 && player.infinityPoints.log10() >= 9.5e5) giveAchievement("Please answer me why you are dying.")
@@ -266,7 +268,7 @@ function ngP3AchieveCheck(){
 		if (player.matter.log10() >= 5000) giveAchievement("Really?")
 	}
 	if (tmp.qu.bigRip.spaceShards.log10() >= 33 && !tmp.qu.breakEternity.did) giveAchievement("Finite Time")
-	if (minUQ.quarks.log10() >= 1e12 && minUQ.decays >=2 && !tmp.qu.bigRip.times) giveAchievement("Weak Decay")		
+	if (minUQ.quarks.log10() >= 1e12 && minUQ.decays >=(tmp.ngp3c?4:2) && !tmp.qu.bigRip.times) giveAchievement("Weak Decay")		
 	if (nG(getInfinitied(), Number.MAX_VALUE)) giveAchievement("Meta-Infinity confirmed?")
 	if (nG(getEternitied(), Number.MAX_VALUE)) giveAchievement("Everlasting Eternities")
 	if (player.options.secrets && player.options.secrets.ghostlyNews && !player.options.newsHidden) giveAchievement("Two tickers")
@@ -279,7 +281,7 @@ function ngP3AchieveCheck(){
 	if (speedrunMilestonesReached >= 28) giveAchievement("Special Relativity")
 	if (tmp.qu.best <= 10) giveAchievement("Quantum doesn't take so long")
 	if (player.masterystudies.includes("d13")) giveAchievement("Do protons decay?")
-	if (getTotalRadioactiveDecays >= 10) giveAchievement("Radioactive Decaying to the max!")
+	if (getTotalRadioactiveDecays() >= 10) giveAchievement("Radioactive Decaying to the max!")
 	if (quantumed) giveAchievement("Sub-atomic")
 
 	if (tmp.ngp3l) return // NG+3.1 achievements from this point on
@@ -287,11 +289,11 @@ function ngP3AchieveCheck(){
 	if (player.ghostify.hb.higgs >= 1) giveAchievement("The Holy Particle")
 	if (player.ghostify.ghostlyPhotons.enpowerments >= 25) giveAchievement("Bright as the Anti-Sun")
 	if (player.quantum.quarks.log10() >= 55555) giveAchievement("Are these another...")
-	if (player.ghostify.reference && minUQ.decays >= 2) giveAchievement("... references to EC8?")
+	if (player.ghostify.reference && (!tmp.ngp3c||!player.masterystudies.includes("t432")) && minUQ.decays >= 2) giveAchievement("... references to EC8?")
 	if (player.ghostify.hb.bosonicSemipowerment && player.ghostify.ghostlyPhotons.lights[7] >= tmp.leReq / 2) giveAchievement("Bosonic Semipowerment")
 	if (player.ghostify.times >= Math.pow(Number.MAX_VALUE, 1/4)) giveAchievement("The Ghostliest Side")
 	if (player.money.log10() >= 1e18) giveAchievement("Meta-Quintillion")
-	if (player.unstableThisGhostify <= 10 && getTwoDecaysBool()) giveAchievement("... references to EC8?")
+	if (!tmp.ngp3c) if (player.unstableThisGhostify <= 10 && getTwoDecaysBool()) giveAchievement("... references to EC8?")
 }
 
 function ALLACHIEVECHECK(){

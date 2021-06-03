@@ -261,7 +261,7 @@ function getDimensionPowerMultiplier(focusOn, debug) {
 	
 function getMPTBase(focusOn) {
 	if (((inQC(5) || inQC(7)) && focusOn != "linear") || (((inNC(13) && player.tickspeedBoosts == undefined) || player.currentChallenge == "postc1" || player.currentChallenge == "postcngm3_1") && player.galacticSacrifice != undefined)) {
-		if (player.masterystudies) if (player.masterystudies.includes("t321")) return new Decimal("1e430")
+		if (player.masterystudies) if (player.masterystudies.includes("t321")) return getTS321SetMPT();
 		return 1
 	}
 	let ret = 2
