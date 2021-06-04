@@ -5353,7 +5353,8 @@
 						<td id="autoGhost11"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-Preon Generate Ghost</b><br>
 							Power usage: 0.5<br>
-							Start producing preon charge when you have <input id="autoGhost11pw" onchange="changeAutoGhost('11pw')"></input>s worth of preon production and <input id="autoGhost11lw" type="text" onchange="changeAutoGhost('11lw')"></input>s worth loss of preon loss, but stop producing preon charge when you have <input id="autoGhost11cw" type="text" onchange="changeAutoGhost('11cw')"></input>s worth of preon charge production.
+							<span id="autoGhost11main">Start producing preon charge when you have <input id="autoGhost11pw" onchange="changeAutoGhost('11pw')"></input>s worth of preon production and <input id="autoGhost11lw" type="text" onchange="changeAutoGhost('11lw')"></input>s worth loss of preon loss, but stop producing preon charge when you have <input id="autoGhost11cw" type="text" onchange="changeAutoGhost('11cw')"></input>s worth of preon charge production.</span>
+							<span id="autoGhost11cond" style="display: none;">Produce preon charge when you can gain at least <input id="autoGhost11pc" onchange="changeAutoGhost('11pc')"></input>% of your current preon charge every second.</span>
 							Is active: <input id="isAutoGhostOn11" type="checkbox" onchange="toggleAutoGhost(11)"></input>
 						</div></td>
 						<td id="autoGhost12"><div class="autoBuyerDiv" style="display:block">

@@ -5205,7 +5205,11 @@ function ghostifyAutomationUpdating(){
 		if (isAutoGhostActive(6)) maxTreeUpg()
 		if (isAutoGhostActive(11)) {
 			var ag=player.ghostify.automatorGhosts[11]
-			var preonGenerate=tmp.qu.replicants.quarks.div(getGatherRate().total).gte(ag.pw)&&tmp.qu.replicants.quarks.div(getQuarkLossProduction()).gte(ag.lw)&&tmp.qu.nanofield.charge.div(ag.cw).lt(1)
+			var preonGenerate;
+			if (tmp.ngp3c) {
+				let gain = Decimal.min(1, tmp.qu.replicants.quarks.div(getQuarkLossProduction())).times(getQuarkChargeProduction());
+				preonGenerate = gain.gte(tmp.qu.nanofield.charge.times((ag.pc||0)/100)) && tmp.qu.replicants.quarks.div(getQuarkLossProduction()).gte(.01);
+			} else preonGenerate=tmp.qu.replicants.quarks.div(getGatherRate().total).gte(ag.pw)&&tmp.qu.replicants.quarks.div(getQuarkLossProduction()).gte(ag.lw)&&tmp.qu.nanofield.charge.div(ag.cw).lt(1)
 			if (tmp.qu.nanofield.producingCharge!=preonGenerate) startProduceQuarkCharge()
 		}
 		if (isAutoGhostActive(13)) {

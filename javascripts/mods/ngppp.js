@@ -742,9 +742,12 @@ function updateAutoGhosts(load) {
 	if (load) {
 		document.getElementById("autoGhostMod4").textContent = "Every " + (data[4].mode == "t" ? "second" : "Quantum")
 		document.getElementById("autoGhostRotate4").textContent = data[4].rotate == "l" ? "Left" : "Right"
-		document.getElementById("autoGhost11pw").value = data[11].pw
-		document.getElementById("autoGhost11lw").value = data[11].lw
-		document.getElementById("autoGhost11cw").value = data[11].cw
+		if (tmp.ngp3c) document.getElementById("autoGhost11pc").value = data[11].pc||"0"
+		else {
+			document.getElementById("autoGhost11pw").value = data[11].pw
+			document.getElementById("autoGhost11lw").value = data[11].lw
+			document.getElementById("autoGhost11cw").value = data[11].cw
+		}
 		document.getElementById("autoGhost13t").value = data[13].t
 		document.getElementById("autoGhost13u").value = data[13].u
 		document.getElementById("autoGhost15a").value = formatValue("Scientific", data[15].a, 2, 1)
@@ -771,6 +774,9 @@ function changeAutoGhost(o) {
 	} else if (o == "4r") {
 		player.ghostify.automatorGhosts[4].rotate = player.ghostify.automatorGhosts[4].rotate == "l" ? "r" : "l"
 		document.getElementById("autoGhostRotate4").textContent = player.ghostify.automatorGhosts[4].rotate == "l" ? "Left" : "Right"
+	} else if (o == "11pc") {
+		var num = parseFloat(document.getElementById("autoGhost11pc").value)
+		if (!isNaN(num) && num > 0) player.ghostify.automatorGhosts[11].pc = num
 	} else if (o == "11pw") {
 		var num = parseFloat(document.getElementById("autoGhost11pw").value)
 		if (!isNaN(num) && num > 0) player.ghostify.automatorGhosts[11].pw = num

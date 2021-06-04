@@ -2091,6 +2091,8 @@ function updateNGp3DisplayStuff(){
         document.getElementById("neutrinoUpg8Effect").textContent = tmp.ngp3c ? "QK Multi Upgrades multiply the start of OS_QK_1." : "Disable the meta-antimatter boost nerf to quark gain."
         document.getElementById("neutrinoUpg9Effect").textContent = tmp.ngp3c ? "Neutrino types further boost all Neutrino Boosts in their column." : "Eternities and Space Shards boost each other."
         document.getElementById("neutrinoUpg10Effect").textContent = tmp.ngp3c ? "Neutrino Boost 4 affects Replicated Condensers." : "Banked eternities are counted in Quantum Challenges."
+        document.getElementById("autoGhost11main").style.display = tmp.ngp3c ? "none" : "";
+        document.getElementById("autoGhost11cond").style.display = tmp.ngp3c ? "" : "none";
         document.getElementById("gphUnl").innerHTML="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9))+" antimatter while your universe is Big Ripped first"+(tmp.ngp3c?" <b>(COMING SOON!)</b>":".")
         document.getElementById("lightBoost4Type").textContent=tmp.ngp3l?"preon":"total green power"
         updateBLUnlockDisplay()
