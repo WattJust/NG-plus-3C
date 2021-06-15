@@ -4467,9 +4467,9 @@ function getECReward(x, alt=false) {
 	}
 	if (x == 13 && alt) {
 		if (!pc) return 1;
-		let chance = tmp.rep.chance;
+		let chance = tmp.rep?tmp.rep.chance:0;
 		if (Decimal.gte(chance, 5e3)) chance = Decimal.pow(10, Math.pow(Decimal.log10(chance)*Math.pow(Math.log10(5e3), 4), 0.2))
-		let eff = Decimal.pow(10, Math.pow(Decimal.mul(chance, c).plus(1).log10(), 2)).pow(6e3+2e3*c).times(Decimal.add(tmp.rep.chance, 1));
+		let eff = Decimal.pow(10, Math.pow(Decimal.mul(chance, c).plus(1).log10(), 2)).pow(6e3+2e3*c).times(Decimal.add(tmp.rep?tmp.rep.chance:0, 1));
 		return tmp.ngp3c?softcap(eff, "ngp3cEC13"):eff;
 	}
 	if (x == 14 && !alt) return getIC3EffFromFreeUpgs()
