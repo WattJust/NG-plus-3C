@@ -207,7 +207,7 @@ function metaBuyOneDimension(tier) {
 	var cost = player.meta[tier].cost;
 	if (!canBuyMetaDimension(tier)) return false;
 	if (!canAffordMetaDimension(cost)) return false;
-	player.meta.antimatter = player.meta.antimatter.minus(cost);
+	if (!player.achievements.includes("ng3p72")) player.meta.antimatter = player.meta.antimatter.minus(cost);
 	player.meta[tier].amount = player.meta[tier].amount.plus(1);
 	player.meta[tier].bought++;
 	if (player.meta[tier].bought % 10 < 1) {
@@ -241,7 +241,7 @@ function metaBuyManyDimension(tier) {
 	if (!canAffordMetaDimension(cost)) {
 		return false;
 	}
-	player.meta.antimatter = player.meta.antimatter.minus(cost);
+	if (!player.achievements.includes("ng3p72")) player.meta.antimatter = player.meta.antimatter.minus(cost);
 	player.meta[tier].amount = player.meta[tier].amount.plus(10 - dimMetaBought(tier));
 	player.meta[tier].bought += 10 - dimMetaBought(tier)
 	player.meta[tier].cost = getMetaCost(tier, player.meta[tier].bought / 10)
@@ -277,7 +277,7 @@ function buyMaxMetaDimension(tier) {
 		tempMA = tempMA.sub(getMetaCost(tier, currentBought).times(10 - dimMetaBought(tier)))
 		bought = 1
 	}
-	player.meta.antimatter = tempMA
+	if (!player.achievements.includes("ng3p72")) player.meta.antimatter = tempMA
 	player.meta[tier].amount = player.meta[tier].amount.add(bought * 10 - dimMetaBought(tier))
 	player.meta[tier].bought += bought * 10 - dimMetaBought(tier)
 	player.meta[tier].cost = getMetaCost(tier, currentBought + bought)
@@ -325,6 +325,7 @@ function getMetaDimensionProduction(tier) {
 		if (tier == 1) ret = ret.plus(player.meta[2].amount.floor().pow(1.3))
 		else if (tier == 4) ret = ret.pow(1.5)
 	}
+	if (player.achievements.includes("ng3p72") && tier==3 && tmp.ngp3c) ret = ret.max(1);
 	return ret.times(getMetaDimensionMultiplier(tier));
 }
 

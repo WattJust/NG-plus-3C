@@ -2065,10 +2065,13 @@ function updateNGp3DisplayStuff(){
 		document.getElementById("bigripupg16desc").textContent = tmp.ngp3c?"Dilated time boosts Eternal Matter gain":"Dilated time boosts the Seventh Time Dimension"
 		document.getElementById("bigripupg17targ").textContent = tmp.ngp3c?"fourth":"first"
 		document.getElementById("bigripupg17special").textContent = tmp.ngp3c?", and it is unaffected by Obscurements":""
-		document.getElementById("breakEternityBtn").setAttribute("ach-tooltip", tmp.ngp3c?("Remove the disability of normal galaxies, and you can gain Time Shards at a very reduced rate. You can gain Eternal Matter (based on your Time Shards) by Eternitying. Normal tickspeed upgrades do nothing. Normal galaxies don't get cancelled, but their cost is way higher."):("Remove the disabilities of normal galaxies and Time Dimensions, but all TD boosts do not work except TS11, TS171, and 'Infinite Time' reward. You can gain Eternal Matter (based on your Time Shards) by Eternitying. Normal tickspeed upgrades do nothing if you are not in EC10. Normal galaxies don’t get cancelled, but their cost is way higher."));
+		document.getElementById("bigripupg20desc").textContent = tmp.ngp3c?"Nano-condensers are 10% stronger.":"you gain Tachyon particles without dilating time."
+                document.getElementById("breakEternityBtn").setAttribute("ach-tooltip", tmp.ngp3c?("Remove the disability of normal galaxies, and you can gain Time Shards at a very reduced rate. You can gain Eternal Matter (based on your Time Shards) by Eternitying. Normal tickspeed upgrades do nothing. Normal galaxies don't get cancelled, but their cost is way higher."):("Remove the disabilities of normal galaxies and Time Dimensions, but all TD boosts do not work except TS11, TS171, and 'Infinite Time' reward. You can gain Eternal Matter (based on your Time Shards) by Eternitying. Normal tickspeed upgrades do nothing if you are not in EC10. Normal galaxies don’t get cancelled, but their cost is way higher."));
 		document.getElementById("beu1desc").textContent = tmp.ngp3c?"Strengthen all Time Condensers based on your Eternity Points and Eternal Matter.":"Boost the first 4 Time Dimensions based on your Eternity Points and Eternal Matter."
 		document.getElementById("beu4desc").textContent = tmp.ngp3c?"The reduction to Timeshard gain is 5% weaker, plus 10% weaker for each upgrade bought in this row":"Boost Time Dimensions 4 - 6 based on your Eternity Points and Space Shards"
-		document.getElementById("beu4effdiv").style.display = tmp.ngp3c?"none":""
+		document.getElementById("beu8desc").textContent = tmp.ngp3c?"Replicated Condensers are":"The Infinite Time reward is"
+                document.getElementById("beu9ec10").style.display = tmp.ngp3c?"none":""
+                document.getElementById("beu4effdiv").style.display = tmp.ngp3c?"none":""
 		document.getElementById("beu5effectdesc").textContent = tmp.ngp3c?"Boost the Break Eternity buyable":"Boost the tickspeed reduction"
 		document.getElementById("breakUpg7obsc").textContent = tmp.ngp3c?" (unaffected by Obscurements)":""
         document.getElementById("ghostifyAnimBtn").textContent="Ghostify: O"+(player.options.animations.ghostify?"N":"FF")
@@ -2091,10 +2094,15 @@ function updateNGp3DisplayStuff(){
         document.getElementById("neutrinoUpg8Effect").textContent = tmp.ngp3c ? "QK Multi Upgrades multiply the start of OS_QK_1." : "Disable the meta-antimatter boost nerf to quark gain."
         document.getElementById("neutrinoUpg9Effect").textContent = tmp.ngp3c ? "Neutrino types further boost all Neutrino Boosts in their column." : "Eternities and Space Shards boost each other."
         document.getElementById("neutrinoUpg10Effect").textContent = tmp.ngp3c ? "Neutrino Boost 4 affects Replicated Condensers." : "Banked eternities are counted in Quantum Challenges."
+        document.getElementById("neutrinoUpg13Effect").textContent = tmp.ngp3c ? "Remove the Replicanti limit outside of Big Rips, & OoMs between replicate slowdown are increased by 25%." : "100 RG upgrade doesn't nerf the 100 BR upgrade."
+        document.getElementById("neutrinoUpg14Effect").textContent = tmp.ngp3c ? "Gain more Dark Matter based on your GhP and color powers." : "Gain more neutrinos based on your GhP and color powers."
+        document.getElementById("neutrinoUpg15Suffix").textContent = tmp.ngp3c ? " & Branch Speed" : ""
         document.getElementById("autoGhost11main").style.display = tmp.ngp3c ? "none" : "";
         document.getElementById("autoGhost11cond").style.display = tmp.ngp3c ? "" : "none";
-        document.getElementById("gphUnl").innerHTML="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9))+" antimatter while your universe is Big Ripped first"+(tmp.ngp3c?" <b>(COMING SOON!)</b>":".")
+        document.getElementById("gphUnl").innerHTML="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9))+" antimatter while your universe is Big Ripped first."
         document.getElementById("lightBoost4Type").textContent=tmp.ngp3l?"preon":"total green power"
+        document.getElementById("violetDesc").textContent = tmp.ngp3c ? "first Time Dimensions" : "sixth Time Dimensions"
+        document.getElementById("leBoost2GalaxyType").textContent = tmp.ngp3c ? "Dark Matter" : "Ghostly"
         updateBLUnlockDisplay()
         document.getElementById("bpc68").textContent=shortenMoney(tmp.qu.pairedChallenges.pc68best)
         document.getElementById("odSlider").value=Math.round((tmp.bl.odSpeed-1)/4*50)

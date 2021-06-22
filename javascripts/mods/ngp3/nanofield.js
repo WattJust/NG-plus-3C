@@ -264,7 +264,7 @@ function getActiveNanoScalings(){
 function getNanoScalingsStart(){
 	let ret = [0, 15, 125, 150, 160, 170, 180]
 	if (tmp.ngp3c) {
-		ret = [0, 7, 45, 75, 150, 165, 180]
+		ret = [0, 7, 45, 75, 100, 150, 180]
 		if (player.masterystudies.includes("t422")) ret[1] = getMTSMult(422)
 	}
 	return ret
@@ -272,7 +272,7 @@ function getNanoScalingsStart(){
 
 function getNanoScalingsBases() {
 	let ret = [4, 2, 2, 1.1, 1.3, 1.6, 2]
-	if (tmp.ngp3c) ret = [8, 4, 4, 1.2, 1.6, 2.5, 4]
+	if (tmp.ngp3c) ret = [8, 4, 4, 3.2, 1.6, 2.5, 4]
 	return ret;
 }
 

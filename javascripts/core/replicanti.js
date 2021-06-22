@@ -244,6 +244,7 @@ function getReplSpeed() {
 	inc = inc + 1
 	if (GUBought("gb2")) exp *= 2
 	if (hasNU(12) && tmp.qu.bigRip.active && tmp.ngp3c) exp *= tmp.nu[4].time;
+	if (hasNU(13) && tmp.ngp3c) exp *= 1.25;
 	if (hasBosonicUpg(35)) exp += tmp.blu[35].rep
 	if (hasBosonicUpg(44)) exp += tmp.blu[44]
 	
@@ -309,7 +310,7 @@ function notContinuousReplicantiUpdating() {
 				counter = 0
 			} else player.replicanti.amount = player.replicanti.amount.times(2)
 			if (!player.timestudy.studies.includes(192)||player.aarexModifications.ngp3c) {
-				if (!(hasNU(12) && tmp.qu.bigRip.active && tmp.ngp3c)) player.replicanti.amount = player.replicanti.amount.min(getReplicantiCap())
+				if (!(((hasNU(12) && tmp.qu.bigRip.active)||(hasNU(13) && !tmp.qu.bigRip.active)) && tmp.ngp3c)) player.replicanti.amount = player.replicanti.amount.min(getReplicantiCap())
 			}
 		}
 		replicantiTicks -= interval
@@ -318,7 +319,7 @@ function notContinuousReplicantiUpdating() {
 
 function continuousReplicantiUpdating(diff){
 	let pastLimit = player.timestudy.studies.includes(192) && !player.aarexModifications.ngp3c
-	if (hasNU(12) && tmp.qu.bigRip.active && tmp.ngp3c) pastLimit = true;
+	if (((hasNU(12) && tmp.qu.bigRip.active)||(hasNU(13) && !tmp.qu.bigRip.active)) && tmp.ngp3c) pastLimit = true;
 	if ((player.timestudy.studies.includes(192)||Decimal.gte(getReplicantiCap(), getReplicantiLimit())) && tmp.rep.est.toNumber() > 0 && tmp.rep.est.toNumber() < 1/0) player.replicanti.amount = Decimal.pow(Math.E, tmp.rep.ln +Math.log((diff*tmp.rep.est/10) * (Math.log10(tmp.rep.speeds.inc)/tmp.rep.speeds.exp)+1) / (Math.log10(tmp.rep.speeds.inc)/tmp.rep.speeds.exp)).min(pastLimit?1/0:getReplicantiCap())
 	else if (player.timestudy.studies.includes(192)||Decimal.gte(getReplicantiCap(), getReplicantiLimit())) player.replicanti.amount = Decimal.pow(Math.E, tmp.rep.ln + tmp.rep.est.times(diff * Math.log10(tmp.rep.speeds.inc) / tmp.rep.speeds.exp / 10).add(1).log(Math.E) / (Math.log10(tmp.rep.speeds.inc)/tmp.rep.speeds.exp)).min(pastLimit?1/0:getReplicantiCap())
 	else player.replicanti.amount = Decimal.pow(Math.E, tmp.rep.ln +(diff*tmp.rep.est/10)).min(getReplicantiCap())

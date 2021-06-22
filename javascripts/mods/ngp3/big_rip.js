@@ -57,7 +57,8 @@ function getSpaceShardsGain() {
 let bigRipUpgCosts = [0, 2, 3, 5, 20, 30, 45, 60, 150, 300, 2000, 1e9, 3e14, 1e17, 3e18, 3e20, 5e22, 1e32, 1e145, 1e150, Number.MAX_VALUE]
 
 function getBigRipUpgCost(id) {
-	if (id==16 && tmp.ngp3c) return 1e21;
+	if (id>=18 && id<=19 && tmp.ngp3c) return Decimal.pow(bigRipUpgCosts[id], 1.44);
+	else if (id==16 && tmp.ngp3c) return 1e21;
 	else return bigRipUpgCosts[id]
 }
 
@@ -193,6 +194,8 @@ var breakUpgCosts = [1, 1e3, 2e6, 2e11, 8e17, 1e45, null, 1e290, new Decimal("1e
 function getBreakUpgCost(id) {
 	if (id == 6 && tmp.ngp3c) return 4.5e23
 	if (id == 7) return getBE7Cost();
+	if (id == 8 && tmp.ngp3c) return 1e190
+	if (id == 9 && tmp.ngp3c) return 1e200
 	return breakUpgCosts[id - 1]
 }
 

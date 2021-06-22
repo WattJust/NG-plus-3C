@@ -4817,8 +4817,8 @@ function doNGP3UnlockStuff(){
 	var inEasierModeCheck = !inEasierMode()
 	if (player.masterystudies && (player.masterystudies.includes("d14")||player.achievements.includes("ng3p51")) && !metaSave.ngp4 && !inEasierModeCheck) doNGP4UnlockStuff()
 	if (player.eternityPoints.gte(tmp.ngp3c?(ghostified?NGP3C_BE_REQ.div(1e50):NGP3C_BE_REQ):"1e1200") && tmp.qu.bigRip.active && !tmp.qu.breakEternity.unlocked) doBreakEternityUnlockStuff()
-	if (player.money.gte(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9)) && tmp.qu.bigRip.active && !player.ghostify.ghostlyPhotons.unl && !tmp.ngp3c) doPhotonsUnlockStuff()
-	if (canUnlockBosonicLab() && !player.ghostify.wzb.unl) doBosonsUnlockStuff()
+	if (player.money.gte(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9)) && tmp.qu.bigRip.active && !player.ghostify.ghostlyPhotons.unl) doPhotonsUnlockStuff()
+	if (canUnlockBosonicLab() && !player.ghostify.wzb.unl && !tmp.ngp3c) doBosonsUnlockStuff()
 	if (!tmp.ng3l) unlockHiggs()
 }
 
@@ -6200,7 +6200,7 @@ function gameLoop(diff) {
 	
 	if (tmp.ngp3) {
 		if (player.dilation.active) ngp3DilationUpdating()
-		else if (isBigRipUpgradeActive(20)) {
+		else if (isBigRipUpgradeActive(20) && !tmp.ngp3c) {
 			let gain = getDilGain()
 			if (player.dilation.tachyonParticles.lt(gain)) setTachyonParticles(gain)
 		}

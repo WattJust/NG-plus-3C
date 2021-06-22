@@ -314,7 +314,7 @@ function updatePCTable() {
 					if (tmp.qu.qcsNoDil["pc" + pcid]) achTooltip += ", No dilation: PC" + tmp.qu.qcsNoDil["pc" + pcid]
 					document.getElementById(divid).setAttribute('ach-tooltip', achTooltip)
 					if (divid=="pc38") giveAchievement("Hardly marked")
-					if (divid=="pc68") giveAchievement("Big Rip isn't enough")
+					if (divid=="pc68" && !tmp.ngp3c) giveAchievement("Big Rip isn't enough")
 				} else if (pcid == 68 && ghostified) {
 					document.getElementById(divid).textContent = "BR"
 					document.getElementById(divid).className = "brCompleted"

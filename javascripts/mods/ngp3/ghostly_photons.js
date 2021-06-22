@@ -34,7 +34,7 @@ var leBoosts = {
 		},
 		//Boost #3
 		function() {
-			return Math.pow(tmp.effL[0].normal + 1, 0.1) * 2 - 1
+			return Math.pow(tmp.effL[0].normal + 1, 0.1) * (tmp.ngp3c?3:2) - 1
 		},
 		//Boost #4
 		function() {
@@ -85,10 +85,11 @@ function updateGPHUnlocks() {
 
 function getGPHProduction() {
 	let b = tmp.qu.bigRip.active
-	if (b) var ret = player.dilation.dilatedTime.div("1e480")
-	else var ret = player.dilation.dilatedTime.div("1e930")
-	if (ret.gt(1)) ret = ret.pow(0.02)
+	if (b) var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e2460":"1e480")
+	else var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e1780":"1e930")
+	if (ret.gt(1)) ret = ret.pow(tmp.ngp3c?0.004:0.02)
 	if (b && ret.gt(Decimal.pow(2, 444))) ret = ret.div(Decimal.pow(2, 444)).sqrt().times(Decimal.pow(2, 444))
+	if (!b && hasNU(14) && tmp.ngp3c) ret = ret.times(tmp.nu[5]);
 	return ret
 }
 
@@ -111,6 +112,7 @@ function updateRaysPhotonsDisplay(){
 	document.getElementById("ghrProduction").textContent = shortenMoney(getGHRProduction())
 	document.getElementById("ghrCap").textContent = shortenMoney(getGHRCap())
 	document.getElementById("ghr").textContent = shortenMoney(gphData.ghostlyRays)
+	for (let i=1;i<=8;i++) updateLightCondenser(i);
 }
 
 function updateLightBoostDisplay(){
@@ -164,19 +166,25 @@ function updateLEmpowermentBoosts(){
 }
 
 function getGHRProduction() {
-	var log = player.ghostify.ghostlyPhotons.amount.sqrt().div(2).log10()
+	var log = player.ghostify.ghostlyPhotons.amount.sqrt().times(tmp.ngp3c?10:.5).log10()
 	if (player.ghostify.neutrinos.boosts >= 11) log += tmp.nb[11].log10()
+	if (tmp.ngp3c) for (let i=1;i<=8;i++) log += Math.log10(getLightCondenserEff(i));
 	return Decimal.pow(10, log)
 }
 
 function getGHRCap() {
 	var log = player.ghostify.ghostlyPhotons.darkMatter.pow(0.4).times(1e3).log10()
 	if (player.ghostify.neutrinos.boosts >= 11) log += tmp.nb[11].log10()
+	if (tmp.ngp3c) for (let i=1;i<=8;i++) log += Math.log10(getLightCondenserEff(i));
 	return Decimal.pow(10, log)
 }
 
 function getLightThreshold(l) {
-	return Decimal.pow(getLightThresholdIncrease(l), player.ghostify.ghostlyPhotons.lights[l]).times(tmp.lt[l])
+	return Decimal.pow(getLightThresholdIncrease(l), player.ghostify.ghostlyPhotons.lights[l]).times(tmp.lt[l]).div(getLightThresholdDiv())
+}
+
+function getLightThresholdDiv() {
+	return tmp.ngp3c ? 4 : 1;
 }
 
 function getLightThresholdIncrease(l) {
@@ -186,6 +194,10 @@ function getLightThresholdIncrease(l) {
 		if (y < 1) x = Math.pow(x, y)
 	}
 	return x
+}
+
+function globalLightPower() {
+	return tmp.ngp3c ? 1/3 : 1;
 }
 
 function lightEmpowerment() {
@@ -199,11 +211,13 @@ function lightEmpowerment() {
 	player.ghostify.ghostlyPhotons.darkMatter = new Decimal(0)
 	player.ghostify.ghostlyPhotons.ghostlyRays = new Decimal(0)
 	player.ghostify.ghostlyPhotons.lights = [0,0,0,0,0,0,0,0]
+	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 }
 
 function getLightEmpowermentReq(le) {
 	if (le === undefined) le = player.ghostify.ghostlyPhotons.enpowerments
-	let x = le * 2.4 + 1
+	let mult = tmp.ngp3c ? 3.6 : 2.4;
+	let x = le * mult + (tmp.ngp3c?3:1)
 	let scale = 0
 	if (!tmp.ngp3l) {
 		if (le > 19) {

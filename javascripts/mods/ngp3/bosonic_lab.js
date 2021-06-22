@@ -1,7 +1,7 @@
 //Bosonic Lab
 function canUnlockBosonicLab() {
 	let max = getMaximumUnstableQuarks()
-	return (max.decays > 5 || max.quarks.e >= (tmp.ngp3l ? 1e10 : 5e10)) && max.decays > 4 && (tmp.ngp3l || player.ghostify.ghostlyPhotons.enpowerments >= 3)
+	return (max.decays > (tmp.ngp3c?6:5) || max.quarks.e >= ((tmp.ngp3l||tmp.ngp3c) ? 1e10 : 5e10)) && max.decays > (tmp.ngp3c?5:4) && (tmp.ngp3l || player.ghostify.ghostlyPhotons.enpowerments >= 3)
 }
   
 function updateBLUnlocks() {
@@ -13,7 +13,7 @@ function updateBLUnlocks() {
 }
 
 function updateBLUnlockDisplay() {
-	document.getElementById("blUnl").textContent = "To unlock Bosonic Lab, you need to get " + shortenCosts(Decimal.pow(10, tmp.ngp3l ? 1e10 : 5e10)) + " Ghostly Unstable Quarks" + (tmp.ngp3l ? "" : " and 3 Light Empowerments") + " first."
+	document.getElementById("blUnl").innerHTML = "To unlock Bosonic Lab, you need to get " + shortenCosts(Decimal.pow(10, (tmp.ngp3l||tmp.ngp3c) ? 1e10 : 5e10)) + (tmp.ngp3c?" Radioactive":"") + " Ghostly Unstable Quarks" + (tmp.ngp3l ? "" : " and 3 Light Empowerments") + " first." + (tmp.ngp3c?" <b>(COMING SOON!)</b>":"")
 }
 
 function getBosonicWattGain() {

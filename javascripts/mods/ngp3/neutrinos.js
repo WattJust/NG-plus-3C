@@ -100,7 +100,7 @@ function getNeutrinoGain() {
 	let ret = Decimal.pow(5, player.ghostify.neutrinos.multPower - 1)
 	if (player.ghostify.ghostlyPhotons.unl) ret = ret.times(tmp.le[5])
 	if (hasNU(7) && tmp.ngp3c) ret = ret.times(tmp.nu[3])
-	if (hasNU(14)) ret = ret.times(tmp.nu[5])
+	if (hasNU(14) && !tmp.ngp3c) ret = ret.times(tmp.nu[5])
 	if (isNanoEffectUsed("neutrinos")) ret = ret.times(tmp.nf.effects.neutrinos)
 	return ret
 }

@@ -162,6 +162,7 @@ function getBranchSpeedText(){
 	if (player.masterystudies.includes("t431")) if (getMTSMult(431).gt(1)) text += "Mastery Study 431: " + shorten(getMTSMult(431)) + "x, "
 	if (tmp.qu.bigRip.active && isBigRipUpgradeActive(19)) text += "19th Big Rip upgrade: " + shorten(tmp.bru[19]) + "x, "
 	if (hasNU(4)) if (tmp.nu[2].gt(1)) text += "Fourth Neutrino Upgrade: " + shorten(tmp.nu[2]) + "x, "
+	if (hasNU(15)) if (tmp.nu[6].gt(1)) text += "Fifteenth Neutrino Upgrade: " + shorten(tmp.nu[6]) + "x, "
 	if (!tmp.ngp3l) if (player.achievements.includes("ng3p48")) if (player.meta.resets > 1) text += "'Are you currently dying?' reward: " + shorten (Math.sqrt(player.meta.resets + 1)) + "x, "
 	if (player.ghostify.milestones >= 14) text += "Brave Milestone 14: " + shorten(getMilestone14SpinMult()) + "x, "
 	if (player.achievements.includes("ng3p61") && tmp.ngp3c) text += "Ghostify Bonus: 5x, "
@@ -180,6 +181,7 @@ function getBranchSpeed() { // idea: when you hold shift you can see where the m
 	}
 	if (player.ghostify.milestones >= 14) x = x.times(getMilestone14SpinMult())
 	if (player.achievements.includes("ng3p61") && tmp.ngp3c) x = x.times(5);
+	if (hasNU(15)) x = x.times(tmp.nu[6]);
 	return x
 }
 

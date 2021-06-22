@@ -77,7 +77,7 @@ function getGalaxyRequirement(offset = 0, display) {
 	if (tmp.be) {
 		amount *= tmp.ngp3c?20:50
 		if (tmp.qu.breakEternity.upgrades.includes(2)) amount /= getBreakUpgMult(2)
-		if (player.currentEternityChall == "eterc10" && tmp.qu.breakEternity.upgrades.includes(9)) amount /= getBreakUpgMult(9)
+		if ((player.currentEternityChall == "eterc10" || tmp.ngp3c) && tmp.qu.breakEternity.upgrades.includes(9)) amount /= getBreakUpgMult(9)
 	}
 	if (!player.boughtDims) {
 		tmp.grd.speed = 1
@@ -89,7 +89,7 @@ function getGalaxyRequirement(offset = 0, display) {
 				div /= Math.pow(over, 6) / 729
 				scaling = 6
 			}
-			if (isLEBoostUnlocked(2) && tmp.be) div *= tmp.leBonus[2]
+			if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2]
 			tmp.grd.speed = Math.pow(2, (tmp.grd.galaxies + 1 - 302500 / ghostlySpeed) * ghostlySpeed / div)
 			scaling = Math.max(scaling, 5)
 		}
@@ -157,6 +157,7 @@ function getDistantScalingStart() {
 
 	if (tmp.grd.galaxies >= tmp.grd.darkStart) {
 		let push = 5 / tmp.grd.speed
+		if (isLEBoostUnlocked(2) && tmp.be && tmp.ngp3c) push *= tmp.leBonus[2]
 		if (GUBought("rg5")) push *= 1.13
 		if (GUBought("gb5")) push *= 1 + Math.sqrt(player.replicanti.galaxies) / 550
 		if (GUBought("br5")) push *= 1 + Math.min(Math.sqrt(player.dilation.tachyonParticles.max(1).log10()) * 0.013, 0.14)

@@ -726,7 +726,7 @@ function replicantiDisplay() {
 	if (player.replicanti.unl) {
 		let replGalOver = getMaxRG() - player.replicanti.gal
 		let chance = Decimal.times(tmp.rep.chance, 100)
-		let showReplLimit = tmp.ngp3c?(!(hasNU(12) && tmp.qu.bigRip.active)):false;
+		let showReplLimit = tmp.ngp3c?(!((hasNU(12) && tmp.qu.bigRip.active)||(hasNU(13) && !tmp.qu.bigRip.active))):false;
 		document.getElementById("replicantiamount").textContent = shortenDimensions(player.replicanti.amount)+(showReplLimit?(" / ")+shortenDimensions(getReplicantiCap()):"")
 		document.getElementById("replicantimult").textContent = shorten(getIDReplMult())
 		

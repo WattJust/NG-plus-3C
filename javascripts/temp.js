@@ -138,7 +138,8 @@ function updateBlueLightBoostTemp(){
 function updateIndigoLightBoostTemp(){
 	var loglighteffect5 = tmp.effL[5] > 25 ? Math.sqrt(tmp.effL[5]*10+375) : tmp.effL[5]
 	loglighteffect5 *= tmp.newNGP3E ? 20 : 10
-	if (!tmp.ngp3l && loglighteffect5 > 729) loglighteffect5 = Math.pow(loglighteffect5 * 27, 2 / 3)
+	if (!tmp.ngp3l && loglighteffect5 > (tmp.ngp3c?64:729)) loglighteffect5 = Math.pow(loglighteffect5 * (tmp.ngp3c?8:27), 2 / 3)
+	if (tmp.ngp3c && loglighteffect5 >= 100) loglighteffect5 = Math.pow(10, Math.pow(Math.log10(loglighteffect5)+2, 0.5+0.01*Math.min(player.ghostify.ghostlyPhotons.enpowerments, 10)));
 	tmp.le[5] = Decimal.pow(10, loglighteffect5) 
 }
 
@@ -147,17 +148,22 @@ function updateVioletLightBoostTemp(){
 	var loglighteffect6 = Math.pow(player.postC3Reward.log10() * tmp.effL[6], lightexp6) * 2 
 	if (loglighteffect6 > 15e3) loglighteffect6 = 15e3 * Math.pow(loglighteffect6 / 15e3, .6)
 	if (!tmp.ngp3l && loglighteffect6 > 5e4) loglighteffect6 = Math.sqrt(loglighteffect6 * 5e4)
-	tmp.le[6] = Decimal.pow(10, loglighteffect6)
+	tmp.le[6] = Decimal.pow(tmp.ngp3c?500:10, loglighteffect6)
 }
 
 function updateEffectiveLightAmountsTemp(){
 	let leBonus5Unl = isLEBoostUnlocked(5)
+	let leGlobal = globalLightPower();
 	for (var c = 7; c >= 0; c--) {
 		var x = player.ghostify.ghostlyPhotons.lights[c]
+		if (tmp.ngp3c) {
+			if (x>=15) x = Math.sqrt(x*15);
+			x *= getLightCondenserEff(c+1);
+		}
 		var y = tmp.leBoost
-		if ((c == 6 && !isLEBoostUnlocked(4)) || c == 7) y += 1
-		else if (leBonus5Unl) y += Math.pow(tmp.effL[c + 1] * tmp.leBonus[5].mult + 1, tmp.leBonus[5].exp)
-		else y += Math.sqrt(tmp.effL[c + 1] + 1)
+		if ((c == 6 && !isLEBoostUnlocked(4)) || c == 7) y += leGlobal
+		else if (leBonus5Unl) y += Math.pow(tmp.effL[c + 1] * tmp.leBonus[5].mult + Math.root(leGlobal, tmp.leBonus[5].exp), tmp.leBonus[5].exp)
+		else y += Math.sqrt(tmp.effL[c + 1] + Math.pow(leGlobal, 2))
 		tmp.ls[c] = y
 		if (c == 0) {
 			tmp.effL[0] = {
@@ -194,7 +200,7 @@ function updateInfiniteTimeTemp() {
 	if (tmp.ngp3) {
 		if (!tmp.ngp3l && player.achievements.includes("ng3p56")) x *= 1.03
 		if (ghostified && player.ghostify.neutrinos.boosts>3 && !tmp.ngp3c) x *= tmp.nb[4]
-		if (tmp.be && !player.dilation.active && tmp.qu.breakEternity.upgrades.includes(8)) x *= getBreakUpgMult(8)
+		if (tmp.be && !player.dilation.active && tmp.qu.breakEternity.upgrades.includes(8) && !tmp.ngp3c) x *= getBreakUpgMult(8)
 		if (isLEBoostUnlocked(8)) x *= tmp.leBonus[8]
 		x = softcap(x, "inf_time_log_1")
 		if (player.aarexModifications.ngudpV) {
@@ -328,7 +334,7 @@ function updateGhostifyTempStuff(){
 	if (player.ghostify.ghostlyPhotons.unl) {
 		var x = getLightEmpowermentBoost()
 		var y = hasBosonicUpg(32)
-		if (tmp.leBoost !== x || tmp.hasBU32 !== y || tmp.updateLights) {
+		if (tmp.leBoost !== x || tmp.hasBU32 !== y || tmp.updateLights || tmp.ngp3c) {
 			tmp.leBoost = x
 			tmp.hasBU32 = y
 			tmp.updateLights = false
@@ -412,11 +418,13 @@ function updateNU12Temp(){ // NU12
 function updateNU14Temp(){
 	var base = player.ghostify.ghostParticles.add(1).log10()
 	var colorsPortion = Math.pow(tmp.qu.colorPowers.r.add(tmp.qu.colorPowers.g).add(tmp.qu.colorPowers.b).add(1).log10(),1/3)
-	tmp.nu[5] = Decimal.pow(base, colorsPortion * 0.8 + 1).max(1) //NU14
+	let nu5 = Decimal.pow(base, colorsPortion * 0.8 + 1).max(1)
+	if (tmp.ngp3c) nu5 = Decimal.pow(3, Math.sqrt(nu5.log(3)));
+	tmp.nu[5] = nu5 //NU14
 }
 
 function updateNU15Temp(){
-	tmp.nu[6] = Decimal.pow(2,(tmp.qu.nanofield.rewards>90?Math.sqrt(90*tmp.qu.nanofield.rewards):tmp.qu.nanofield.rewards) / 2.5) 
+	tmp.nu[6] = Decimal.pow(2,(tmp.qu.nanofield.rewards>90?Math.sqrt(90*tmp.qu.nanofield.rewards):tmp.qu.nanofield.rewards) / (tmp.ngp3c?4:2.5)) 
 	//NU15
 }
 
@@ -437,6 +445,9 @@ function updateNeutrinoUpgradesTemp(){
 	tmp.nuc[8] = tmp.ngp3c?1.5e9:7.5e9
 	tmp.nuc[10] = tmp.ngp3c?1.5e11:7e12
 	tmp.nuc[12] = tmp.ngp3c?2e33:1e55
+	tmp.nuc[13] = tmp.ngp3c?1e185:1e125
+	tmp.nuc[14] = tmp.ngp3c?1e200:1e160
+	tmp.nuc[15] = tmp.ngp3c?1e240:1e280
 }
 
 function updateBreakEternityUpgrade1Temp(){
@@ -510,7 +521,7 @@ function updateBreakEternityUpgrade8Temp(){
 
 function updateBreakEternityUpgrade9Temp(){
 	var em = tmp.qu.breakEternity.eternalMatter
-	var x = em.div("1e335").add(1).pow(0.05 * Math.log10(4))
+	var x = em.div(tmp.ngp3c?"1e185":"1e335").add(1).pow(0.05 * Math.log10(4))
 	if (!tmp.ngp3l) {
 		if (x.gte(Decimal.pow(10,18))) x = Decimal.pow(x.log10() * 5 + 10, 9)
 		if (x.gte(Decimal.pow(10,100))) x = Decimal.pow(x.log10(), 50)

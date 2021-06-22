@@ -12,7 +12,10 @@ function updateQuantumWorth(mode) {
 		}
 		if (player.ghostify.times) {
 			var automaticCharge = Math.max(Math.log10(quantumWorth.add(1).log10() / (tmp.ngp3c?100:150)) / Math.log10(2), 0) + Math.max(tmp.qu.bigRip.spaceShards.add(1).log10() / 20 - 0.5, 0)
-			if (tmp.ngp3c) automaticCharge *= 1.25;
+			if (tmp.ngp3c) {
+				automaticCharge *= 1.25;
+				if (automaticCharge>=20) automaticCharge = Math.sqrt(automaticCharge*20);
+			}
 			player.ghostify.automatorGhosts.power = Math.max(automaticCharge, player.ghostify.automatorGhosts.power)
 			if (mode != "quick") {
 				document.getElementById("automaticCharge").textContent = automaticCharge.toFixed(2)
@@ -474,7 +477,7 @@ function getRG3Effect() {
 
 function getBR4Effect() {
 	let exp = player.aarexModifications.ngp3c?0.00002:0.0003
-	let ret = Decimal.pow(getDimensionPowerMultiplier(hasNU(13) && "no-rg4"), exp).max(1)
+	let ret = Decimal.pow(getDimensionPowerMultiplier((hasNU(13)&&!tmp.ngp3c) && "no-rg4"), exp).max(1)
 	if (player.aarexModifications.ngp3c) ret = Decimal.pow(10, Math.sqrt(ret.log10()))
 	return ret;
 }

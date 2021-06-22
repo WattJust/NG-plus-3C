@@ -6,7 +6,7 @@ function getBreakEternityTDMult(tier){
 	if (tmp.qu.breakEternity.upgrades.includes(1) && tier < 5 && !tmp.ngp3c) ret = ret.times(getBreakUpgMult(1))
 	if (tmp.qu.breakEternity.upgrades.includes(4) && tier > 3 && tier < 7 && !tmp.ngp3c) ret = ret.times(getBreakUpgMult(4))
 	if (tmp.qu.bigRip.upgrades.includes(13) && !tmp.ngp3c) ret = ret.times(player.replicanti.amount.max(1).pow(1e-6))
-	if (tier == 6 && player.ghostify.ghostlyPhotons.unl) ret = ret.times(tmp.le[6])
+	if (tier == 6 && player.ghostify.ghostlyPhotons.unl && !tmp.ngp3c) ret = ret.times(tmp.le[6])
 	if (tier == 7 && tmp.qu.bigRip.upgrades.includes(16) && !tmp.ngp3c) ret = ret.times(tmp.bru[16])
 	if (tier == 8 && player.achievements.includes("ng3p62") && !tmp.ngp3l) ret = ret.pow(Math.log10(player.ghostify.time/10+1)/100+1)
 	if (ret.lt(0)) ret = new Decimal(0)
@@ -74,7 +74,11 @@ function getTimeDimensionPower(tier) {
 	if (tmp.be && !tmp.ngp3c) return getBreakEternityTDMult(tier)
 	var dim = player["timeDimension" + tier]
 
-	if ((player.currentEternityChall == "eterc13" || inQC("8c")) && player.aarexModifications.ngp3c) return tmp.cnd.time[tier];
+	if ((player.currentEternityChall == "eterc13" || inQC("8c")) && player.aarexModifications.ngp3c) {
+		let pow = tmp.cnd.time[tier];
+		if (tier == 1 && player.ghostify.ghostlyPhotons.unl && tmp.qu.bigRip.active) pow = pow.times(tmp.le[6])
+		return pow;
+	}
 	
 	var ret = dim.power.pow(player.boughtDims ? 1 : 2)
 

@@ -490,7 +490,7 @@ function getGHPGain() {
 function getGHPMult() {
 	let x = Decimal.pow(2, player.ghostify.multPower - 1)
 	if (player.achievements.includes("ng3p93")) x = x.times(500)
-	if (player.achievements.includes("ng3p83")) x = x.times(ranking + 1)
+	if (player.achievements.includes("ng3p83")) x = x.times(tmp.ngp3c?10:(ranking + 1))
 	if (player.achievements.includes("ng3p97")) x = x.times(Decimal.pow(player.ghostify.times + 1, 1/3))
 	return x
 }
@@ -559,8 +559,9 @@ function ghostifyReset(implode, gain, amount, force) {
 	if (bm > 2) for (var c=1;c<9;c++) tmp.qu.electrons.mult += .5 - QCIntensity(c) * .25
 	if (bm > 6 && !force && player.achievements.includes("ng3p68")) gainNeutrinos(Decimal.times(2e3 * tmp.qu.bigRip.bestGals, bulk), "all")
 	if (bm > 15) giveAchievement("I rather oppose the theory of everything")
-	if (player.eternityPoints.e>=22e4&&player.ghostify.under) giveAchievement("Underchallenged")
-	if (player.eternityPoints.e>=375e3&&inQCModifier("ad")) giveAchievement("Overchallenged")
+	if (player.eternityPoints.e>=22e4&&player.ghostify.under&&!force) giveAchievement("Underchallenged")
+	if (tmp.ngp3c&&!tmp.qu.breakEternity.did&&!force) giveAchievement("Big Rip isn't enough")
+	if (player.eternityPoints.e>=375e3&&inQCModifier("ad")&&!force) giveAchievement("Overchallenged")
 	if (player.ghostify.best<=6) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
 	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU)

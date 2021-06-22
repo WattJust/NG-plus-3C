@@ -463,7 +463,7 @@ function setR21Tooltip(){
 	mi.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" infinities. Reward: You gain banked infinites and eternities when going Quantum or Big Ripping the universe.")
 	wd.setAttribute('ach-tooltip', "Get "+shortenCosts(Decimal.pow(10, 1e12))+(tmp.ngp3c?" Quantum":" Infinity")+" Unstable Quarks for each Branch without Big Ripping in this Ghostify." + (tmp.ngp3l ? "" : " Reward: Normal replicant autobuyer buys max."))
 	radioDecay.setAttribute('ach-tooltip', "Get 10 total Radioactive Decays." + (!tmp.ngp3l ? " Reward: You get 1 galaxy worth of generated neutrinos per second." : ""))
-	ultimate.setAttribute('ach-tooltip', (tmp.ngp3c?"???":"Have at least 48 Mastery Studies")+". Reward: When you become a ghost, you start with all Eternity Challenges and all Time Studies bought.")
+	ultimate.setAttribute('ach-tooltip', (tmp.ngp3c?"Purchase the first Electron buyable 8 times":"Have at least 48 Mastery Studies")+". Reward: When you become a ghost, you start with all Eternity Challenges and all Time Studies bought.")
 	arent.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 1.8e6)) + " IP while dilated and Big Ripped and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify." + (tmp.ngp3l ? "" : " Reward: Your 8th Tree Upgrade's level speeds up Nanofield."))
 }
 
@@ -471,7 +471,7 @@ function setR22Tooltip(){
 	// Row 22 (ng3p8) (7/8)
 	let ghostierthanbefore = document.getElementById("Even Ghostlier than before")
 	let oc = document.getElementById("Overchallenged")
-	//ng3p83/////
+	let paan = document.getElementById("Pulling an All-Nighter")
 	let isnotenough = document.getElementById("Big Rip isn't enough") 
 	let ee = document.getElementById("Everlasting Eternities")
 	let btco = document.getElementById("Back to Challenge One")
@@ -482,10 +482,11 @@ function setR22Tooltip(){
 	ghostierthanbefore.setAttribute("ach-tooltip", "Unlock Bosonic Lab." + (tmp.ngp3l ? "" : " Reward: The meta-antimatter effect uses your best meta-antimatter in your current Ghostify instead of your best in the current Quantum, and unlock all achievements prior to Ghostly Photons."))
 	ee.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" eternities." + (tmp.ngp3l ? "" : " Reward: Boost quark gain by 10 per Light Empowerment squared."))
 	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, 3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the second nanofield reward scaling."))
+	paan.setAttribute('ach-tooltip', tmp.ngp3c?("Awaken Anti-Preontius. Reward: Gain 10x more GhP."):("Get 165 Paired Challenges ranking. Reward: Paired Challenges ranking multiplies GHP gain."))
 	btco.setAttribute('ach-tooltip', "Complete Paired Challenge 1 after getting "+shortenCosts(Decimal.pow(10, 1.65e9)) + " antimatter in Quantum Challenges 6 and 8." + (tmp.ngp3l ? "" : " Reward: Ghostifies only makes you lose 25% of your radiocative decays."))
 	tdc.setAttribute('ach-tooltip', "Complete Eternity Challenge 11 with "+shortenCosts(Decimal.pow(10, 15500)) + " IP in a Paired Challenge with the Quantum Challenges 6 and 8 combination and the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the quadratic cost scaling and the level softcap of fifth Tree of Decay upgrade and make it based on best meta-antimatter over Ghostifies, instead of over quantums."))
 	igu.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 2.25e4)) + " IP while dilated and Big Ripped with Anti-Dilation modifier and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify.")
-	isnotenough.setAttribute('ach-tooltip', "Complete a Paired Challenge with Quantum Challenges 6 and 8 combinations." + (tmp.ngp3l ? "" : " Reward: Remove the hardcap reduction of 'And so your life?'."))
+	isnotenough.setAttribute('ach-tooltip', (tmp.ngp3c?"Ghostify without Breaking Eternity during this Ghostify run.":"Complete a Paired Challenge with Quantum Challenges 6 and 8 combinations.") + (tmp.ngp3l ? "" : " Reward: Remove the hardcap reduction of 'And so your life?'."))
 }
 
 function setR23Tooltip(){

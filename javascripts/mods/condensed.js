@@ -8,6 +8,7 @@ function loadCondensedVars() {
 			emp: [null, 0, 0, 0, 0, 0, 0, 0, 0],
 			autoEmp: false,
 			nano: [null, 0, 0, 0, 0, 0, 0, 0, 0],
+			light: [null, 0, 0, 0, 0, 0, 0, 0, 0],
 			repl: 0,
 			elec: 0,
 			obsc: {},
@@ -21,6 +22,7 @@ function loadCondensedVars() {
 	if (player.condensed.emp === undefined) player.condensed.emp = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	if (player.condensed.autoEmp === undefined) player.condensed.autoEmp = false;
 	if (player.condensed.nano === undefined) player.condensed.nano = [null, 0, 0, 0, 0, 0, 0, 0, 0]
+	if (player.condensed.light === undefined) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	if (player.infchallengeTimes[9] === undefined) {
 		player.infchallengeTimes.push(600*60*24*31)
 		player.infchallengeTimes.push(600*60*24*31)
@@ -52,6 +54,9 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		player.condensed.emp = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 		if (resetNum>6 || !player.achievements.includes("ng3p66")) player.condensed.nano = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 	}
+	if (resetNum>=7) {
+		player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0]
+	}
 	
 	if (preVer<1.1) {
 		for (let i=5;i<=8;i++) player["timeDimension"+i].cost = timeDimCost(i, player["timeDimension"+i].bought)
@@ -72,7 +77,7 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 	if (preVer<1.24) tmp.qu.bigRip.tss = new Decimal(0);
 	if (preVer<1.25) player.condensed.autoEmp = false;
 
-	player.aarexModifications.ngp3c = 1.25;
+	player.aarexModifications.ngp3c = 1.26;
 }
 
 function getTotalCondensers(type) {
@@ -355,6 +360,7 @@ function getReplCondPow() {
 	if (player.dilation.upgrades.includes(8)) pow *= 1.15
 	if (player.masterystudies.includes("t267")) pow *= 1.5
 	if (ghostified && player.ghostify.neutrinos.boosts>3 && hasNU(10)) pow *= tmp.nb[4]
+	if (tmp.be && !player.dilation.active && tmp.qu.breakEternity.upgrades.includes(8)) pow *= getBreakUpgMult(8)
 	return pow;
 }
 
@@ -717,7 +723,7 @@ function condenseMetaDim(x) {
 	let res = player.meta.antimatter
 	let cost = getMetaCondenserCost(x)
 	if (res.lt(cost)) return;
-	player.meta.antimatter = player.meta.antimatter.sub(cost)
+	if (!player.achievements.includes("ng3p72")) player.meta.antimatter = player.meta.antimatter.sub(cost)
 	player.condensed.meta[x]++;
 }
 
@@ -728,7 +734,7 @@ function maxMetaCondense(x) {
 	let cost = getMetaCondenserCost(x)
 	if (res.lt(cost)) return;
 	player.condensed.meta[x] = Math.max(player.condensed.meta[x], getMetaCondenserTarget(x))
-	player.meta.antimatter = player.meta.antimatter.sub(cost)
+	if (!player.achievements.includes("ng3p72")) player.meta.antimatter = player.meta.antimatter.sub(cost)
 }
 
 function isIC10Trapped() {
@@ -925,6 +931,7 @@ function getNanoCondenserTarget(x) {
 
 function getNanoCondenserPow() {
 	let pow = new Decimal(1)
+	if (isBigRipUpgradeActive(20)) pow = pow.times(1.1);
 	return pow
 }
 
@@ -977,4 +984,81 @@ function getBE7Base() {
 	let base = new Decimal(1e9);
 	if (tmp.qu.breakEternity.upgrades.includes(5) && tmp.ngp3c && tmp.be) base = base.times(getBreakUpgMult(5));
 	return base;
+}
+
+const LIGHT_CONDENSER_START = {
+	1: 1e4,
+	2: 7.5e4,
+	3: 1e6,
+	4: 2.5e6,
+	5: 1e7,
+	6: 4.75e7,
+	7: 3.6e8,
+	8: 4e10,
+}
+
+const LIGHT_CONDENSER_BASE = {
+	1: 1.5,
+	2: 2.5,
+	3: 4,
+	4: 6,
+	5: 9,
+	6: 13,
+	7: 17,
+	8: 3.5,
+}
+
+function updateLightCondenser(x) {
+	document.getElementById("light"+x+"condenseDiv").style.display = tmp.ngp3c ? "" : "none"
+	if (!player.aarexModifications.ngp3c) return;
+	let costPart = 'Condense: '
+	let cost = getLightCondenserCost(x)
+	let resource = player.ghostify.ghostlyPhotons.ghostlyRays;
+	document.getElementById("light"+x+"condense").textContent = costPart + shorten(cost)+" Ghostly Rays"
+	document.getElementById("light"+x+"condense").className = "gluonupgrade "+(resource.gte(cost) ? 'gph' : 'unavailablebtn')
+}
+
+function getLightCondenserCost(x) {
+	if (!player.aarexModifications.ngp3c) return new Decimal(1/0);
+	let bought = player.condensed.light[x]
+	return Decimal.pow(LIGHT_CONDENSER_BASE[x], Decimal.pow(bought, 1+2**getLightCondenserCostScaling())).times(LIGHT_CONDENSER_START[x])
+}
+
+function getLightCondenserTarget(x) {
+	if (!player.aarexModifications.ngp3c) return new Decimal(0);
+	let res = player.ghostify.ghostlyPhotons.ghostlyRays;
+	let target = Math.pow(res.div(LIGHT_CONDENSER_START[x]).max(1).log10()/Math.log10(LIGHT_CONDENSER_BASE[x]), 1/(1+2**getLightCondenserCostScaling()))
+	return Math.floor(target+1)
+}
+
+function getLightCondenserCostScaling() {
+	return 1;
+}
+
+function condenseLight(x) {
+	if (!player.aarexModifications.ngp3c) return;
+	let res = player.ghostify.ghostlyPhotons.ghostlyRays;
+	let cost = getLightCondenserCost(x)
+	if (res.lt(cost)) return;
+	player.ghostify.ghostlyPhotons.ghostlyRays = player.ghostify.ghostlyPhotons.ghostlyRays.sub(cost);
+	player.condensed.light[x]++;
+}
+
+function maxCondenseLight(x) {
+	if (!player.aarexModifications.ngp3c) return;
+	let res = player.ghostify.ghostlyPhotons.ghostlyRays;
+	let cost = getLightCondenserCost(x)
+	if (res.lt(cost)) return;
+	player.condensed.light[x] = Math.max(player.condensed.light[x], getLightCondenserTarget(x))
+	player.ghostify.ghostlyPhotons.ghostlyRays = player.ghostify.ghostlyPhotons.ghostlyRays.sub(cost);
+}
+
+function getLightCondenserPow() {
+	return 1;
+}
+
+function getLightCondenserEff(x) {
+	let eff = Decimal.add(player.ghostify.ghostlyPhotons.ghostlyRays.plus(1).log10() * player.condensed.light[x], 1).log10()*player.condensed.light[x]+1;
+	if (eff>=5) eff = Math.sqrt(eff*5);
+	return eff;
 }
