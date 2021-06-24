@@ -50,7 +50,7 @@ function updateQuantumChallenges() {
 		document.getElementById("brngp3c").textContent = sc1t != 6 || sc2t != 8 ? "QC6+7+8" : tmp.qu.bigRip.active ? "Big Ripped" : tmp.qu.pairedChallenges.completed + 1 < pc ? "Locked" : "Big Rip"
 		document.getElementById("brngp3c").className = tmp.qu.bigRip.active ? "onchallengebtn" : "bigripbtn"
 		document.getElementById("brngp3ccost").textContent = "Cost: "+getFullExpansion(NGP3C_BR_COST)+" electrons"
-		document.getElementById("brngp3cgoal").textContent = "GOal: "+shortenCosts(NGP3C_BR_GOAL)+" antimatter"
+		document.getElementById("brngp3cgoal").textContent = "Goal: "+shortenCosts(NGP3C_BR_GOAL)+" antimatter"
 	}
 	if (player.masterystudies.includes("d14")) {
 		var max = getMaxBigRipUpgrades()
@@ -105,7 +105,7 @@ function getQCGoal(num, bigRip) {
 	var c1 = 0
 	var c2 = 0
 	var mult = 1
-	if (player.achievements.includes("ng3p96") && !bigRip) mult *= 0.95
+	if (player.achievements.includes("ng3p96") && !bigRip && !tmp.ngp3c) mult *= 0.95
 	let goalData = quantumChallenges[player.aarexModifications.ngp3c?"cond_goals":"goals"]
 	if (num == undefined) {
 		var data = tmp.inQCs
@@ -206,12 +206,12 @@ function updatePCCompletions() {
 		document.getElementById("modifiersdiv").style.display = ""
 		for (var m = 0; m < qcm.modifiers.length; m++) {
 			var id = qcm.modifiers[m]
-			if (r >= qcm.reqs[id] || !qcm.reqs[id]) {
+			if (QCModifierUnl(id, r) || !qcm.reqs[id]) {
 				document.getElementById("qcm_" + id).className = qcm.on.includes(id) ? "chosenbtn" : "storebtn"
 				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', qcm.descs[id] || "???")
 			} else {
 				document.getElementById("qcm_" + id).className = "unavailablebtn"
-				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', 'Get ' + qcm.reqs[id] + ' Paired Challenges ranking to unlock this modifier. Ranking: ' + ranking.toFixed(1))
+				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', tmp.ngp3c?(qcm.condReqDescs[id]+" to unlock this modifier."):('Get ' + qcm.reqs[id] + ' Paired Challenges ranking to unlock this modifier. Ranking: ' + ranking.toFixed(1)))
 			}
 		}
 	} else document.getElementById("modifiersdiv").style.display = "none"
@@ -368,6 +368,14 @@ var qcm={
 		ad: 100,
 		sm: 165
 	},
+	condReqs: {
+		ad() { return player.ghostify.wzb.unl },
+		sm() { return player.ghostify.hb.unl },
+	},
+	condReqDescs: {
+		ad: "Unlock Bosonic Lab",
+		sm: "Unlock Higgs Bosons",
+	},
 	descs:{
 		ad: "You always have no Tachyon particles. You can dilate time, but you can't gain Tachyon particles.",
 		sm: "You can't have normal Time Studies, and can't have more than 20 normal Mastery Studies."
@@ -375,8 +383,13 @@ var qcm={
 	on: []
 }
 
+function QCModifierUnl(id, r) {
+	if (tmp.ngp3c) return qcm.condReqs[id]();
+	else return r >= qcm.reqs[id];
+}
+
 function toggleQCModifier(id) {
-	if (!(ranking >= qcm.reqs[id]) && qcm.reqs[id]) return
+	if (!QCModifierUnl(id, ranking) && qcm.reqs[id]) return
 	if (qcm.on.includes(id)) {
 		let data = []
 		for (var m = 0; m < qcm.on.length; m++) if (qcm.on[m] != id) data.push(qcm.on[m])

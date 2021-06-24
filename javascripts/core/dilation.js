@@ -566,7 +566,7 @@ function getFreeGalaxyThresholdUpgEff() {
 
 function getFreeGalaxyThresholdIncrease(){
 	let thresholdMult = inQC(5) ? Math.pow(10, 2.8) : !canBuyGalaxyThresholdUpg() ? 1.35 : getFreeGalaxyThresholdUpgEff()
-	if (hasBosonicUpg(12)) {
+	if (hasBosonicUpg(12) && !tmp.ngp3c) {
 		thresholdMult -= tmp.blu[12]
 		if (!tmp.ngp3l && thresholdMult < 1.2) thresholdMult = 1.1 + 0.1 / Math.sqrt(2.2 - thresholdMult)
 		else if (thresholdMult < 1.15) thresholdMult = 1.05 + 0.1 / (2.15 - thresholdMult)

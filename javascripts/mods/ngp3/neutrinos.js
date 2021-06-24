@@ -9,9 +9,9 @@ function updateNeutrinoBoostDisplay(){
 		document.getElementById("preNeutrinoBoost2Exp").textContent = getMTSMult(273, ["pn", "intensity"]).toFixed(2)
 		document.getElementById("neutrinoBoost2Exp").textContent = getMTSMult(273, "intensity").toFixed(2)
 	}
-	if (player.ghostify.neutrinos.boosts >= 3) document.getElementById("neutrinoBoost3").textContent = tmp.nb[3].toFixed(2)
+	if (player.ghostify.neutrinos.boosts >= 3) document.getElementById("neutrinoBoost3").textContent = getFullExpansion(Math.round(tmp.nb[3]*100)/100)
 	if (player.ghostify.neutrinos.boosts >= 4) document.getElementById("neutrinoBoost4").textContent = (tmp.nb[4] * 100 - 100).toFixed(1)
-	if (player.ghostify.neutrinos.boosts >= 5) document.getElementById("neutrinoBoost5").textContent = (tmp.nb[5] * 100).toFixed(1)
+	if (player.ghostify.neutrinos.boosts >= 5) document.getElementById("neutrinoBoost5").textContent = getFullExpansion(Math.round(tmp.nb[5]*1000)/10)
 	if (player.ghostify.neutrinos.boosts >= 6) document.getElementById("neutrinoBoost6").textContent = tmp.ngp3c ? (tmp.nb[6] * 100).toFixed(1) : (tmp.nb[6] < 10.995 ? (tmp.nb[6] * 100 - 100).toFixed(1) : getFullExpansion(Math.floor(tmp.nb[6] * 100 - 100)))
 	if (player.ghostify.neutrinos.boosts >= 7) {
 		document.getElementById("neutrinoBoost7").textContent = (tmp.nb[7] * 100).toFixed(1)
@@ -172,6 +172,7 @@ var neutrinoBoosts = {
 			if (tmp.newNGP3E) nb1mult = .8
 			if (tmp.ngp3c) nb1mult *= 2.5
 			if (isLEBoostUnlocked(7)) nb1mult *= tmp.leBonus[7]
+			if (player.achievements.includes("ng3p96") && tmp.ngp3c) nb1mult *= 1.5
 			let nb1neutrinos = nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10()
 			if (tmp.ngp3c) {
 				if (hasNU(9)) nb1neutrinos += nt[0].add(1).log10();
@@ -271,7 +272,7 @@ var neutrinoBoosts = {
 		10: function(nt) {
 			let nb10neutrinos = nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10()
 			if (hasNU(9) && tmp.ngp3c) nb10neutrinos += nt[0].add(1).log10();
-			let nb10 = Math.max(nb10neutrinos - 3e3, 0) / 75e4
+			let nb10 = Math.max(nb10neutrinos - (tmp.ngp3c?300:3e3), 0) / (tmp.ngp3c?5e4:75e4)
 			if (!tmp.ngp3l && nb10 > 0.1) nb10 = Math.log10(nb10 * 100) / 10
 			return nb10
 		},

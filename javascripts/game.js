@@ -341,7 +341,8 @@ function setupBosonicExtraction(){
 		for (var g1 = 1; g1 < g2; g1++) {
 			var col = row.insertCell(g1 - 1)
 			var id = (g1 * 10 + g2)
-			col.innerHTML = "<button id='bEn" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='takeEnchantAction("+id+")'>"+(bEn.descs[id]||"???")+"<br>"+
+			let desc = bEn.descs[id]
+			col.innerHTML = "<button id='bEn" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='takeEnchantAction("+id+")'>"+(desc||"???")+"<br>"+
 			"Currently: <span id='bEnEffect" + id + "'>???</span><br>"+
 			"<span id='bEnLvl" + id + "'></span><br>" +
 			"<span id='bEnOn" + id + "'></span><br>" +
@@ -362,7 +363,7 @@ function setupBosonicUpgrades(){
 		for (c = 1; c < 6; c++) {
 			var col = row.insertCell(c - 1)
 			var id = (r * 10 + c)
-			col.innerHTML = "<button id='bUpg" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='buyBosonicUpgrade(" + id + ")'>" + (bu.descs[id] || "???") + "<br>" +
+			col.innerHTML = "<button id='bUpg" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='buyBosonicUpgrade(" + id + ")'><span id='bUpg" + id + "Desc'>???</span>" + "<br>" +
 			(bu.effects[id] !== undefined ? "Currently: <span id='bUpgEffect" + id + "'>0</span><br>" : "") +
 			"Cost: <span id='bUpgCost" + id + "'></span> Bosonic Antimatter<br>" +
 			"Requires: <span id='bUpgG1Req" + id + "'></span> <div class='bRune' type='" + bu.reqData[id][2] + "'></div> & <span id='bUpgG2Req" + id + "'></span> <div class='bRune' type='" + bu.reqData[id][4] + "'></div></button>"
@@ -2732,7 +2733,7 @@ function onNotationChange() {
 		updateBosonicStuffCosts()
 		if (!player.ghostify.ghostlyPhotons.unl) document.getElementById("gphUnl").textContent="To unlock Ghostly Photons, you need to get "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9))+" antimatter while your universe is Big Ripped first."
 		else if (!player.ghostify.wzb.unl) updateBLUnlockDisplay()
-		else if (!tmp.ngp3l && !tmp.hb.unl) updateHiggsUnlockDisplay()
+		else if (!tmp.ngp3l && !tmp.hb.unl) updateNextParticleUnlockDisplay()
 	}
 	document.getElementById("epmult").innerHTML = "You gain 5 times more EP<p>Currently: "+shortenDimensions(player.epmult)+"x<p>Cost: "+shortenDimensions(player.epmultCost)+" EP"
 	document.getElementById("achmultlabel").textContent = "Current achievement multiplier on each Dimension: " + shortenMoney(player.achPow) + "x"
@@ -3881,7 +3882,7 @@ function eternity(force, auto, presetLoad, dilated) {
 	if (player.dead && !force) giveAchievement("You're already dead.")
 	if (player.infinitied <= 1 && !force) giveAchievement("Do I really need to infinity")
 	if (gainedEternityPoints().gte("1e600") && player.thisEternity <= 600 && player.dilation.active && !force) giveAchievement("Now you're thinking with dilation!")
-	if (ghostified && player.currentEternityChall == "eterc11" && inQC(6) && inQC(8) && inQCModifier("ad") && player.infinityPoints.e >= 15500) giveAchievement("The Deep Challenge")
+	if (ghostified && player.currentEternityChall == "eterc11" && inQC(6) && (tmp.ngp3c?inQC("8c"):inQC(8)) && inQCModifier("ad") && player.infinityPoints.e >= 15500) giveAchievement("The Deep Challenge")
 	if (isEmptiness) {
 		showTab("dimensions")
 		isEmptiness = false
@@ -4742,6 +4743,22 @@ function dilationStuffABTick(){
 	updateDilationUpgradeButtons()
 }
 
+function doBosonicUpgUnlockStuff() {
+	player.ghostify.bl.UPGSUNL = true;
+	$.notify("Congratulations! You have unlocked Bosonic Upgrades!", "success")
+	updateTemp()
+	updateBLUpgUnlocks()
+	updateNextParticleUnlockDisplay()
+}
+
+function doWZBUnlockStuff() {
+	player.ghostify.wzb.WZBUNL = true;
+	$.notify("Congratulations! You have unlocked W & Z Bosons!", "success")
+	updateTemp()
+	updateWZBUnlocks()
+	updateNextParticleUnlockDisplay()
+}
+
 function doBosonsUnlockStuff() {
 	player.ghostify.wzb.unl=true
 	$.notify("Congratulations! You have unlocked Bosonic Lab!", "success")
@@ -4818,7 +4835,9 @@ function doNGP3UnlockStuff(){
 	if (player.masterystudies && (player.masterystudies.includes("d14")||player.achievements.includes("ng3p51")) && !metaSave.ngp4 && !inEasierModeCheck) doNGP4UnlockStuff()
 	if (player.eternityPoints.gte(tmp.ngp3c?(ghostified?NGP3C_BE_REQ.div(1e50):NGP3C_BE_REQ):"1e1200") && tmp.qu.bigRip.active && !tmp.qu.breakEternity.unlocked) doBreakEternityUnlockStuff()
 	if (player.money.gte(Decimal.pow(10, tmp.ngp3c?3.5e9:6e9)) && tmp.qu.bigRip.active && !player.ghostify.ghostlyPhotons.unl) doPhotonsUnlockStuff()
-	if (canUnlockBosonicLab() && !player.ghostify.wzb.unl && !tmp.ngp3c) doBosonsUnlockStuff()
+	if (canUnlockBosonicLab() && !player.ghostify.wzb.unl) doBosonsUnlockStuff()
+	if (canUnlockWZB() && tmp.ngp3c && !player.ghostify.wzb.WZBUNL) doWZBUnlockStuff()
+	if (canUnlockBosonicUpgrades() && tmp.ngp3c && !player.ghostify.bl.UPGSUNL) doBosonicUpgUnlockStuff()
 	if (!tmp.ng3l) unlockHiggs()
 }
 
@@ -5243,7 +5262,8 @@ function WZBosonsUpdating(diff){
 	data.watt = wattGained
 	if (data.speed > 0) {
 		var limitDiff = Math.min(diff,data.speed * 14400)
-		bosonicTick((data.speed-limitDiff / 28800) * limitDiff)
+		let change = (data.speed-limitDiff / 28800) * limitDiff;
+		bosonicTick(change);
 		data.speed = Math.max(data.speed-limitDiff/ 14400, 0)
 	}
 }

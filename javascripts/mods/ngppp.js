@@ -490,7 +490,7 @@ function getGHPGain() {
 function getGHPMult() {
 	let x = Decimal.pow(2, player.ghostify.multPower - 1)
 	if (player.achievements.includes("ng3p93")) x = x.times(500)
-	if (player.achievements.includes("ng3p83")) x = x.times(tmp.ngp3c?10:(ranking + 1))
+	if (player.achievements.includes("ng3p83")) x = x.times(tmp.ngp3c?666:(ranking + 1))
 	if (player.achievements.includes("ng3p97")) x = x.times(Decimal.pow(player.ghostify.times + 1, 1/3))
 	return x
 }
@@ -560,9 +560,9 @@ function ghostifyReset(implode, gain, amount, force) {
 	if (bm > 6 && !force && player.achievements.includes("ng3p68")) gainNeutrinos(Decimal.times(2e3 * tmp.qu.bigRip.bestGals, bulk), "all")
 	if (bm > 15) giveAchievement("I rather oppose the theory of everything")
 	if (player.eternityPoints.e>=22e4&&player.ghostify.under&&!force) giveAchievement("Underchallenged")
-	if (tmp.ngp3c&&!tmp.qu.breakEternity.did&&!force) giveAchievement("Big Rip isn't enough")
-	if (player.eternityPoints.e>=375e3&&inQCModifier("ad")&&!force) giveAchievement("Overchallenged")
-	if (player.ghostify.best<=6) giveAchievement("Running through Big Rips")
+	if (player.eternityPoints.e>=(tmp.ngp3c?35e3:375e3)&&inQCModifier("ad")&&!force) giveAchievement("Overchallenged")
+	if (inQCModifier("sm") && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
+	if (player.ghostify.best<=((tmp.ngp3c?10:6))) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
 	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU)
 	
@@ -717,6 +717,11 @@ function setupAutomaticGhostsData() {
 var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40]
 var powerConsumed
 var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,6,3,9,3]
+function getAutoGhostReq(x) {
+	if (tmp.ngp3c && x>=13) return autoGhostRequirements[x]+6;
+	return autoGhostRequirements[x];
+}
+
 function updateAutoGhosts(load) {
 	var data = player.ghostify.automatorGhosts
 	if (load) {
@@ -725,7 +730,7 @@ function updateAutoGhosts(load) {
 		else {
 			document.getElementById("automatorGhostsAmount").textContent=data.ghosts
 			document.getElementById("nextAutomatorGhost").parentElement.style.display=""
-			document.getElementById("nextAutomatorGhost").textContent=autoGhostRequirements[data.ghosts-3].toFixed(2)
+			document.getElementById("nextAutomatorGhost").textContent=getAutoGhostReq(data.ghosts-3).toFixed(2)
 		}
 	}
 	powerConsumed=0

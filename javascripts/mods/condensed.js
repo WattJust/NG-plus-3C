@@ -77,7 +77,7 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 	if (preVer<1.24) tmp.qu.bigRip.tss = new Decimal(0);
 	if (preVer<1.25) player.condensed.autoEmp = false;
 
-	player.aarexModifications.ngp3c = 1.26;
+	player.aarexModifications.ngp3c = 1.27;
 }
 
 function getTotalCondensers(type) {
@@ -143,6 +143,7 @@ function getCondenserPow() {
 	if (player.challenges.includes("postc4")) pow = pow.times(1.25)
 	if (player.challenges.includes("postcngc_2")) pow = pow.times(1.15)
 	if (player.masterystudies.includes("t267")) pow = pow.times(1.5)
+	if (hasBosonicUpg(25)) pow = pow.times(tmp.blu[25])
 	return pow
 }
 
@@ -448,7 +449,9 @@ function maxTimeCondense(x) {
 }
 
 function ts13Eff() {
-	let eff = Math.pow(player.galaxies+1, 4/9);
+	let g = player.galaxies;
+	if (tmp.be && (tmp.ngp3c?!player.dilation.active:player.dilation.active) && tmp.qu.breakEternity.upgrades.includes(10)) g *= getBreakUpgMult(10)
+	let eff = Math.pow(g+1, 4/9);
 	return eff;
 }
 
@@ -794,6 +797,7 @@ function getCondPreonEffMult() {
 	let mult = 5;
 	if (player.masterystudies.includes("t345")) mult *= getMTSMult(345)
 	if (hasNU(12) && tmp.qu.bigRip.active) mult *= tmp.nu[4].inf;
+	if (hasBosonicUpg(14)) mult *= tmp.blu[14]
 	return mult;
 }
 
@@ -1054,11 +1058,20 @@ function maxCondenseLight(x) {
 }
 
 function getLightCondenserPow() {
-	return 1;
+	let pow = 1;
+	if (hasBosonicUpg(25)) pow *= tmp.blu[25]
+	return pow;
 }
 
 function getLightCondenserEff(x) {
-	let eff = Decimal.add(player.ghostify.ghostlyPhotons.ghostlyRays.plus(1).log10() * player.condensed.light[x], 1).log10()*player.condensed.light[x]+1;
+	let amt = player.condensed.light[x] * getLightCondenserPow();
+	let eff = Decimal.add(player.ghostify.ghostlyPhotons.ghostlyRays.plus(1).log10() * amt, 1).log10()*amt+1;
 	if (eff>=5) eff = Math.sqrt(eff*5);
 	return eff;
+}
+
+function getBENTotalLevelEffect() {
+	let eff = Math.log2(tmp.bEn.totalLvl.plus(1).log10()+1);
+	if (player.ghostify.bl.upgrades.length>6) return Math.max(Decimal.log2(tmp.bEn.totalLvl.plus(1).cbrt()), eff);
+	else return eff
 }

@@ -29,7 +29,7 @@ function unstoreTT() {
 function getSpaceShardsGain() {
 	let ret = tmp.qu.bigRip.active ? tmp.qu.bigRip.bestThisRun : player.money
 	ret = Decimal.pow(ret.add(1).log10() / ((tmp.ngp3c&&!ghostified)?2e4:2000), 1.5).times(player.dilation.dilatedTime.add(1).pow(0.05))
-	if (!tmp.qu.bigRip.active || tmp.be) {
+	if ((!tmp.qu.bigRip.active&&!tmp.ngp3c) || tmp.be) {
 		if (tmp.qu.breakEternity.upgrades.includes(3)) ret = ret.times(getBreakUpgMult(3))
 		if (tmp.qu.breakEternity.upgrades.includes(6)) ret = ret.times(getBreakUpgMult(6))
 	}
@@ -41,16 +41,18 @@ function getSpaceShardsGain() {
 	let log = ret.log10()
 	let log4log = Math.log10(log) / Math.log10(4)
 	let start = 5 //Starts at e1,024.
-	if (log4log > start && false) { //removed the softcap for now, it can go back in later maybe
+	if (log4log > start && !tmp.ngp3c) { //removed the softcap for now, it can go back in later maybe
 		let capped=Math.min(Math.floor(Math.log10(Math.max(log4log + 2 - start, 1)) / Math.log10(2)), 10 - start)
 		log4log = (log4log - Math.pow(2, capped) - start + 2) / Math.pow(2, capped) + capped + start - 1
 		log = Math.pow(4, log4log)
 	}
 	ret = Decimal.pow(10, log)
 
+	if (tmp.ngp3c && hasBosonicUpg(24) && !tmp.qu.bigRip.active) ret = ret.pow(2.5);
+
 	if (isNaN(ret.e)) return new Decimal(0)
 	ret = ret.floor();
-	if (tmp.ngp3c) ret = ret.sub(tmp.qu.bigRip.tss.div(3));
+	if (tmp.ngp3c && !hasBosonicUpg(24)) ret = ret.sub(tmp.qu.bigRip.tss.div(3));
 	return ret;
 }
 
@@ -196,6 +198,7 @@ function getBreakUpgCost(id) {
 	if (id == 7) return getBE7Cost();
 	if (id == 8 && tmp.ngp3c) return 1e190
 	if (id == 9 && tmp.ngp3c) return 1e200
+	if (id == 10 && tmp.ngp3c) return 1e210
 	return breakUpgCosts[id - 1]
 }
 

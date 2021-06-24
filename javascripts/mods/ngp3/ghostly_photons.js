@@ -88,7 +88,7 @@ function getGPHProduction() {
 	if (b) var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e2460":"1e480")
 	else var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e1780":"1e930")
 	if (ret.gt(1)) ret = ret.pow(tmp.ngp3c?0.004:0.02)
-	if (b && ret.gt(Decimal.pow(2, 444))) ret = ret.div(Decimal.pow(2, 444)).sqrt().times(Decimal.pow(2, 444))
+	if (b && ret.gt(Decimal.pow(2, tmp.ngp3c?50:444))) ret = ret.div(Decimal.pow(2, tmp.ngp3c?50:444)).sqrt().times(Decimal.pow(2, tmp.ngp3c?50:444))
 	if (!b && hasNU(14) && tmp.ngp3c) ret = ret.times(tmp.nu[5]);
 	return ret
 }
@@ -122,7 +122,7 @@ function updateLightBoostDisplay(){
 	document.getElementById("lightBoost2").textContent = tmp.le[1].toFixed(2)
 	document.getElementById("lightBoost3").textContent = getFullExpansion(Math.floor(tmp.le[2]))
 	document.getElementById("lightBoost4").textContent = (tmp.le[3] * 100 - 100).toFixed(1)
-	document.getElementById("lightBoost5").textContent = (tmp.le[4] * 100).toFixed(1) + (hasBosonicUpg(11) ? "+" + (tmp.blu[11] * 100).toFixed(1) : "")
+	document.getElementById("lightBoost5").textContent = (tmp.le[4] * 100).toFixed(1) + ((hasBosonicUpg(11)&&!tmp.ngp3c) ? "+" + (tmp.blu[11] * 100).toFixed(1) : "")
 	document.getElementById("lightBoost6").textContent = shorten(tmp.le[5])
 	document.getElementById("lightBoost7").textContent = shorten(tmp.le[6])
 }
@@ -176,6 +176,7 @@ function getGHRCap() {
 	var log = player.ghostify.ghostlyPhotons.darkMatter.pow(0.4).times(1e3).log10()
 	if (player.ghostify.neutrinos.boosts >= 11) log += tmp.nb[11].log10()
 	if (tmp.ngp3c) for (let i=1;i<=8;i++) log += Math.log10(getLightCondenserEff(i));
+	if (hasBosonicUpg(13) && tmp.ngp3c) log += Math.log10(Math.max(tmp.blu[13], 1));
 	return Decimal.pow(10, log)
 }
 

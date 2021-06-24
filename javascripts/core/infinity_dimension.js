@@ -165,6 +165,7 @@ function DimensionPower(tier) {
   	if (player.galacticSacrifice === undefined) mult = mult.times(ec9)
 
   	if (inQC(6)) mult = mult.times(player.postC8Mult).dividedBy(player.matter.max(1))
+	if (tmp.ngp3c && hasBosonicUpg(11) && tier==1) mult = mult.times(tmp.ig||1);
 
   	mult = dilates(mult, 2)
   	if (player.replicanti.unl && player.replicanti.amount.gt(1) && player.galacticSacrifice !== undefined && !player.aarexModifications.ngp3c) mult = mult.times(getIDReplMult())

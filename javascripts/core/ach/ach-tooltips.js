@@ -454,7 +454,7 @@ function setR21Tooltip(){
 	let mi = document.getElementById("Meta-Infinity confirmed?")
 	let wd = document.getElementById("Weak Decay")
 	let radioDecay = document.getElementById("Radioactive Decaying to the max!")
-	//ng3p76/////
+	let rtbr = document.getElementById("Running through Big Rips")
 	let ultimate = document.getElementById("The Theory of Ultimate Studies")
 	let arent = document.getElementById("Aren't you already dead?")
 
@@ -463,6 +463,7 @@ function setR21Tooltip(){
 	mi.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" infinities. Reward: You gain banked infinites and eternities when going Quantum or Big Ripping the universe.")
 	wd.setAttribute('ach-tooltip', "Get "+shortenCosts(Decimal.pow(10, 1e12))+(tmp.ngp3c?" Quantum":" Infinity")+" Unstable Quarks for each Branch without Big Ripping in this Ghostify." + (tmp.ngp3l ? "" : " Reward: Normal replicant autobuyer buys max."))
 	radioDecay.setAttribute('ach-tooltip', "Get 10 total Radioactive Decays." + (!tmp.ngp3l ? " Reward: You get 1 galaxy worth of generated neutrinos per second." : ""))
+	rtbr.setAttribute('ach-tooltip', "Become a ghost in "+(tmp.ngp3c?"1.0":"0.6")+" seconds. Reward: Going Quantum doesn't require meta-antimatter if you got the meta-antimatter requirement in your current Ghostify.")
 	ultimate.setAttribute('ach-tooltip', (tmp.ngp3c?"Purchase the first Electron buyable 8 times":"Have at least 48 Mastery Studies")+". Reward: When you become a ghost, you start with all Eternity Challenges and all Time Studies bought.")
 	arent.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 1.8e6)) + " IP while dilated and Big Ripped and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify." + (tmp.ngp3l ? "" : " Reward: Your 8th Tree Upgrade's level speeds up Nanofield."))
 }
@@ -481,12 +482,12 @@ function setR22Tooltip(){
 	//ACHIEVEMENT ROW 22
 	ghostierthanbefore.setAttribute("ach-tooltip", "Unlock Bosonic Lab." + (tmp.ngp3l ? "" : " Reward: The meta-antimatter effect uses your best meta-antimatter in your current Ghostify instead of your best in the current Quantum, and unlock all achievements prior to Ghostly Photons."))
 	ee.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" eternities." + (tmp.ngp3l ? "" : " Reward: Boost quark gain by 10 per Light Empowerment squared."))
-	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, 3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the second nanofield reward scaling."))
-	paan.setAttribute('ach-tooltip', tmp.ngp3c?("Awaken Anti-Preontius. Reward: Gain 10x more GhP."):("Get 165 Paired Challenges ranking. Reward: Paired Challenges ranking multiplies GHP gain."))
-	btco.setAttribute('ach-tooltip', "Complete Paired Challenge 1 after getting "+shortenCosts(Decimal.pow(10, 1.65e9)) + " antimatter in Quantum Challenges 6 and 8." + (tmp.ngp3l ? "" : " Reward: Ghostifies only makes you lose 25% of your radiocative decays."))
+	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e4:3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the second nanofield reward scaling."))
+	paan.setAttribute('ach-tooltip', tmp.ngp3c?("Awaken Anti-Preontius. Reward: Gain 666x more GhP."):("Get 165 Paired Challenges ranking. Reward: Paired Challenges ranking multiplies GHP gain."))
+	btco.setAttribute('ach-tooltip', "Complete Paired Challenge 1 after getting "+shortenCosts(Decimal.pow(10, tmp.ngp3c?1.05e8:1.65e9)) + " antimatter in Quantum Challenges 6 and 8." + (tmp.ngp3l ? "" : " Reward: Ghostifies only makes you lose 25% of your radiocative decays."))
 	tdc.setAttribute('ach-tooltip', "Complete Eternity Challenge 11 with "+shortenCosts(Decimal.pow(10, 15500)) + " IP in a Paired Challenge with the Quantum Challenges 6 and 8 combination and the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the quadratic cost scaling and the level softcap of fifth Tree of Decay upgrade and make it based on best meta-antimatter over Ghostifies, instead of over quantums."))
-	igu.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 2.25e4)) + " IP while dilated and Big Ripped with Anti-Dilation modifier and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify.")
-	isnotenough.setAttribute('ach-tooltip', (tmp.ngp3c?"Ghostify without Breaking Eternity during this Ghostify run.":"Complete a Paired Challenge with Quantum Challenges 6 and 8 combinations.") + (tmp.ngp3l ? "" : " Reward: Remove the hardcap reduction of 'And so your life?'."))
+	igu.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, tmp.ngp3c?2e6:2.25e4)) + " IP while dilated and Big Ripped with Anti-Dilation modifier and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify.")
+	isnotenough.setAttribute('ach-tooltip', (tmp.ngp3c?("Reach "+shorten(Decimal.pow(10, 2.98e8))+" antimatter in Big Rip without Breaking Eternity during this Ghostify run."):"Complete a Paired Challenge with Quantum Challenges 6 and 8 combinations.") + (tmp.ngp3l ? "" : " Reward: Remove the hardcap reduction of 'And so your life?'."))
 }
 
 function setR23Tooltip(){
@@ -496,7 +497,7 @@ function setR23Tooltip(){
 	let aretheseanother = document.getElementById("Are these another...")
 	let refToEC8 = document.getElementById("... references to EC8?");
 	//ng3p95/////
-	//ng3p96/////
+	let notsoverychall = document.getElementById("Not-so-very-challenging")
 	let ghostliest = document.getElementById("The Ghostliest Side")
 	let metae18 = document.getElementById("Meta-Quintillion")
 
@@ -505,6 +506,7 @@ function setR23Tooltip(){
 	metae18.setAttribute('ach-tooltip', "Get " + shortenCosts(Decimal.pow(10, 1e18)) + " antimatter. Reward: Distant Antimatter Galaxies scaling is 10% weaker and Higgs Bosons produce Bosonic Antimatter at a linear rate.")
 	aretheseanother.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 55555)) + " Quarks. Reward: Gain 500x more Quarks and Ghost Particles.")
 	refToEC8.setAttribute('ach-tooltip', "Get at least 2 Radioactive Decays of every color with at most 10 gains of Unstable Quarks"+(tmp.ngp3c?" and without TS432":"")+". Reward: Gain 1 level of Branch upgrade 2 per 1 Radioactive Decay.")
+	notsoverychall.setAttribute('ach-tooltip', tmp.ngp3c?"Become a ghost while Big Ripped with the Supermastery modifier. Reward: Neutrino Boost 1 is 50% stronger.":"Get 190 Paired Challenges ranking. Reward: Quantum and Paired Challenge goals are decreased by 5%, except during Big Rip.")
 }
 
 function setPreNGP3AchievementTooltip() {

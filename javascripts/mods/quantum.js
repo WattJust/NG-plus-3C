@@ -33,7 +33,7 @@ function quantum(auto, force, challid, bigRip = false, quick) {
 					if (player.options.challConf || (tmp.qu.pairedChallenges.completions.length < 1 && !ghostified)) if (!confirm("You will start a Quantum Challenge, but as a Paired Challenge, there will be two challenges at once. Completing it boosts the rewards of the Quantum Challenges that you chose in this Paired Challenge. You will keep electrons & sacrificed galaxies, but they don't work in this Challenge.")) return
 				} else if (player.options.challConf || (QCIntensity(1) == 0 && !ghostified)) if (!confirm("You will do a Quantum reset, but you will not gain quarks, you keep your electrons & sacrificed galaxies, and you can't buy electron upgrades. You have to reach the set goal of antimatter while getting the meta-antimatter requirement to Quantum to complete this challenge. Electrons and banked eternities have no effect in Quantum Challenges and your electrons and sacrificed galaxies don't reset until you end the challenge.")) return
 				tmp.qu.electrons.amount -= cond_br?NGP3C_BR_COST:getQCCost(challid)
-				if (!quick) for (var m = 0; m < qcm.on.length; m++) if (ranking >= qcm.reqs[qcm.on[m]] || !qcm.reqs[qcm.on[m]]) tmp.qu.qcsMods.current.push(qcm.on[m])
+				if (!quick) for (var m = 0; m < qcm.on.length; m++) if (QCModifierUnl(qcm.on[m], ranking) || !qcm.reqs[qcm.on[m]]) tmp.qu.qcsMods.current.push(qcm.on[m])
 			} else if (pcFocus && pc < 1) {
 				if (!assigned.includes(challid)) {
 					if (!tmp.qu.pairedChallenges.order[pcFocus]) tmp.qu.pairedChallenges.order[pcFocus]=[challid]
@@ -500,7 +500,7 @@ function quantumReset(force, auto, challid, bigRip, implode = false) {
 					tmp.qu.challenges[qc2] = 2
 					tmp.qu.electrons.mult += 0.5
 					tmp.qu.pairedChallenges.completed = tmp.qu.pairedChallenges.current
-					if (pcid == 68 && tmp.qu.pairedChallenges.current == 1 && oldMoney.e >= 1.65e9) giveAchievement("Back to Challenge One")
+					if (pcid == 68 && tmp.qu.pairedChallenges.current == 1 && oldMoney.e >= (tmp.ngp3c?1.05e8:1.65e9)) giveAchievement("Back to Challenge One")
 					if (tmp.qu.pairedChallenges.current == 4) giveAchievement("Twice in a row")
 				}
 				if (tmp.qu.pairedChallenges.completions[pcid] === undefined) tmp.qu.pairedChallenges.completions[pcid] = tmp.qu.pairedChallenges.current

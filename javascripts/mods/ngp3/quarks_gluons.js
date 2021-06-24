@@ -15,20 +15,21 @@ function updateQuantumWorth(mode) {
 			if (tmp.ngp3c) {
 				automaticCharge *= 1.25;
 				if (automaticCharge>=20) automaticCharge = Math.sqrt(automaticCharge*20);
+				if (automaticCharge>=25) automaticCharge = Math.sqrt(automaticCharge*25);
 			}
 			player.ghostify.automatorGhosts.power = Math.max(automaticCharge, player.ghostify.automatorGhosts.power)
 			if (mode != "quick") {
 				document.getElementById("automaticCharge").textContent = automaticCharge.toFixed(2)
 				document.getElementById("automaticPower").textContent = player.ghostify.automatorGhosts.power.toFixed(2)
 			}
-			while (player.ghostify.automatorGhosts.ghosts<getMaxAutoGhosts()&&player.ghostify.automatorGhosts.power>=autoGhostRequirements[player.ghostify.automatorGhosts.ghosts-3]) {
+			while (player.ghostify.automatorGhosts.ghosts<getMaxAutoGhosts()&&player.ghostify.automatorGhosts.power>=getAutoGhostReq(player.ghostify.automatorGhosts.ghosts-3)) {
 				player.ghostify.automatorGhosts.ghosts++
 				document.getElementById("autoGhost"+player.ghostify.automatorGhosts.ghosts).style.display=""
 				if (player.ghostify.automatorGhosts.ghosts>=getMaxAutoGhosts()) document.getElementById("nextAutomatorGhost").parentElement.style.display="none"
 				else {
 					document.getElementById("automatorGhostsAmount").textContent=player.ghostify.automatorGhosts.ghosts
 					document.getElementById("nextAutomatorGhost").parentElement.style.display=""
-					document.getElementById("nextAutomatorGhost").textContent=autoGhostRequirements[player.ghostify.automatorGhosts.ghosts-3].toFixed(1)
+					document.getElementById("nextAutomatorGhost").textContent=getAutoGhostReq(player.ghostify.automatorGhosts.ghosts-3).toFixed(1)
 				}
 			}
 		}
@@ -117,7 +118,7 @@ function assignAll(auto) {
 
 function getQuarkAssignMult() {
 	let r = new Decimal(1)
-	if (hasBosonicUpg(23)) r = r.times(tmp.blu[23])
+	if (hasBosonicUpg(23) && !tmp.ngp3c) r = r.times(tmp.blu[23])
 	return r
 }
 
@@ -248,7 +249,7 @@ function updateColorPowers(log) {
 	let softcapStartLog = tmp.ngp3l ? Math.log10(1300) : 3
 	let softcapPower = 1
 	if (player.ghostify.ghostlyPhotons.unl) softcapPower += tmp.le[4]
-	if (hasBosonicUpg(11)) softcapPower += tmp.blu[11]
+	if (hasBosonicUpg(11) && !tmp.ngp3c) softcapPower += tmp.blu[11]
 	if (bLog > softcapStartLog) {
 		bLog = Decimal.pow(bLog/softcapStartLog,softcapPower/2).times(softcapStartLog)
 		if (bLog.lt(100)) bLog = bLog.toNumber()

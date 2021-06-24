@@ -90,6 +90,7 @@ function getQuarkAntienergyProduction() {
 function getQuarkChargeProductionCap() {
 	let cap = tmp.qu.nanofield.charge.times(2500).sqrt()
 	if (tmp.ngp3c && player.masterystudies.includes("t403")) cap = cap.times(getMTSMult(403))
+	if (hasBosonicUpg(23) && tmp.ngp3c && tmp.qu.bigRip.active) cap = cap.times(tmp.blu[23])
 	return cap;
 }
 
@@ -126,7 +127,7 @@ var nanoRewards = {
 			return x * 2150
 		},
 		preon_charge: function(x) {
-			return Decimal.pow(2.6, x)
+			return Decimal.pow((hasBosonicUpg(22)&&tmp.ngp3c)?162:2.6, x)
 		},
 		per_10_power: function(x) {
 			return x * 0.76
@@ -136,9 +137,13 @@ var nanoRewards = {
 			return Decimal.pow(2.5, Math.sqrt(x))
 		},
 		supersonic_start: function(x) {
-			return Math.floor(Math.max(x - 3.5, 0) * 75e5)
+			let y = Math.max(x - 3.5, 0);
+			if (hasBosonicUpg(25) && tmp.ngp3c) y *= tmp.blu[25];
+			if (tmp.ngp3c) y = Math.sqrt(y) / 3
+			return Math.floor(y * 75e5)
 		},
 		neutrinos: function(x) {
+			if (hasBosonicUpg(25) && tmp.ngp3c) x *= tmp.blu[25];
 			return Decimal.pow(10, x * 10)
 		},
 		light_threshold_speed: function(x) {
@@ -235,9 +240,12 @@ function getNanoRewardPower(reward, rewards) {
 	let x = Math.ceil((rewards - reward + 1) / 8)
 	let apgw = tmp.apgw
 	if (rewards >= apgw) {
-		let sbsc = Math.ceil((apgw - reward + 1) / 8)
-		x = Math.sqrt((x / 2 + sbsc / 2) * sbsc)
-		if (reward == (rewards - 1) % 8 + 1) x += 0.5
+		if (tmp.ngp3c) x += 0.5
+		else {
+			let sbsc = Math.ceil((apgw - reward + 1) / 8)
+			x = Math.sqrt((x / 2 + sbsc / 2) * sbsc)
+			if (reward == (rewards - 1) % 8 + 1) x += 0.5
+		}
 	}
 	let pow = x * tmp.nf.powerEff
 	if (tmp.ngp3c && tmp.cnd) pow += tmp.cnd.nano[reward];
@@ -264,7 +272,7 @@ function getActiveNanoScalings(){
 function getNanoScalingsStart(){
 	let ret = [0, 15, 125, 150, 160, 170, 180]
 	if (tmp.ngp3c) {
-		ret = [0, 7, 45, 75, 100, 150, 180]
+		ret = [0, 7, 45, 75, 150, 175, 200]
 		if (player.masterystudies.includes("t422")) ret[1] = getMTSMult(422)
 	}
 	return ret

@@ -538,7 +538,7 @@ function getMinimumUnstableQuarks() {
 	for (var i=0;i<3;i++) {
 		let b=tmp.qu.tod[c[i]]
 		let d=b.decays||0
-		if (r.decays>d||(r.decays==d&&b.quarks.lte(r.quarks))) r={quarks:b.quarks,decays:d}
+		if (r.decays>d||(r.decays==d&&b.quarks.lte(r.quarks))) r={quarks:b.quarks,decays:d,col:c[i]}
 	}
 	return r
 }
@@ -549,7 +549,7 @@ function getMaximumUnstableQuarks() {
 	for (var i = 0; i < 3; i++) {
 		let b = tmp.qu.tod[c[i]]
 		let d = b.decays || 0
-		if (r.decays < d || (r.decays == d && b.quarks.gte(r.quarks))) r = {quarks: b.quarks, decays: d}
+		if (r.decays < d || (r.decays == d && b.quarks.gte(r.quarks))) r = {quarks: b.quarks, decays: d, col: c[i]}
 	}
 	return r
 }

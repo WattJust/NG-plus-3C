@@ -639,6 +639,12 @@ var softcap_data = {
 			},
 			derv: false,
 		},
+		3: {
+			func: "pow",
+			start: Decimal.pow(10, 2e16),
+			pow: 0.04,
+			derv: false,
+		},
 	},
 	ngp3cTDs: {
 		1: {
@@ -694,7 +700,11 @@ var softcap_data = {
 		},
 		3: {
 			func: "expPow",
-			start: new Decimal("1e2000"),
+			start() {
+				let start = new Decimal("1e2000");
+				if (hasBosonicUpg(12)) start = start.times(tmp.blu[12])
+				return start;
+			},
 			pow: 0.95,
 		},
 	},
@@ -747,6 +757,11 @@ var softcap_data = {
 			start: new Decimal(Number.MAX_VALUE),
 			pow: 1/3,
 		},
+		2: {
+			func: "pow",
+			start() { return new Decimal(tmp.qu.bigRip.active ? "1e500000" : 1/0) },
+			pow: 0.15,
+		},
 	},
 	ngp3cQK: {
 		1: {
@@ -754,6 +769,7 @@ var softcap_data = {
 			start() { 
 				let s = new Decimal(1e200);
 				if (hasNU(8)) s = s.times(Decimal.pow(2, tmp.qu.multPower.total));
+				if (hasBosonicUpg(12)) s = s.times(tmp.blu[12])
 				return s;
 			},
 			pow: 1/3,

@@ -17,7 +17,7 @@ function tickspeedBoostDisplay(){
 function galaxyReqDisplay(){
 	var nextGal = getGalaxyRequirement(0, true)
 	var totalReplGalaxies = getTotalRG()
-	var totalTypes = tmp.aeg ? 4 : player.dilation.freeGalaxies ? 3 : totalReplGalaxies ? 2 : 1
+	var totalTypes = (tmp.aeg&&!tmp.ngp3c) ? 4 : player.dilation.freeGalaxies ? 3 : totalReplGalaxies ? 2 : 1
 	document.getElementById("secondResetLabel").innerHTML = getGalaxyScaleName(nextGal.scaling) + (nextGal.scaling <= 3 ? "Antimatter " : "") + ' Galaxies ('+ getFullExpansion(player.galaxies) + (totalTypes > 1 ? ' + ' + getFullExpansion(totalReplGalaxies) : '') + (totalTypes > 2 ? ' + ' + getFullExpansion(Math.round(player.dilation.freeGalaxies)) : '') + (totalTypes > 3 ? ' + ' + getFullExpansion(tmp.aeg) : '') +'): requires ' + getFullExpansion(nextGal.amount) + ' '+DISPLAY_NAMES[inNC(4) || player.pSac != undefined ? 6 : 8]+' Dimensions'
 }
 

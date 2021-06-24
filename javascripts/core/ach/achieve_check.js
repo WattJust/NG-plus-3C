@@ -264,7 +264,7 @@ function ngP3AchieveCheck(){
 		if (tmp.qu.breakEternity.eternalMatter.gte(9.999999e99)) giveAchievement("This achievement doesn't exist 4")
 		if (ableToGetRid8 && player.infinityPoints.log10() >= 9.5e5) giveAchievement("Please answer me why you are dying.")
 		if (ableToGetRid9 && player.infinityPoints.log10() >= 1.8e6) giveAchievement("Aren't you already dead?")
-		if (ableToGetRid10 && player.infinityPoints.log10() >= 2.25e4) giveAchievement("I give up.")
+		if (ableToGetRid10 && player.infinityPoints.log10() >= (tmp.ngp3c?2e6:2.25e4)) giveAchievement("I give up.")
 		if (player.matter.log10() >= 5000) giveAchievement("Really?")
 	}
 	if (tmp.qu.bigRip.spaceShards.log10() >= 33 && !tmp.qu.breakEternity.did) giveAchievement("Finite Time")
@@ -275,7 +275,8 @@ function ngP3AchieveCheck(){
 	if (tmp.qu.breakEternity.did) giveAchievement("Time Breaker")
 	if (tmp.ngp3c?(tmp.qu.electrons.rebuyables[0]>=8):(masteryStudies.bought >= 48)) giveAchievement("The Theory of Ultimate Studies")
 	if (tmp.ngp3c?(tmp.qu.nanofield.rewards>=tmp.apgw):(ranking >= 165)) giveAchievement("Pulling an All-Nighter")
-	if (ranking >= 190) giveAchievement("Not-so-very-challenging") 
+	if (tmp.ngp3c && (player.money.e>=2.98e8) && tmp.qu.bigRip.active && !tmp.qu.breakEternity.did) giveAchievement("Big Rip isn't enough")
+	if (ranking >= 190 && !tmp.ngp3c) giveAchievement("Not-so-very-challenging") 
 	if (tmp.pcc) if (tmp.pcc.normal >= 24) giveAchievement("The Challenging Day")
 	if (speedrunMilestonesReached >= 24) giveAchievement("And the winner is...")
 	if (speedrunMilestonesReached >= 28) giveAchievement("Special Relativity")

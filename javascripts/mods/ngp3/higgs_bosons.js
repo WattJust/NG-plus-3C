@@ -20,7 +20,7 @@ function unlockHiggs() {
 }
 
 function canUnlockHiggs() {
-	return player.money.gte(Decimal.pow(10, 2e17)) && player.ghostify.bl.am.gte(getHiggsRequirement()) && !tmp.ngp3l
+	return player.money.gte(Decimal.pow(10, tmp.ngp3c?6.75e15:2e17)) && player.ghostify.bl.am.gte(getHiggsRequirement()) && !tmp.ngp3l && !tmp.ngp3c
 }
 
 function updateHiggsUnlocks() {
@@ -32,11 +32,7 @@ function updateHiggsUnlocks() {
 	let unl = player.ghostify.hb.unl
 	document.getElementById("nextParticle").style.display = unl ? "none" : ""
 	document.getElementById("bosonicResets").style.display = unl ? "" : "none"
-	if (!unl) updateHiggsUnlockDisplay()
-}
-
-function updateHiggsUnlockDisplay() {
-	document.getElementById("nextParticle").textContent = "To unlock the next particle (Higgs Bosons), you need to get " + shortenCosts(Decimal.pow(10, 2e17)) + " antimatter and " + shortenCosts(getHiggsRequirement()) + " Bosonic Antimatter first."
+	if (!unl) updateNextParticleUnlockDisplay()
 }
 
 function bosonicLabReset() {
@@ -64,7 +60,8 @@ function bosonicLabReset() {
 		usedEnchants: [],
 		upgrades: [],
 		battery: new Decimal(0),
-		odSpeed: player.ghostify.bl.odSpeed
+		odSpeed: player.ghostify.bl.odSpeed,
+		UPGSUNL: tmp.ngp3c?true:undefined,
 	}
 	var order = [11, 12, 13, 15, 14, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45]
 	//tmp.bl.upgrades needs to be updated (also 12 needs to be added)
@@ -85,7 +82,8 @@ function bosonicLabReset() {
 		zNeReq: new Decimal(1),
 		wpb: new Decimal(0),
 		wnb: new Decimal(0),
-		zb: new Decimal(0)
+		zb: new Decimal(0),
+		WZBUNL: tmp.ngp3c?true:undefined,
 	}
 	updateBosonicAMDimReturnsTemp()
 	ghostify(false, true)

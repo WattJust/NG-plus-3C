@@ -2071,6 +2071,7 @@ function updateNGp3DisplayStuff(){
 		document.getElementById("beu4desc").textContent = tmp.ngp3c?"The reduction to Timeshard gain is 5% weaker, plus 10% weaker for each upgrade bought in this row":"Boost Time Dimensions 4 - 6 based on your Eternity Points and Space Shards"
 		document.getElementById("beu8desc").textContent = tmp.ngp3c?"Replicated Condensers are":"The Infinite Time reward is"
                 document.getElementById("beu9ec10").style.display = tmp.ngp3c?"none":""
+                document.getElementById("beu10nodil").textContent = tmp.ngp3c?", TS13, & TS264 in non-":""
                 document.getElementById("beu4effdiv").style.display = tmp.ngp3c?"none":""
 		document.getElementById("beu5effectdesc").textContent = tmp.ngp3c?"Boost the Break Eternity buyable":"Boost the tickspeed reduction"
 		document.getElementById("breakUpg7obsc").textContent = tmp.ngp3c?" (unaffected by Obscurements)":""
@@ -2104,6 +2105,7 @@ function updateNGp3DisplayStuff(){
         document.getElementById("violetDesc").textContent = tmp.ngp3c ? "first Time Dimensions" : "sixth Time Dimensions"
         document.getElementById("leBoost2GalaxyType").textContent = tmp.ngp3c ? "Dark Matter" : "Ghostly"
         updateBLUnlockDisplay()
+        document.getElementById("apgRewardTarget").textContent = tmp.ngp3c ? "all rewards" : "your current reward"
         document.getElementById("bpc68").textContent=shortenMoney(tmp.qu.pairedChallenges.pc68best)
         document.getElementById("odSlider").value=Math.round((tmp.bl.odSpeed-1)/4*50)
         for (var g=1;g<=br.limit;g++) document.getElementById("typeToExtract"+g).className=tmp.bl.typeToExtract==g?"chosenbtn":"storebtn"
@@ -2120,9 +2122,9 @@ function updateNGp3DisplayStuff(){
         updateGPHUnlocks()
         updateBLUnlocks()
         updateBosonicStuffCosts()
-        if (!tmp.ngp3l) {
-                document.getElementById("nextParticle").textContent = "To unlock the next particle (Higgs Bosons), you need to get " + shortenCosts(Decimal.pow(10, 2e17)) + " antimatter and " + shortenCosts(getHiggsRequirement()) + " Bosonic Antimatter first."
-        }
+        updateWZBUnlocks()
+        updateBLUpgUnlocks()
+        if (!tmp.ngp3l) updateNextParticleUnlockDisplay();
         updateHiggsUnlocks()
 }
 

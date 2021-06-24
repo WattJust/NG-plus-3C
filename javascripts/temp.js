@@ -218,12 +218,13 @@ function updateIntergalacticTemp() {
 	if (!tmp.ngp3) return
 	x = player.galaxies
 	if (isLEBoostUnlocked(3) && !player.quantum.bigRip.active) x *= tmp.leBonus[3]
-	if (tmp.be && player.dilation.active && tmp.qu.breakEternity.upgrades.includes(10)) x *= getBreakUpgMult(10)
+	if (tmp.be && (tmp.ngp3c?!player.dilation.active:player.dilation.active) && tmp.qu.breakEternity.upgrades.includes(10)) x *= getBreakUpgMult(10)
 	if (!tmp.ngp3l) x += tmp.effAeg
 	tmp.igg = x
 
 	tmp.igs = 0 //Intergalactic Scaling ; used in the display text
 	var igLog = Math.pow(x, Math.min(Math.sqrt(Math.log10(Math.max(x,1))) * 2, 2.5)) //Log10 of reward
+	if (hasBosonicUpg(11) && tmp.ngp3c) igLog *= tmp.blu[11]+1
 	
 	if (player.quantum.bigRip.active && !tmp.ngp3l) {
 		if (igLog > 1e9) { //Distant
@@ -237,11 +238,11 @@ function updateIntergalacticTemp() {
 		tmp.ig = Decimal.pow(10, igLog)
 		return
 	}
-	if ((player.aarexModifications.ngudpV || !tmp.ngp3l) && igLog > 1e15) { //Further
+	if ((player.aarexModifications.ngudpV || !tmp.ngp3l) && !tmp.ngp3c && igLog > 1e15) { //Further
 		igLog = Math.pow(10 + 6 * Math.log10(igLog), 7.5)
 		tmp.igs = 2
 	}
-	if (player.aarexModifications.ngudpV && igLog > 1e16) { //Remote
+	if (player.aarexModifications.ngudpV && !tmp.ngp3c && igLog > 1e16) { //Remote
 		igLog = Math.pow(84 + Math.log10(igLog), 8)
 		tmp.igs = 3
 	}
@@ -257,7 +258,7 @@ function updateIntergalacticTemp() {
 
 function updateAntiElectronGalaxiesTemp(){
 	tmp.aeg = 0
-	if (hasBosonicUpg(14) && !player.quantum.bigRip.active) tmp.aeg = Math.max(tmp.blu[14] - tmp.qu.electrons.sacGals, 0)
+	if (hasBosonicUpg(14) && !tmp.ngp3c && !player.quantum.bigRip.active) tmp.aeg = Math.max(tmp.blu[14] - tmp.qu.electrons.sacGals, 0)
 	tmp.effAeg = tmp.aeg
 	if (tmp.aeg > 0) {
 		if (hasBosonicUpg(34)) tmp.effAeg *= tmp.blu[34]
@@ -363,6 +364,7 @@ function updateNeutrinoBoostsTemp() {
 	tmp.nbc[1] = tmp.ngp3c?1:2;
 	tmp.nbc[2] = tmp.ngp3c?3:4;
 	tmp.nbc[8] = tmp.ngp3c?4e19:1e35;
+	tmp.nbc[9] = tmp.ngp3c?1e96:"1e900";
 }
 
 function updateNU1Temp(){
@@ -467,7 +469,7 @@ function updateBreakEternityUpgrade2Temp(){
 
 function updateBreakEternityUpgrade3Temp(){
 	var ep = player.eternityPoints
-	var nerfUpgs = !tmp.be && hasBosonicUpg(24)
+	var nerfUpgs = !tmp.be && hasBosonicUpg(24) && !tmp.ngp3c
 	var log = ep.div(tmp.ngp3c?"1e8150":"1e1370").add(1).log10()
 	if (nerfUpgs) log /= 2e6
 	var exp = Math.pow(log, tmp.ngp3c?(1/5):(1/3)) * 0.5
@@ -500,7 +502,7 @@ function updateBreakEternityUpgrade5Temp(){
 function updateBreakEternityUpgrade6Temp(){
 	var ep = player.eternityPoints
 	var em = tmp.qu.breakEternity.eternalMatter
-	var nerfUpgs = !tmp.be && hasBosonicUpg(24)
+	var nerfUpgs = !tmp.be && hasBosonicUpg(24) && !tmp.ngp3c
 	var log1 = ep.div("1e4900").add(1).log10()
 	var log2 = em.div(1e45).add(1).log10()
 	if (nerfUpgs) log1 /= 2e6
@@ -531,7 +533,9 @@ function updateBreakEternityUpgrade9Temp(){
 
 function updateBreakEternityUpgrade10Temp(){
 	var ep = player.eternityPoints
-	tmp.beu[10] = Math.max(Math.log10(ep.add(1).log10() + 1) - 1, 1)
+	let beu10 = Math.max(Math.log10(ep.add(1).log10() + 1) - 1, 1)
+	if (tmp.ngp3c) beu10 = Math.sqrt(beu10)
+	tmp.beu[10] = beu10;
 }
 
 function updateBreakEternityUpgradesTemp() {
@@ -540,7 +544,7 @@ function updateBreakEternityUpgradesTemp() {
 	var ts = player.timeShards
 	var ss = tmp.qu.bigRip.spaceShards
 	var em = tmp.qu.breakEternity.eternalMatter
-	var nerfUpgs = !tmp.be && hasBosonicUpg(24)
+	var nerfUpgs = !tmp.be && hasBosonicUpg(24) && !tmp.ngp3c
 
 	updateBreakEternityUpgrade1Temp()
 	updateBreakEternityUpgrade2Temp()
@@ -653,15 +657,18 @@ function updateBosonicAMDimReturnsTemp() {
 
 function updateBosonicEnchantsTemp(){
 	tmp.bEn.lvl = {}
+	tmp.bEn.totalLvl = new Decimal(0)
 	for (var g2 = 2; g2 <= br.limit; g2++) for (var g1 = 1; g1 < g2; g1++) {
 		var id = g1 * 10 + g2
 		tmp.bEn.lvl[id] = player.ghostify.bl.enchants[id] || new Decimal(0)
+		tmp.bEn.totalLvl = tmp.bEn.totalLvl.plus(tmp.bEn.lvl[id])
 		if (bEn.effects[id] !== undefined) tmp.bEn[id] = getEnchantEffect(id)
 	}
+	tmp.bEn.totalLvlEffect = tmp.ngp3c?getBENTotalLevelEffect():new Decimal(1);
 }
 
 function updateBosonicUpgradesTemp(){
-	for (var r = bu.rows; r >= 1; r--) for (var c = 1; c < 6; c++) {
+	for (var r = bu.rows; r >= 1; r--) for (var c = 5; c > 0; c--) {
 		var id = r * 10 + c
 		if (bu.effects[id] !== undefined) tmp.blu[id] = bu.effects[id]()
 	}
@@ -673,12 +680,21 @@ function updateWZBosonsTemp(){
 	var wnl = player.ghostify.wzb.wnb.add(1).log10()
 
 	var bosonsExp = Math.max(wpl * (player.ghostify.wzb.wpb.sub(player.ghostify.wzb.wnb.min(player.ghostify.wzb.wpb))).div(player.ghostify.wzb.wpb.max(1)).toNumber(), 0)
-	data.wbt = Decimal.pow(tmp.newNGP3E ? 5 : 3, bosonsExp) //W Bosons boost to extract time
+	if (tmp.ngp3c) {
+		bosonsExp = Math.pow(bosonsExp, player.ghostify.bl.UPGSUNL?.6:.5);
+		if (player.ghostify.bl.upgrades.length>7) bosonsExp += .5;
+	}
+	
+	data.wbt = Decimal.pow((tmp.newNGP3E||tmp.ngp3c) ? 5 : 3, bosonsExp) //W Bosons boost to extract time
 	data.wbo = Decimal.pow(10, Math.max(bosonsExp, 0)) //W Bosons boost to Z Neutrino oscillation requirement
-	data.wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(100).max(1).pow(1 / 3).sub(1) //W Bosons boost to Bosonic Antimatter production
+	
+	let wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(tmp.ngp3c?((player.ghostify.bl.upgrades.length>1)?.01:.1):100).max(1)
+	if (tmp.ngp3c) wbp = Decimal.pow(2, Math.pow(wbp.log2(), .95));
+	data.wbp = wbp.pow((player.ghostify.bl.upgrades.length>4&&tmp.ngp3c)?(2 / 3+Math.max((Math.min(player.ghostify.bl.upgrades.length, 10)-6)/5, 0)):(1 / 3)).sub(tmp.ngp3c?0:1) //W Bosons boost to Bosonic Antimatter production
 
 	var zbslog = player.ghostify.wzb.zb.div(10).add(1).sqrt().log10()
-	data.zbs = Decimal.pow(10, zbslog) //Z Bosons boost to W Quark
+	if (tmp.ngp3c) zbslog *= Math.log10(player.ghostify.bl.upgrades.length + 1) + 1
+	data.zbs = Decimal.pow(10, Math.pow(zbslog, tmp.ngp3c?.8:1)) //Z Bosons boost to W Quark
 }
 
 function updateNanoEffectUsages() {
@@ -764,7 +780,7 @@ function updateCondenseTemp() {
 	let c2 = player.condensed.repl
 	if (c2>=2) c2 = Math.pow(c2*4, 1/3)
 	if (c2>9) c2 = Math.pow(c2, 3)/81
-	tmp.cnd.repl.eff2 = new Decimal(repl.max(1).log10()).div(3).times(Math.pow(c2*tmp.cnd.repl.pow, 0.95)/2.5).times(player.timestudy.studies.includes(24)?(player.timestudy.studies.includes(197)?(repl.plus(1).log10()+2):2):1).plus(1)
+	tmp.cnd.repl.eff2 = new Decimal(repl.max(1).log10()).div(3).times(Math.pow(c2*tmp.cnd.repl.pow, 0.95)/2.5).times(player.timestudy.studies.includes(24)?(player.timestudy.studies.includes(197)?(repl.plus(1).log10()+2):2):1).plus(1).times(hasBosonicUpg(14) ? tmp.blu[14]||1 : 1)
 
 	if (player.timestudy.studies.includes(23)) tmp.cnd.repl.eff1 = tmp.cnd.repl.eff1.plus(tmp.cnd.repl.eff2.sub(1).max(0))
 

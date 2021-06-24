@@ -28,7 +28,11 @@ function getDilationMetaDimensionMultiplier() {
 
 function getMetaDimensionMultiplier(tier) {
 	if (player.currentEternityChall === "eterc11") return new Decimal(1)
-	if (inQC("8c")) return softcap(tmp.cnd.meta[tier]||new Decimal(1), "ngp3cMDs")
+	if (inQC("8c")) {
+		let r = tmp.cnd.meta[tier]||new Decimal(1)
+		if (tmp.ngp3c && hasBosonicUpg(11) && tmp.qu.bigRip.active) r = r.times(dilates(tmp.ig||new Decimal(1)));
+		return softcap(r, "ngp3cMDs")
+	}
 	let ret = Decimal.pow(getPerTenMetaPower(), Math.floor(player.meta[tier].bought / 10))
 	ret = ret.times(Decimal.pow(getMetaBoostPower(), Math.max(player.meta.resets + 1 - tier, 0)))
 	ret = ret.times(tmp.mdgm) //Global multiplier of all Meta Dimensions
@@ -89,7 +93,7 @@ function getPerTenMetaPower() {
 	let r = 2
 	let exp = 1
 	if (player.dilation.upgrades.includes("ngpp4")) r = getDil15Bonus()
-	if (hasBosonicUpg(25)) exp = tmp.blu[25]
+	if (hasBosonicUpg(25) && !tmp.ngp3c) exp = tmp.blu[25]
 	return Math.pow(r, exp)
 }
 

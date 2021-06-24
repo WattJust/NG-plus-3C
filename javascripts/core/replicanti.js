@@ -128,7 +128,7 @@ function upgradeReplicantiGalaxy() {
 	var cost = getRGCost()
 	if (player.infinityPoints.gte(cost) && player.eterc8repl !== 0) {
 		player.infinityPoints = player.infinityPoints.minus(cost)
-		player.replicanti.galCost = getRGCost(1)
+		player.replicanti.galCost = getRGCost(1, true)
 		player.replicanti.gal += 1
 		if (player.currentEternityChall == "eterc8") player.eterc8repl -= 1
 		document.getElementById("eterc8repl").textContent = "You have "+player.eterc8repl+" purchases left."

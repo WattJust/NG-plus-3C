@@ -154,8 +154,10 @@ var masteryStudies = {
 		},
 		264: function(){
 			let r = 1
-			if (tmp.ngp3l) r = Math.pow(player.galaxies + 1, 0.25) * 2
-			else r = player.galaxies / 100 + 1
+			let g = player.galaxies;
+			if (tmp.be && (tmp.ngp3c?!player.dilation.active:player.dilation.active) && tmp.qu.breakEternity.upgrades.includes(10)) g *= getBreakUpgMult(10)
+			if (tmp.ngp3l) r = Math.pow(g + 1, 0.25) * 2
+			else r = g / 100 + 1
 			if (player.aarexModifications.newGameExpVersion) return Math.pow(r, 2)
 			if (player.aarexModifications.ngp3c) return Decimal.pow(r, 16)
 			return r
@@ -216,9 +218,10 @@ var masteryStudies = {
 			return ret
 		},
 		345: function() {
+			let g = player.galaxies
 			let mult = Math.pow(2, Math.sqrt(Math.log10(player.money.plus(1).log10()/250e9+1)))
 			if (tmp.twr) if (tmp.twr.gte(9)) mult *= 1.1;
-			let ret = mult*Math.sqrt(player.galaxies/20)/10+1
+			let ret = mult*Math.sqrt(g/20)/10+1
 			if (ret>=6) ret = Math.log10(ret)*6/Math.log10(6)
 			return ret;
 		},
