@@ -44,6 +44,7 @@ function bosonicLabReset() {
 	player.ghostify.ghostlyPhotons.darkMatter = new Decimal(0)
 	player.ghostify.ghostlyPhotons.ghostlyRays = new Decimal(0)
 	player.ghostify.ghostlyPhotons.lights = [0,0,0,0,0,0,0,0]
+	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 	tmp.updateLights = true
 	var startingEnchants = tmp.bEn[14] ? tmp.bEn[14].bUpgs : 0
 	player.ghostify.bl = {

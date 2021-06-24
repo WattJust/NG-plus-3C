@@ -34,11 +34,11 @@ function updateBLUpgUnlocks() {
 }
 
 function canUnlockWZB() {
-	return tmp.bEn.totalLvl.gte(10) && tmp.ngp3c;
+	return (tmp.bEn&&tmp.bEn.totalLvl)?(tmp.bEn.totalLvl.gte(10) && tmp.ngp3c):false;
 }
 
 function canUnlockBosonicUpgrades() {
-	return tmp.bl.am.gte(100) && tmp.bEn.totalLvl.gte(100) && tmp.ngp3c;
+	return (tmp.bEn&&tmp.bEn.totalLvl&&tmp.bl&&tmp.bl.am)?(tmp.bl.am.gte(100) && tmp.bEn.totalLvl.gte(100) && tmp.ngp3c):false;
 }
 
 function updateBLUnlockDisplay() {
