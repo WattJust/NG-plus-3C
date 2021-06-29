@@ -154,6 +154,7 @@ function getHiggsScalingData(index) {
 
 function implementHiggsReqScaling(x, invert=false) {
 	for (let i=1;i<=Object.keys(higgs_scaling).length;i++) {
+		if (invert) i = Object.keys(higgs_scaling).length-i+1
 		let data = getHiggsScalingData(i);
 		if (x<data.start) continue;
 		if (invert) x = Math.pow(x * Math.pow(data.start, data.exp-1), 1/data.exp)
