@@ -266,7 +266,7 @@ function getParticleMassGainBase() {
 }
 
 function updateHiggsMechanismTab(speed, full=false) {
-	if (!tmp.ngp3c) return;
+	if ((!tmp.ngp3c)||(!tmp.hm)||(!tmp.hb)) return;
 	let e = hm[Object.keys(hm)[tmp.hm.unlocks+1]]
 	document.getElementById("hmReqDiv").style.display = e?"":"none"
 	document.getElementById("hmReq").textContent = getFullExpansion(e?e.req:1/0)+" Higgs Boson"+((e?e.req:1/0)==1?"":"s")
