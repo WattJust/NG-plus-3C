@@ -379,9 +379,17 @@ function giveAchievement(name, noUpdate) {
         }
 	if (name == "Bright as the Anti-Sun" && !tmp.bl.upgrades.includes(32)) tmp.bl.upgrades.push(32)
 	if (name == "... references to EC8?") updateTODStuff()
-	if (name == "Not-so-very-challenging") updateQuantumChallenges()
-        if (!noUpdate) {
-		if (name == "A sound financial decision") localStorage.setItem(btoa("dsAM_asfd"),"")
+	if (name == "Not-so-very-challenging") {
+        if (tmp.ngp3c) {
+            let i = 0;
+            for (let t in player.ghostify.hb.masses) {
+                updateHiggsMechSelectBtn(t, i)
+                i++;
+            }
+        } else updateQuantumChallenges()
+    }
+    if (!noUpdate) {
+	    if (name == "A sound financial decision") localStorage.setItem(btoa("dsAM_asfd"),"")
 		else $.notify(name, "success");
 		updateAchievements()
 	}
@@ -564,7 +572,19 @@ function metaAchMultLabelUpdate() {
     }
     var metaMult = (tmp.qcRewards ? tmp.qcRewards[6] : 1)
     if (tmp.qu.challenges[6] > 0) {
-        document.getElementById("metaAchMultLabel").style.display = "inline-block"
+        document.getElementById("metaAchMultLabel").style.display = "block"
         document.getElementById("metaAchMultLabel").textContent = "Achievement multiplier to Meta Dimensions: " + shorten(metaMult) + "x"
     } else document.getElementById("metaAchMultLabel").style.display = "none"
+}
+
+function bosonicAMAchMultLabelUpdate() {
+    if (!tmp.ngp3 || tmp.ngp3l) {
+        document.getElementById("bosonicAMAchMultLabel").style.display = "none"
+        return
+    }
+    var bosonMult = getAchBAMMult()
+    if (player.achievements.includes("ng3p91")) {
+        document.getElementById("bosonicAMAchMultLabel").style.display = "block"
+        document.getElementById("bosonicAMAchMultLabel").textContent = "Achievement multiplier to Bosonic Antimatter gain: " + shorten(bosonMult) + "x"
+    } else document.getElementById("bosonicAMAchMultLabel").style.display = "none"
 }

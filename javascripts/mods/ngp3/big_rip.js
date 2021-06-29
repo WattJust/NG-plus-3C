@@ -1,6 +1,6 @@
 function unstoreTT() {
 	if (tmp.qu.bigRip.storedTS===undefined) return
-	player.timestudy.theorem = tmp.qu.bigRip.storedTS.tt
+	player.timestudy.theorem = nP(tmp.qu.bigRip.storedTS.tt)
 	player.timestudy.amcost = Decimal.pow(10, 2e4 * (tmp.qu.bigRip.storedTS.boughtA + 1))
 	player.timestudy.ipcost = Decimal.pow(10, 100 * tmp.qu.bigRip.storedTS.boughtI)
 	player.timestudy.epcost = Decimal.pow(2, tmp.qu.bigRip.storedTS.boughtE)
@@ -87,8 +87,8 @@ function tweakBigRip(id, reset) {
 		if (!reset) updateEternityChallenges()
 	}
 	if (!tmp.qu.bigRip.upgrades.includes(9)) {
-		if (id == 3) player.timestudy.theorem += 5
-		if (id == 5) player.timestudy.theorem += 20
+		if (id == 3) player.timestudy.theorem = nA(player.timestudy.theorem, 5)
+		if (id == 5) player.timestudy.theorem = nA(player.timestudy.theorem, 20)
 		if (id == 7 && !player.timestudy.studies.includes(tmp.ngp3c?181:192)) player.timestudy.studies.push(tmp.ngp3c?181:192)
 	}
 	if (id == 9) {
@@ -99,7 +99,7 @@ function tweakBigRip(id, reset) {
 			epcost: new Decimal(1),
 			studies: []
 		}
-		if (!tmp.qu.bigRip.upgrades.includes(12)) player.timestudy.theorem += tmp.ngp3c?5750:1350
+		if (!tmp.qu.bigRip.upgrades.includes(12)) player.timestudy.theorem = nA(player.timestudy.theorem, tmp.ngp3c?5750:1350)
 	}
 	if (id == 10) {
 		if (!player.dilation.studies.includes(1)) player.dilation.studies.push(1)

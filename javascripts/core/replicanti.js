@@ -87,6 +87,12 @@ function isIntervalAffordable() {
 	return player.replicanti.interval > (player.timestudy.studies.includes(22) || player.boughtDims ? 1 : 50)
 }
 
+function getDistantRGStart() {
+	let start = 3e3
+	if (hasBosonicUpg(43) && tmp.ngp3c) start += tmp.blu[43]
+	return start;
+}
+
 function getRGCost(offset = 0, costChange) {
 	let ret = player.replicanti.galCost
 	if (offset > 0) {
@@ -105,7 +111,9 @@ function getRGCost(offset = 0, costChange) {
 					if (player.masterystudies != undefined) if (player.masterystudies.includes("t266")) isReduced = true
 					if (isReduced) {
 						increase += (offset - Math.max(scaleStart-1 - player.replicanti.gal, 0)) * (1500 * (offset - Math.max(scaleStart-1 - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, scaleStart-1) * 2) - 1183500)
-						if (player.replicanti.gal + offset > 2998) increase += (offset - Math.max(2998 - player.replicanti.gal, 0)) * (5e3 * (offset - Math.max(2998 - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, 2998) * 2) - 29935e3)
+
+						let distantStart = getDistantRGStart()
+						if (player.replicanti.gal + offset > distantStart-2) increase += (offset - Math.max((distantStart-2) - player.replicanti.gal, 0)) * (15e6/distantStart * (offset - Math.max((distantStart-2) - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, distantStart-2) * 2) - 29935e3)
 						if (player.replicanti.gal + offset > 58198) increase += (offset - Math.max(58199 - player.replicanti.gal, 0)) * (1e6 * (offset - Math.max(58199 - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, 58199) * 2) - 58199e6)
 						if (player.replicanti.gal + offset >= 200000) {
 							increase += 1e12 * (offset - Math.max(199999 - player.replicanti.gal, 0))
@@ -216,6 +224,7 @@ function updateExtraReplGalaxies() {
 		tmp.pe=Math.pow(tmp.qu.replicants.quarks.add(1).log10(),exp)
 		tmp.pe*=tmp.ngp3l?0.67*(player.masterystudies.includes("t412")?1.25:1):0.8
 		if (player.ghostify.ghostlyPhotons.unl) tmp.pe*=tmp.le[3]
+		if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm.preons && player.ghostify.hb.masses.preons) tmp.pe *= tmp.hm.preons.eff
 		extraReplGalaxies*=colorBoosts.g+tmp.pe
 	}
 	extraReplGalaxies = Math.floor(extraReplGalaxies)
@@ -245,8 +254,9 @@ function getReplSpeed() {
 	if (GUBought("gb2")) exp *= 2
 	if (hasNU(12) && tmp.qu.bigRip.active && tmp.ngp3c) exp *= tmp.nu[4].time;
 	if (hasNU(13) && tmp.ngp3c) exp *= 1.25;
-	if (hasBosonicUpg(35)) exp += tmp.blu[35].rep
-	if (hasBosonicUpg(44)) exp += tmp.blu[44]
+	if (hasNU(16) && player.ghostify.hb.unl && tmp.ngp3c) exp *= tmp.nu[7];
+	if (hasBosonicUpg(35) && !tmp.ngp3c) exp += tmp.blu[35].rep
+	if (hasBosonicUpg(44) && !tmp.ngp3c) exp += tmp.blu[44]
 	
 	return {inc: inc, exp: exp}
 }

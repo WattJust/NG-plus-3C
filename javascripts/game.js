@@ -389,6 +389,25 @@ function setupBosonicRunes(){
 	}
 }
 
+function setupHiggsMechanism() {
+	var hmTable = document.getElementById("higgsMech");
+	for (r = 1; r <= Math.ceil(hm.limit / 3); r++) {
+		var row = hmTable.insertRow(r - 1)
+		row.id = "hmRow" + r
+		for (c = 1; c <= Math.min(hm.limit - 3 * (r-1), 3); c++) {
+			var col = row.insertCell(c - 1)
+			var x = (r-1)*3+c
+			var type = Object.keys(hm)[x];
+			var data = hm[type];
+			col.id = "hm"+type+"div"
+			col.style.display = "none"
+			col.style.margin = "0 20px 0 20px"
+			col.innerHTML = "<br><h2 style='font-size: 25px;'>"+data.title+"<span id='hm"+type+"sel'></span></h2>Mass: <b id='hm"+type+"'>0</b> amu <span style='font-size: 15px;'>(+<span id='hm"+type+"gain'>0</span> amu/s)</span><br>Effect: <b id='hm"+type+"eff'>???</b><br><button id='hm"+type+"selectbtn' class='storebtn' onclick='toggleHiggsMech("+(x-1)+")'>Toggle</button>"
+
+		}
+	}
+}
+
 function setupHTMLAndData() {
 	setupParadoxUpgrades()
 	setupInfUpgHTMLandData()
@@ -402,6 +421,7 @@ function setupHTMLAndData() {
 	setupBosonicExtraction()
 	setupBosonicUpgrades()
 	setupBosonicRunes()
+	setupHiggsMechanism()
 	setupAutobuyerHTMLandData()
 }
 
@@ -2280,6 +2300,7 @@ function changeSaveDesc(saveId, placement) {
 				msg += "+"
 				if (!temp.exdilation) msg = exp + "+4"
 			}
+			if (temp.aarexModifications.ngp3c) msg += "C"
 			if (temp.aarexModifications.ngp3lV) msg += "L"
 		}
 		if (temp.aarexModifications.ngmX > 3) msg += "-" + temp.aarexModifications.ngmX
@@ -2291,7 +2312,7 @@ function changeSaveDesc(saveId, placement) {
 		else msg = "NG" + msg
 		if (ex) msg = msg == "NG" ? "Expert Mode" : msg + "Ex"
 		if (temp.galacticSacrifice&&temp.aarexModifications.newGameMinusVersion) msg += ", NG-"
-		if ((temp.exdilation || temp.meta) && !temp.aarexModifications.newGamePlusVersion) msg += ", no NG+ features"
+		if ((temp.exdilation || temp.meta) && !temp.aarexModifications.newGamePlusVersion && !temp.aarexModifications.ngp3c) msg += ", no NG+ features"
 		msg = (msg == "NG" ? "" : msg + "<br>") + (isSaveCurrent ? "Selected<br>" : "Played for " + timeDisplayShort(temp.totalTimePlayed) + "<br>")
 		var originalBreak = player.break
 		var originalNotation = player.options.notation
@@ -3849,13 +3870,13 @@ function doCheckECCompletionStuff(){
 			else if (player.eternityChalls.eterc11 < 5) player.eternityChalls.eterc11++
 		}
 		if (tmp.ngp3 ? tmp.qu.autoEC && player.eternityChalls[player.currentEternityChall] < 5 : false) {
-			if (player.etercreq > 12) player.timestudy.theorem += masteryStudies.costs.ec[player.etercreq]
-			else player.timestudy.theorem += ([0,30,35,40,70,130,85,115,115,415,550,1,1])[player.etercreq]
+			if (player.etercreq > 12) player.timestudy.theorem = nA(player.timestudy.theorem, masteryStudies.costs.ec[player.etercreq])
+			else player.timestudy.theorem = nA(player.timestudy.theorem, ([0,30,35,40,70,130,85,115,115,415,550,1,1])[player.etercreq])
 			player.eternityChallUnlocked = 0
 			tmp.qu.autoECN = player.etercreq
 		} else if (ghostified && player.ghostify.milestones > 1) {
-			if (player.etercreq > 12) player.timestudy.theorem += masteryStudies.costs.ec[player.etercreq]
-			else player.timestudy.theorem += ([0, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1])[player.etercreq]
+			if (player.etercreq > 12) player.timestudy.theorem = nA(player.timestudy.theorem, masteryStudies.costs.ec[player.etercreq])
+			else player.timestudy.theorem = nA(player.timestudy.theorem, ([0, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1])[player.etercreq])
 			player.eternityChallUnlocked = 0
 		} else forceRespec = true
 		player.etercreq = 0
@@ -4211,7 +4232,7 @@ function canUnlockEC(idx, cost, study, study2) {
 	study2 = (study2 !== undefined) ? study2 : 0;
 	if (player.eternityChallUnlocked !== 0) return false
 	if (!player.timestudy.studies.includes(study) && (player.study2 == 0 || !player.timestudy.studies.includes(study2))) return false
-	if (player.timestudy.theorem < cost) return false
+	if (nL(player.timestudy.theorem, cost)) return false
 	if (player.etercreq == idx && idx !== 11 && idx !== 12) return true
 
 	var ecStarts = getECStarts()
@@ -4303,7 +4324,7 @@ for (let ecnum = 1; ecnum <= 12; ecnum ++){
 	document.getElementById("ec" + ecnum + "unl").onclick = function(){
 		if (canUnlockECFromNum(ecnum)) {
 			unlockEChall(ecnum)
-			player.timestudy.theorem -= ECCosts[ecnum]
+			player.timestudy.theorem = nS(player.timestudy.theorem, ECCosts[ecnum])
 			drawStudyTree()
 		}
 	}
@@ -4961,6 +4982,7 @@ setInterval(function() {
 	ALLACHIEVECHECK()
 	bendTimeCheck()
 	metaAchMultLabelUpdate()
+	bosonicAMAchMultLabelUpdate()
 
 	// AB Stuff
 	updateReplicantiGalaxyToggels()
@@ -5209,7 +5231,7 @@ function dimensionButtonDisplayUpdating(){
 	document.getElementById("mdtabbtn").style.display = player.dilation.studies.includes(6) ? "" : "none"
 }
 
-function ghostifyAutomationUpdating(){
+function ghostifyAutomationUpdating(diff){
 	if (ghostified && isAutoGhostsSafe) {
 		var colorShorthands=["r", "g", "b"]
 		for (var c = 1; c <= 3; c++) {
@@ -5239,6 +5261,7 @@ function ghostifyAutomationUpdating(){
 		if (isAutoGhostActive(15)) if (tmp.qu.bigRip.active && getGHPGain().gte(player.ghostify.automatorGhosts[15].a)) ghostify(true)
 		if (tmp.ngp3l) return
 		if (isAutoGhostActive(16)) maxNeutrinoMult()
+		let constantElectronUpdates = tmp.ngp3c ? (player.ghostify.hb.unl && tmp.hm.electrons && Decimal.gt(player.ghostify.hb.masses.electrons||0, 0)) : false
 		if (isAutoGhostActive(18)) {
 			var added = 0
 			var addedTotal = 0
@@ -5249,16 +5272,20 @@ function ghostifyAutomationUpdating(){
 				}
 				if (added > 0) tmp.qu.electrons.mult += added * getElectronUpgIncrease(u)
 			}
-			if (addedTotal > 0) updateElectrons(true)
+			if (addedTotal > 0 && !constantElectronUpdates) updateElectrons(true)
+			if (tmp.ngp3c) elecCondense(true)
 		}
+		if (isAutoGhostActive(19)) maxAllBosonicEnchants(player.ghostify.automatorGhosts[19].a*diff/100)
 		if (isAutoGhostActive(20)) buyMaxBosonicUpgrades()
+		if (constantElectronUpdates) updateElectrons(true, true);
 	} 
 }
 
 function WZBosonsUpdating(diff){
 	var data = player.ghostify.bl
 	var wattGained = Math.max(getBosonicWattGain(), data.watt)
-	data.speed = Math.max(Math.min(wattGained + (data.watt - data.speed) * 2, wattGained), data.speed)
+	var wattMult = getBosonicSpeedMult();
+	data.speed = Math.max(Math.min(wattGained * wattMult + (data.watt * wattMult - data.speed) * 2, wattGained * wattMult), data.speed)
 	data.watt = wattGained
 	if (data.speed > 0) {
 		var limitDiff = Math.min(diff,data.speed * 14400)
@@ -6088,15 +6115,14 @@ function passiveQuantumLevelStuff(diff){
 function TTpassiveGain(diff){
 	if (player.dilation.upgrades.includes(10)) {
 		var speed = getPassiveTTGen()
-		if (nG(nMx(speed, player.timestudy.theorem), 1e200)) {
+		if (nG(nMx(speed, player.timestudy.theorem), 1e200) && !tmp.ngp3c) {
 			player.timestudy.theorem = 1e200
 			// special stuff for post-1e200 tt goes here...
 		} else {
-			speed = new Decimal(speed).toNumber();
-			var div = player.timestudy.theorem / speed
-			player.timestudy.theorem += diff * speed  
-			if (div < 3600 && player.achievements.includes("ng3p44")) player.timestudy.theorem += Math.min(diff * 9, 3600 - div) * speed
-			if (player.timestudy.theorem > 1e200) player.timestudy.theorem = 1e200
+			var div = nD(player.timestudy.theorem, speed)
+			player.timestudy.theorem = nA(player.timestudy.theorem, nM(speed, diff))
+			if (nL(div, 3600) && player.achievements.includes("ng3p44")) player.timestudy.theorem = nA(player.timestudy.theorem, nM(speed, Math.min(diff * 9, 3600 - new Decimal(div).toNumber())))
+			if (player.timestudy.theorem > 1e200 && !tmp.ngp3c) player.timestudy.theorem = 1e200
 		}
 	}
 }
@@ -6142,7 +6168,7 @@ function gameLoop(diff) {
 	passiveIPperMUpdating(diff)
 	incrementTimesUpdating(diffStat)
 	dimensionButtonDisplayUpdating()
-	ghostifyAutomationUpdating()
+	ghostifyAutomationUpdating(diff)
 
 	if (player.meta) metaDimsUpdating(diff)
 	infinityTimeMetaBlackHoleDimUpdating(diff) //production of those dims

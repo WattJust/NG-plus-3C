@@ -8,7 +8,7 @@ function canUnlockBosonicLab() {
 function updateNextParticleUnlockDisplay() {
 	let text = "To unlock W & Z Bosons, you need to get 10 Total Bosonic Enchant Levels."
 	if (!tmp.ngp3c || player.ghostify.wzb.WZBUNL) text = "To unlock Bosonic Upgrades, you need to get 100 Bosonic Antimatter & 100 Total Bosonic Enchant Levels.";
-	if (!tmp.ngp3c || player.ghostify.bl.UPGSUNL) text = "To unlock Higgs Bosons, you need to get " + shortenCosts(Decimal.pow(10, tmp.ngp3c?6.75e15:2e17)) + " antimatter and " + shortenCosts(getHiggsRequirement()) + " Bosonic Antimatter first."+(tmp.ngp3c?" <b>(COMING SOON)</b>":"")
+	if (!tmp.ngp3c || player.ghostify.bl.UPGSUNL) text = "To unlock Higgs Bosons, you need to get " + shortenCosts(Decimal.pow(10, tmp.ngp3c?6.75e15:2e17)) + " antimatter and " + shortenCosts(getHiggsRequirement()) + " Bosonic Antimatter first."
 	document.getElementById("nextParticle").innerHTML = text
 }
   
@@ -65,6 +65,45 @@ function getBatteryGainPerSecond(toSub){
 	return toAdd.div(10)
 }
 
+function useAntiPreons(use, diff=0, apDiff=new Decimal(0), changeUse=false) {
+	let lData = player.ghostify.wzb;
+	if (use==0||use==4) {
+		lData.dP = lData.dP.add(getAntiPreonProduction().times(diff).times(tmp.wzb.spd))
+	}
+	if (use==1||use==4) {
+		lData.wQkProgress = lData.wQkProgress.add(apDiff.times(tmp.wzb.zbs))
+		if (lData.wQkProgress.gt(1)) {
+			let toSub = lData.wQkProgress.floor()
+			lData.wpb = lData.wpb.add(toSub.add(lData.wQkUp ? 1 : 0).div(2).floor())
+			lData.wnb = lData.wnb.add(toSub.add(lData.wQkUp ? 0 : 1).div(2).floor())
+			if (toSub.mod(2).gt(0)) lData.wQkUp = !lData.wQkUp
+			lData.wQkProgress = lData.wQkProgress.sub(toSub.min(lData.wQkProgress))
+			
+			if (!tmp.ngp3c) {
+				let toAdd = getBatteryGainPerSecond(toSub)
+
+				data.battery = data.battery.add(toAdd.times(diff))
+				tmp.batteryGainLast = toAdd
+			}
+		}
+	}
+	if (use==2||use==4) {
+		lData.zNeProgress = lData.zNeProgress.add(apDiff.times(getOscillateGainSpeed()))
+		if (lData.zNeProgress.gte(1)) {
+			let oscillated = Math.floor(lData.zNeProgress.add(1).log(2))
+			lData.zb = lData.zb.add(Decimal.pow(Math.pow(2, 0.75), oscillated).sub(1).div(Math.pow(2, 0.75)-1).times(lData.zNeReq.pow(0.75)))
+			lData.zNeProgress = lData.zNeProgress.sub(Decimal.pow(2,oscillated).sub(1).min(lData.zNeProgress)).div(Decimal.pow(2, oscillated))
+			lData.zNeReq = lData.zNeReq.times(Decimal.pow(2,oscillated))
+			lData.zNeGen = (lData.zNeGen+oscillated-1)%3+1
+		}
+	}
+	if (use==3||use==4) {
+		lData.wpb = lData.wpb.add(lData.wnb.min(apDiff).times(tmp.wzb.zbs))
+		lData.wnb = lData.wnb.sub(lData.wnb.min(apDiff).times(tmp.wzb.zbs))
+		if (lData.wnb.lte(0) && changeUse) lData.dPUse = 0
+	}
+}
+
 function bosonicTick(diff) {
 	let lDiff //Mechanic-local diff
 	let lData //Mechanic-local data
@@ -75,13 +114,14 @@ function bosonicTick(diff) {
 	if (data.odSpeed > 1 && data.battery.gt(0)) {
 		var bBtL = getBosonicBatteryLoss()
 		var odDiff = diff.times(bBtL).min(data.battery)
-		var fasterDiff = odDiff.div(bBtL).times(data.odSpeed)
+		var fasterDiff = odDiff.div(bBtL).times(adjustOverdriveSpeed(data.odSpeed))
 		data.battery = data.battery.sub(diff.times(bBtL).min(data.battery))
 		diff = fasterDiff.add(diff.sub(odDiff.min(diff)))
 	}
 	data.ticks = data.ticks.add(diff)
 	
 	//W & Z Bosons
+	let wzbAutomated = isAutoGhostActive(21)
 	let apDiff
 	let apSpeed
 	lData = player.ghostify.wzb
@@ -91,76 +131,59 @@ function bosonicTick(diff) {
 
 			data.battery = data.battery.add(toAdd.times(ogDiff))
 		}
-		if (lData.dPUse) {
-			apDiff = diff.times(getAntiPreonLoss()).min(lData.dP).div(tmp.ngp3c?condAplScalings[player.ghostify.wzb.dPUse]:aplScalings[player.ghostify.wzb.dPUse])
+		if (lData.dPUse||wzbAutomated) {
+			apDiff = diff.times(getAntiPreonLoss()).min(lData.dP).div(wzbAutomated?1:(tmp.ngp3c?condAplScalings[player.ghostify.wzb.dPUse]:aplScalings[player.ghostify.wzb.dPUse])).times(tmp.wzb.spd||1)
 			if (isNaN(apDiff.e)) apDiff=new Decimal(0)
-			if (lData.dPUse == 1) {
-				lData.wQkProgress = lData.wQkProgress.add(apDiff.times(tmp.wzb.zbs))
-				if (lData.wQkProgress.gt(1)) {
-					let toSub = lData.wQkProgress.floor()
-					lData.wpb = lData.wpb.add(toSub.add(lData.wQkUp ? 1 : 0).div(2).floor())
-					lData.wnb = lData.wnb.add(toSub.add(lData.wQkUp ? 0 : 1).div(2).floor())
-					if (toSub.mod(2).gt(0)) lData.wQkUp = !lData.wQkUp
-					lData.wQkProgress = lData.wQkProgress.sub(toSub.min(lData.wQkProgress))
-					
-					if (!tmp.ngp3c) {
-						let toAdd = getBatteryGainPerSecond(toSub)
-
-						data.battery = data.battery.add(toAdd.times(diff))
-						tmp.batteryGainLast = toAdd
-					}
-				}
+			if (wzbAutomated) {
+				lData.dPUse = 0;
+				useAntiPreons(4, diff, apDiff);
+			} else {
+				useAntiPreons(lData.dPUse, diff, apDiff, true)
+				lData.dP = lData.dP.sub(diff.times(getAntiPreonLoss()).times(tmp.wzb.spd).min(lData.dP))
+				if (lData.dP.eq(0)) lData.dPUse = 0
 			}
-			if (lData.dPUse == 2) {
-				lData.zNeProgress = lData.zNeProgress.add(apDiff.times(getOscillateGainSpeed()))
-				if (lData.zNeProgress.gte(1)) {
-					let oscillated = Math.floor(lData.zNeProgress.add(1).log(2))
-					lData.zb = lData.zb.add(Decimal.pow(Math.pow(2, 0.75), oscillated).sub(1).div(Math.pow(2, 0.75)-1).times(lData.zNeReq.pow(0.75)))
-					lData.zNeProgress = lData.zNeProgress.sub(Decimal.pow(2,oscillated).sub(1).min(lData.zNeProgress)).div(Decimal.pow(2, oscillated))
-					lData.zNeReq = lData.zNeReq.times(Decimal.pow(2,oscillated))
-					lData.zNeGen = (lData.zNeGen+oscillated-1)%3+1
-				}
-			}
-			if (lData.dPUse == 3) {
-				lData.wpb = lData.wpb.add(lData.wnb.min(apDiff).times(tmp.wzb.zbs))
-				lData.wnb = lData.wnb.sub(lData.wnb.min(apDiff).times(tmp.wzb.zbs))
-			}
-			lData.dP = lData.dP.sub(diff.times(getAntiPreonLoss()).min(lData.dP))
-			if (lData.dP.eq(0)) lData.dPUse = 0
-		} else lData.dP = lData.dP.add(getAntiPreonProduction().times(diff))
+		} else useAntiPreons(0, diff)
 		lData.zNeReq=Decimal.pow(10, Math.sqrt(Math.max(Math.pow(lData.zNeReq.log10(),2) - diff / 100, 0)))
 	}
 	
 	//Bosonic Extractor
-	if (data.usedEnchants.includes(12)) {
-		data.autoExtract = data.autoExtract.add(diff.times(tmp.bEn[12]))
-		if (!data.extracting && data.autoExtract.gte(1)) {
-			data.extracting = true
-			data.autoExtract = data.autoExtract.sub(1)
+	if (isAutoGhostActive(17)) {
+		data.extracting = true;
+		let ben12 = (tmp.bEn[12]||new Decimal(0)).times(bEn.autoScalings[player.ghostify.bl.typeToExtract])
+		var oldAuto = diff.times(ben12)
+		if (!data.usedEnchants.includes(12)) oldAuto = new Decimal(0)
+		for (let i=1; i<=br.limit; i++) data.glyphs[i-1] = data.glyphs[i-1].plus(diff.div(getExtractTime(i)).min(oldAuto.div(bEn.autoScalings[i]).add(1)));
+	} else {
+		if (data.usedEnchants.includes(12)) {
+			data.autoExtract = data.autoExtract.add(diff.times(tmp.bEn[12]))
+			if (!data.extracting && data.autoExtract.gte(1)) {
+				data.extracting = true
+				data.autoExtract = data.autoExtract.sub(1)
+				dynuta.times = 0
+			}
+		} else data.autoExtract = new Decimal(1)
+		if (data.extracting) data.extractProgress = data.extractProgress.add(diff.div(getExtractTime()))
+		if (data.extractProgress.gte(1)) {
+			var oldAuto = data.autoExtract.floor()
+			if (!data.usedEnchants.includes(12)) oldAuto = new Decimal(0)
+			var toAdd = data.extractProgress.min(oldAuto.add(1).round()).floor()
+			data.autoExtract = data.autoExtract.sub(toAdd.min(oldAuto))
+			data.glyphs[data.typeToExtract - 1] = data.glyphs[data.typeToExtract - 1].add(toAdd).round()
+			if (dynuta.check) {
+				dynuta.check = false
+				dynuta.times++
+				if (dynuta.times >= 20) giveAchievement("Did you not understand the automation?")
+			}
+			if (data.usedEnchants.includes(12) && oldAuto.add(1).round().gt(toAdd)) data.extractProgress = data.extractProgress.sub(toAdd.min(data.extractProgress))
+			else {
+				data.extracting = false
+				data.extractProgress = new Decimal(0)
+			}
+		}
+		if (data.extracting && data.extractProgress.lt(1)) {
+			dynuta.check = false
 			dynuta.times = 0
 		}
-	} else data.autoExtract = new Decimal(1)
-	if (data.extracting) data.extractProgress = data.extractProgress.add(diff.div(getExtractTime()))
-	if (data.extractProgress.gte(1)) {
-		var oldAuto = data.autoExtract.floor()
-		if (!data.usedEnchants.includes(12)) oldAuto = new Decimal(0)
-		var toAdd = data.extractProgress.min(oldAuto.add(1).round()).floor()
-		data.autoExtract = data.autoExtract.sub(toAdd.min(oldAuto))
-		data.glyphs[data.typeToExtract - 1] = data.glyphs[data.typeToExtract - 1].add(toAdd).round()
-		if (dynuta.check) {
-			dynuta.check = false
-			dynuta.times++
-			if (dynuta.times >= 20) giveAchievement("Did you not understand the automation?")
-		}
-		if (data.usedEnchants.includes(12) && oldAuto.add(1).round().gt(toAdd)) data.extractProgress = data.extractProgress.sub(toAdd.min(data.extractProgress))
-		else {
-			data.extracting = false
-			data.extractProgress = new Decimal(0)
-		}
-	}
-	if (data.extracting && data.extractProgress.lt(1)) {
-		dynuta.check = false
-		dynuta.times = 0
 	}
 
 	//Bosonic Antimatter production
@@ -180,6 +203,9 @@ function bosonicTick(diff) {
 		}
 	}
 	data.am = newBA
+
+	// Higgs Mechanism
+	if (tmp.ngp3c && tmp.hb.unl) higgsMechanismTick(diff);
 }
 
 function getBAMProduction(){
@@ -195,15 +221,22 @@ function getAchBAMMult(){
 	return player.achPow.pow(0.2)
 }
 
+function getBosonicAMGainExp() {
+	let exp = player.money.max(1).log10() / (tmp.ngp3c?1.2e15:15e15) - 3;
+	if (player.achievements.includes("ng3p98") && tmp.ngp3c) exp += tmp.hm.baseEff||0
+	return exp;
+}
+
 function getBosonicAMProduction() {
-	var exp = player.money.max(1).log10() / (tmp.ngp3c?1.2e15:15e15) - 3
+	var exp = getBosonicAMGainExp()
 	var ret = Decimal.pow(10, exp).times(tmp.wzb.wbp)
 	if (hasBosonicUpg(13) && tmp.ngp3c) ret = ret.times(tmp.blu[13]);
 	if (player.ghostify.bl.usedEnchants.includes(34)) ret = ret.times(tmp.bEn[34] || 1)
 	if (player.achievements.includes("ng3p91")) ret = ret.times(getAchBAMMult())
-	if (player.achievements.includes("ng3p98")) ret = ret.plus(Math.pow(player.ghostify.hb.higgs, 2))
-	//maybe softcap at e40 or e50?
-	ret = softcap(ret, "bam")
+	if (player.ghostify.neutrinos.boosts >= 11 && tmp.ngp3c) ret = ret.times(tmp.nb[11])
+	if (player.achievements.includes("ng3p98") && !tmp.ngp3c) ret = ret.plus(Decimal.pow(player.ghostify.hb.higgs, 2))
+
+	// ret = softcap(ret, "bam")
 	return ret
 }
 
@@ -271,7 +304,7 @@ function getEstimatedNetBatteryGain(){
 
 function updateBosonicLabTab(){
 	let data = player.ghostify.bl
-	let speed = data.speed * (data.battery.gt(0) ? data.odSpeed : 1)
+	let speed = data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1)
 	document.getElementById("bWatt").textContent = shorten(data.watt)
 	document.getElementById("bSpeed").textContent = shorten(data.speed)
 	document.getElementById("bTotalSpeed").textContent = shorten(speed)
@@ -286,10 +319,11 @@ function updateBosonicLabTab(){
 	s = shorten(x[1]) + "/s"
 	if (!x[0]) s = "-" + s
 	document.getElementById("bBtProduction").textContent = s
-	document.getElementById("odSpeed").textContent=(data.battery.gt(0)?data.odSpeed:1).toFixed(2) + "x"
+	let od = adjustOverdriveSpeed(data.battery.gt(0)?data.odSpeed:1)
+	document.getElementById("odSpeed").textContent=shorten(od) + "x"
 	document.getElementById("odSpeedWBBt").style.display = data.battery.eq(0) && data.odSpeed > 1 ? "" : "none"
-	document.getElementById("odSpeedWBBt").textContent = " (" + data.odSpeed.toFixed(2) + "x if you have Bosonic Battery)"
-	for (var g = 1;g <= br.limit; g++) document.getElementById("bRune"+g).textContent = shortenDimensions(data.glyphs[g-1])
+	document.getElementById("odSpeedWBBt").textContent = " (" + od.toFixed(2) + "x if you have Bosonic Battery)"
+	for (var g = 1;g <= br.limit; g++) document.getElementById("bRune"+g).textContent = shortenDimensions(data.glyphs[g-1].floor())
 	if (document.getElementById("bextab").style.display=="block") updateBosonExtractorTab()
 	if (document.getElementById("butab").style.display=="block") updateBosonicUpgradeDescs()
 	if (document.getElementById("wzbtab").style.display=="block") updateWZBosonsTab()
@@ -297,9 +331,11 @@ function updateBosonicLabTab(){
 		if (player.ghostify.hb.unl) {
 			var req = getHiggsRequirement()
 			document.getElementById("hb").textContent = getFullExpansion(player.ghostify.hb.higgs)
+			document.getElementById("hbDirectEff").innerHTML = getHiggsDirectEffHTML()
 			document.getElementById("hbReset").className = "gluonupgrade " + (player.ghostify.bl.am.gte(req) ? "hb" : "unavailablebtn")
-			document.getElementById("hbResetReq").textContent = shorten(req)
+			document.getElementById("hbResetReq").textContent = shorten(getHiggsRequirement(tmp.hb.higgs+getHiggsGain()))
 			document.getElementById("hbResetGain").textContent = getFullExpansion(getHiggsGain())
+			if (tmp.ngp3c && document.getElementById("higgstab").style.display=="block") updateHiggsMechanismTab(speed)
 		}
 	}
 }
@@ -330,7 +366,7 @@ function getBosonicFinalCost(x) {
 		if (x.gte(1e5)) x = x.div(20);
 		if (x.gte(250)) x = x.div(10);
 	}
-	if (player.achievements.includes("ng3p91")) x = x.div(2)
+	if (player.achievements.includes("ng3p91")) x = x.div(tmp.ngp3c?Decimal.pow(2, player.ghostify.hb.higgs).min(5):2)
 	return x.ceil()
 }
 
@@ -338,9 +374,6 @@ function updateBosonicLabTemp() {
 	tmp.bEn = {}
 	tmp.blu = {}
 	tmp.wzb = {}
-	tmp.hbTmp = {}
-	//tmp.gvTmp = {}
-	//tmp.x17Tmp = {}
 
 	if (!tmp.ngp3) return 
 	if (!player.ghostify.wzb.unl) return 
@@ -348,10 +381,7 @@ function updateBosonicLabTemp() {
 	updateBosonicEnchantsTemp()
 	updateBosonicUpgradesTemp()
 	updateWZBosonsTemp()
-	if (!tmp.ngp3l) {
-		// if (tmp.gv.unl) updateGravitonsTemp()
-		// if (tmp.x17.unl) updateX17Temp()
-	}
+	if (tmp.ngp3c) updateHiggsMechanismTemp()
 }
 
 //Bosonic Extractor / Bosonic Runes
@@ -366,11 +396,12 @@ function extract() {
 	data.extracting = true
 }
 
-function getExtractTime() {
+function getExtractTime(tte=player.ghostify.bl.typeToExtract) {
 	let data = player.ghostify.bl
 	let sc = tmp.ngp3c?br.condScalings:br.scalings
-	let r = new Decimal(sc[data.typeToExtract] || 1/0)
+	let r = new Decimal(sc[tte] || 1/0)
 	r = r.div(tmp.wzb.wbt)
+	if (player.achievements.includes("ng3p93")) r = r.div(10)
 	return r
 }
 
@@ -428,17 +459,8 @@ function takeEnchantAction(id) {
 		data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(getBosonicFinalCost(costData[1])).round()
 		if (data.enchants[id] == undefined) data.enchants[id] = new Decimal(1)
 		else data.enchants[id] = data.enchants[id].add(1).round()
-	} else if (bEn.action == "max") {
-		let lvl = getMaxEnchantLevelGain(id)
-		let costData = bEn.costs[id]
-		let g1 = Math.floor(id / 10)
-		let g2 = id % 10
-		if (!canBuyEnchant(id)) return
-		data.glyphs[g1 - 1] = data.glyphs[g1 - 1].sub(lvl.times(getBosonicFinalCost(costData[0])).min(data.glyphs[g1 - 1])).round()
-		data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(lvl.times(getBosonicFinalCost(costData[1])).min(data.glyphs[g2 - 1])).round()
-		if (data.enchants[id] == undefined) data.enchants[id] = new Decimal(lvl)
-		else data.enchants[id] = data.enchants[id].add(lvl).round()
-	} else if (bEn.action == "use") {
+	} else if (bEn.action == "max") buyMaxEnchant(id)
+	else if (bEn.action == "use") {
 		if (canUseEnchant(id)) {
 			if (bEn.limit == 1) data.usedEnchants = [id]
 			else {
@@ -449,6 +471,30 @@ function takeEnchantAction(id) {
 				} else data.usedEnchants.push(id)
 			}
 		}
+	}
+}
+
+function buyMaxEnchant(id, r=1) {
+	let data = player.ghostify.bl
+	let lvl = getMaxEnchantLevelGain(id).times(r).round()
+	let costData = bEn.costs[id]
+	let g1 = Math.floor(id / 10)
+	let g2 = id % 10
+	if (!canBuyEnchant(id)) return
+	data.glyphs[g1 - 1] = data.glyphs[g1 - 1].sub(lvl.times(getBosonicFinalCost(costData[0])).min(data.glyphs[g1 - 1]))
+	data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(lvl.times(getBosonicFinalCost(costData[1])).min(data.glyphs[g2 - 1]))
+	if (r==1) {
+		data.glyphs[g1 - 1] = data.glyphs[g1 - 1].round()
+		data.glyphs[g2 - 1] = data.glyphs[g2 - 1].round()
+	}
+	if (data.enchants[id] == undefined) data.enchants[id] = new Decimal(lvl)
+	else data.enchants[id] = data.enchants[id].add(lvl).round()
+}
+
+function maxAllBosonicEnchants(r=1) {
+	for (var g2 = 2; g2 <= br.limit; g2++) for (var g1 = 1; g1 < g2; g1++) {
+		var id = g1 * 10 + g2
+		buyMaxEnchant(id, r);
 	}
 }
 
@@ -465,13 +511,14 @@ function getEnchantEffect(id, desc) {
 }
 
 function updateBosonExtractorTab(){
+	let ag17 = isAutoGhostActive(17)
 	let data = player.ghostify.bl
-	let speed = data.speed * (data.battery.gt(0) ? data.odSpeed : 1)
+	let speed = data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1)
 	let time = getExtractTime().div(speed)
-	if (data.extracting) document.getElementById("extract").textContent = "Extracting" + (time.lt(0.1)?"":" ("+data.extractProgress.times(100).toFixed(1)+"%)")
+	if (data.extracting) document.getElementById("extract").textContent = "Extracting" + (time.lt(0.1)?"":" ("+(ag17?data.glyphs[data.typeToExtract-1].sub(data.glyphs[data.typeToExtract-1].floor()).times(100).toFixed(1):data.extractProgress.times(100).toFixed(1))+"%)")
 	else document.getElementById("extract").textContent="Extract"
 	if (time.lt(0.1)) document.getElementById("extractTime").textContent="This would automatically take "+shorten(Decimal.div(1,time))+" runes per second."
-	else if (data.extracting) document.getElementById("extractTime").textContent=shorten(time.times(Decimal.sub(1,data.extractProgress)))+" seconds left to extract."
+	else if (data.extracting) document.getElementById("extractTime").textContent=shorten(time.times(ag17?Decimal.sub(1, data.glyphs[data.typeToExtract-1].sub(data.glyphs[data.typeToExtract-1].floor())):Decimal.sub(1,data.extractProgress)))+" seconds left to extract."
 	else document.getElementById("extractTime").textContent="This will take "+shorten(time)+" seconds."
 	updateEnchantDescs()
 }
@@ -509,7 +556,7 @@ var br = {
 		1: 5,
 		2: 12,
 		3: 100,
-		4: 6e7
+		4: 1e7
 	}
 }
 
@@ -526,7 +573,7 @@ var bEn = {
 		12: "You automatically extract Bosonic Runes.",
 		13: "Speed up the production and use of Anti-Preons.",
 		23: "Bosonic Antimatter boosts oscillate speed.",
-		14: "Divide the requirement of Higgs and start with some Bosonic Upgrades even it is inactive.",
+		14: "Divide the requirement of Higgs and start with some Bosonic Upgrades, even if it is disabled.",
 		24: "You gain more Bosonic Battery.",
 		34: "Higgs Bosons produce more Bosonic Antimatter."
 	},
@@ -541,11 +588,11 @@ var bEn = {
 			return Decimal.add(l, 1).sqrt()
 		},
 		14: function(l) {
-			let eff = Decimal.add(l, 9).log10()
+			let eff = tmp.ngp3c?(Decimal.max(l, 1).log10()+(Decimal.gte(l, 1)?1:0)):Decimal.add(l, 9).log10()
 			if (eff > 15) eff = Math.sqrt(eff * 15)
 			return {
-				bUpgs: Math.floor(eff),
-				higgs: Decimal.add(l, 1).pow(0.4)
+				bUpgs: Math.min(Math.floor(eff), bu.rows*5),
+				higgs: Decimal.add(l, 1).pow(tmp.ngp3c?0.1:0.4)
 			}
 		},
 		23: function(l) {
@@ -555,17 +602,17 @@ var bEn = {
 			return Decimal.pow(player.ghostify.bl.am.add(10).log10(), exp)
 		},
 		24: function(l) {
-			return Decimal.pow(Decimal.add(l, 100).log10(), 4).div(16)
+			return Decimal.pow(Decimal.add(l, 100).log10(), tmp.ngp3c?2.5:4).div(tmp.ngp3c?Math.pow(2, 2.5):16)
 		},
 		34: function(l) {
-			return Decimal.pow(player.ghostify.hb.higgs / 20 + 1, l.add(1).log10() / 5)
+			return Decimal.pow(Math.pow(player.ghostify.hb.higgs, tmp.ngp3c?0.5:1) / (tmp.ngp3c?Math.sqrt(20):20) + 1, l.add(1).log10() / 5)
 		}
 	},
 	effectDescs: {
 		12: function(x) {
 			var blData = player.ghostify.bl
 
-			x = x.times(blData.speed * (blData.battery.gt(0) ? blData.odSpeed : 1))
+			x = x.times(blData.speed * adjustOverdriveSpeed(blData.battery.gt(0) ? blData.odSpeed : 1))
 			if (x.lt(1) && x.gt(0)) return x.m.toFixed(2) + "/" + shortenCosts(Decimal.pow(10, -x.e)) + " seconds"
 			return shorten(x) + "/second"
 		},
@@ -645,6 +692,7 @@ function updateBosonicUpgradeDescs() {
 	for (var r = 1; r <= bu.rows; r++) for (var c = 1; c <= 5; c++) {
 		var id = r * 10 + c
 		document.getElementById("bUpg" + id).className = player.ghostify.bl.upgrades.includes(id) ? "gluonupgradebought bl" : canBuyBosonicUpg(id) ? "gluonupgrade bl" : "gluonupgrade unavailablebtn"
+		if (id==42 && tmp.ngp3c) document.getElementById("bUpg" + id).style = "font-size: 8px;";
 		document.getElementById("bUpg" + id + "Desc").textContent = ((tmp.ngp3c?bu.condDescs[id]:bu.descs[id]) || "???")
 		if (tmp.blu[id] !== undefined) document.getElementById("bUpgEffect"+id).textContent = (bu.effectDescs[id] !== undefined && bu.effectDescs[id](tmp.blu[id])) || shorten(tmp.blu[id]) + "x"
 	}
@@ -744,12 +792,12 @@ var bu = {
 			g3: 4e12
 		},
 		44:{
-			am: 2e65,
+			am: 2e61,
 			g1: 1e14,
 			g4: 1e8
 		},
 		45:{
-			am: 2e80,
+			am: 2e76,
 			g2: 2e14,
 			g4: 4e8
 		}
@@ -784,18 +832,29 @@ var bu = {
 		14: "The 2nd Preon effect, 2nd Replicated Condenser effect, & base Bosonic Watt gain are boosted based on free galaxies.",
 		15: "Ghostifies and dilated time power up each other.",
 		21: "Replace first Nanofield reward with a boost to slow down Dimension Supersonic scaling.",
-		22: "Replace seventh Nanofield reward with a boost to neutrino gain and preon charge.",
+		22: "The seventh Nanofield reward also gives a boost to neutrino gain.",
 		23: "In Big Rips, Ghostly Photons extend the Preon Anti-Energy limit.",
 		24: "You can produce Space Shards outside of Big Rip, and their gain is raised ^2.5 outside of Big Rip.",
 		25: "Bosonic Antimatter strengthens Normal Condensers, Light Condensers, & all previous Bosonic Upgrades.",
+		31: "Higgs Bosons boost W & Z Boson Speed.",
+		32: "Unlock new Light Boosts at every Light Empowerment from LE5 to LE10, and unselected particle mass in the Higgs Mechanism is gained at a reduced rate.",
+		33: "Bosonic Antimatter reduces the costs of all electron upgrades.",
+		34: "Preon Charge divides the Tick interval (weaker in Big Rip).",
+		35: "Light Empowerments add power to all Nanofield rewards at a reduced rate.",
+		41: "Tachyon Particles boost Tree Upgrade Power.",
+		42: "Ultraviolet Light Threshold increases 4% slower, & Red Power gives extra Red, Green, & Blue Light.",
+		43: "Green Power makes Distant Replicated Galaxy scaling start later.",
+		44: "Higgs Bosons boost Overdrive, & Blue Power boosts Particle Mass gain base.",
+		45: "Light Empowerments & Dark Matter weaken Distant Galaxies scaling and boost W & Z Boson speed.",
 	},
 	effects: {
 		11: function() {
 			let x = player.ghostify.bl.am.add(1).log(tmp.ngp3c?1.01:10)
 			let y = 1
 			if (hasBosonicUpg(25) && tmp.ngp3c) y = tmp.blu[25];
-			if (hasBosonicUpg(42)) y *= tmp.blu[42]
-
+			if (hasBosonicUpg(42) && !tmp.ngp3c) y *= tmp.blu[42]
+			if (player.achievements.includes("ng3p96") && tmp.ngp3c) y *= 1.15
+			
 			let exp = 0.5 - 0.25 * x / (x + 3) / y
 			if (tmp.newNGP3E || tmp.ngp3c) x += x / 2 + Math.sqrt(x)
 			if (y > 1) x *= y
@@ -874,54 +933,87 @@ var bu = {
 			}
 		},
 		31: function() {
-			var ret = Math.pow(Math.log10(player.ghostify.bl.am.add(1).log10() / 5 + 1) / 2 + 1, 2)
-			for (var i = 4; i < 10; i++){
-				if (ret > i / 2) ret = i / 2 + Math.log10(ret - i/2 + 1)
-				else break
+			if (tmp.ngp3c) return Decimal.pow(1.5, player.ghostify.hb.higgs);
+			else {
+				var ret = Math.pow(Math.log10(player.ghostify.bl.am.add(1).log10() / 5 + 1) / 2 + 1, 2)
+				for (var i = 4; i < 10; i++){
+					if (ret > i / 2) ret = i / 2 + Math.log10(ret - i/2 + 1)
+					else break
+				}
+				return ret
 			}
-			return ret
 		},
 		33: function() {
 			var div = tmp.newNGP3E ? 4 : 6
-			return (Math.sqrt(player.ghostify.hb.higgs + 1) - 1) / div + 1
+			return (Math.sqrt((tmp.ngp3c?Math.max(player.ghostify.bl.am.plus(1).log10()/18, (player.ghostify.bl.am.plus(1).log10()-16)/2):player.ghostify.hb.higgs) + 1) - 1) / div + 1
 		},
 		34: function() {
-			var galPart = Math.log10(player.galaxies / 1e4 + 10) * Math.log10(getTotalRG() / 1e4 + 10) * Math.log10(player.dilation.freeGalaxies / 1e4 + 10) * Math.log10(tmp.aeg / 1e4 + 10)
-			var exp = tmp.newNGP3E ? 1/6 : 1/8
-			var ret = Math.pow(galPart, exp) - 1
-			for (var i = 2; i < 10; i++){
-				if (ret > i / 10) ret = i / 10 + Math.log10(ret - i/10 + 1)
-				else break
+			if (tmp.ngp3c) {
+				let mult = tmp.qu.bigRip.active?2:250
+				let x = tmp.qu.nanofield.charge.plus(1).log10()
+				if (x >= 2000) x = Math.sqrt(x * 2000);
+				return Decimal.pow(10, x * mult);
+			} else {
+				var galPart = Math.log10(player.galaxies / 1e4 + 10) * Math.log10(getTotalRG() / 1e4 + 10) * Math.log10(player.dilation.freeGalaxies / 1e4 + 10) * Math.log10(tmp.aeg / 1e4 + 10)
+				var exp = tmp.newNGP3E ? 1/6 : 1/8
+				var ret = Math.pow(galPart, exp) - 1
+				for (var i = 2; i < 10; i++){
+					if (ret > i / 10) ret = i / 10 + Math.log10(ret - i/10 + 1)
+					else break
+				}
+				return ret / 5 + 1
 			}
-			return ret / 5 + 1
 		},
 		35: function() {
-			return {
+			if (tmp.ngp3c) return Math.pow(player.ghostify.ghostlyPhotons.enpowerments, .75)
+			else return {
 				rep: Math.pow(tmp.qu.replicants.quarks.add(1).log10(), 1/3) * 2,
 				eds: Decimal.pow(tmp.newNGP3E ? 10 : 20, Math.pow(player.replicanti.amount.log10(), 2/3) / 15e3)
 			}
 		},
 		41: function() {
-			return {
+			if (tmp.ngp3c) return Math.sqrt(Math.log10(player.dilation.tachyonParticles.plus(1).log10()+1))/20
+			else return {
 				ig: Decimal.pow(tmp.qu.bigRip.active ? 1e5 : 1.05, Math.pow(Decimal.max(tmp.it, 1).log10(), 2)),
 				it: Decimal.pow(tmp.qu.bigRip.active ? 1.01 : 5, Math.sqrt(Decimal.max(tmp.ig, 1).log10()))
 			}
 		},
 		42: function() {
-			var exp = tmp.newNGP3E ? 1/3 : 1/4
-			return Math.pow(tmp.qu.colorPowers.r.add(1).log10() / 2e4 + 1, exp)
+			if (tmp.ngp3c) {
+				return {
+					r: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) * 2),
+					g: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) / 2),
+					b: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3)),
+				}
+			} else {
+				var exp = tmp.newNGP3E ? 1/3 : 1/4
+				return Math.pow(tmp.qu.colorPowers.r.add(1).log10() / 2e4 + 1, exp)
+			}
 		},
 		43: function() {
-			return Math.sqrt(colorBoosts.g + tmp.pe) / (tmp.qu.bigRip.active ? 100 : 40) + 1
+			if (tmp.ngp3c) return Math.floor(Math.sqrt(tmp.qu.colorPowers.g.add(1).log10())*100)
+			else return Math.sqrt(colorBoosts.g + tmp.pe) / (tmp.qu.bigRip.active ? 100 : 40) + 1
 		},
 		44: function() {
-			var exp = tmp.newNGP3E ? .55 : .5
-			return Math.pow(tmp.qu.colorPowers.b.add(1).log10(), exp) * 0.15
+			if (tmp.ngp3c) {
+				return {
+					od: tmp.hb.higgs/10+1,
+					pm: Math.log2(tmp.qu.colorPowers.g.add(1).log10()+1)/50,
+				}
+			} else {
+				var exp = tmp.newNGP3E ? .55 : .5
+				return Math.pow(tmp.qu.colorPowers.b.add(1).log10(), exp) * 0.15
+			}
 		},
 		45: function() {
-			var eff = player.dilation.dilatedTime.add(1).pow(.0005)
-			eff = softcap(eff, "bu45")
-			return eff.toNumber()
+			var eff;
+			if (tmp.ngp3c) {
+				let eff = Decimal.pow(player.ghostify.ghostlyPhotons.darkMatter.add(1).log10()+1, player.ghostify.ghostlyPhotons.enpowerments/15+1);
+				return {
+					dg: softcap(eff, "bu45").toNumber(),
+					wzb: eff.div(5).pow(2),
+				}
+			} else return softcap(player.dilation.dilatedTime.add(1).pow(.0005), "bu45").toNumber()
 		}
 	},
 	effectDescs: {
@@ -941,31 +1033,31 @@ var bu = {
 			return tmp.ngp3c?(((x-1)*100).toFixed(3)+"% stronger"):("^" + x.toFixed(2))
 		},
 		31: function(x) {
-			return (x * 100 - 100).toFixed(1) + "% stronger"
+			return tmp.ngp3c?(shorten(x)+"x"):((x * 100 - 100).toFixed(1) + "% stronger")
 		},
 		33: function(x) {
 			return "-" + x.toFixed(2) + " levels worth"
 		},
 		34: function(x) {
-			return (x * 100 - 100).toFixed(2) + "% stronger"
+			return tmp.ngp3c?("/"+shorten(x)):((x * 100 - 100).toFixed(2) + "% stronger")
 		},
 		35: function(x) {
-			return "+" + shorten(x.rep) + " OoMs to replicate interval increase, " + shorten(x.eds) + "x to all EDs"
+			return tmp.ngp3c?("+"+shorten(x)):("+" + shorten(x.rep) + " OoMs to replicate interval increase, " + shorten(x.eds) + "x to all EDs")
 		},
 		41: function(x) {
-			return shorten(x.ig) + "x to Intergalactic, " + shorten(x.it) + "x to Infinite Time"
+			return tmp.ngp3c?("+"+(x*100).toFixed(2)+"%"):(shorten(x.ig) + "x to Intergalactic, " + shorten(x.it) + "x to Infinite Time")
 		},
 		42: function(x) {
-			return (x * 100).toFixed(2) + "% to growth and softcap slowdown"
+			return tmp.ngp3c?("+"+getFullExpansion(x.r)+" red, +"+getFullExpansion(x.g)+" green, +"+getFullExpansion(x.b)+" blue"):((x * 100).toFixed(2) + "% to growth and softcap slowdown")
 		},
 		43: function(x) {
-			return (x * 100).toFixed(2) + "%"
+			return tmp.ngp3c?(getFullExpansion(x)+" later"):((x * 100).toFixed(2) + "%")
 		},
 		44: function(x) {
-			return "+" + x.toFixed(1) + " OoMs"
+			return (tmp.ngp3c?("^"+shorten(x.od)+" Overdrive Speed, "):"")+"+" + x.pm.toFixed(tmp.ngp3c?3:1) + (tmp.ngp3c?" to Particle Mass gain base":" OoMs")
 		},
 		45: function(x) {
-			return "/" + shorten(x) + " to efficiency"
+			return tmp.ngp3c?("/" + shorten(x.dg) + " to scaling, "+shorten(x.wzb)+"x to W & Z Boson speed"):("/" + shorten(x) + " to efficiency")
 		}
 	}
 }
@@ -979,6 +1071,11 @@ function getBosonicBatteryLoss() {
 function changeOverdriveSpeed() {
 	if (tmp.ngp3c&&!player.ghostify.bl.UPGSUNL) return;
 	player.ghostify.bl.odSpeed = document.getElementById("odSlider").value / 50 * 4 + 1
+}
+
+function adjustOverdriveSpeed(x) {
+	if (hasBosonicUpg(44) && tmp.ngp3c) x = Decimal.pow(x, tmp.blu[44].od);
+	return x;
 }
 
 //W & Z Bosons
@@ -1025,9 +1122,9 @@ function updateWZBosonsTab() {
 	let data = player.ghostify.bl
 	let data2 = tmp.wzb
 	let data3 = player.ghostify.wzb
-	let speed = data.speed * (data.battery.gt(0) ? data.odSpeed : 1)
+	let speed = data2.spd.times(data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1))
 	let show0 = data2.dPUse == 1 && getAntiPreonLoss().times(speed).div(tmp.ngp3c?condAplScalings[1]:aplScalings[1]).times(tmp.wzb.zbs).gte(10)
-	let gainSpeed = getOscillateGainSpeed()
+	let gainSpeed = getOscillateGainSpeed().times(tmp.wzb.spd)
 	let r
 	if (!data2.dPUse) r = getAntiPreonProduction().times(speed)
 	else r = getAntiPreonLoss().times(speed)
@@ -1051,5 +1148,26 @@ function updateWZBosonsTab() {
 	document.getElementById("zb").textContent = shortenDimensions(data3.zb)
 	document.getElementById("zbGain").textContent = "You will gain " + shortenDimensions(data3.zNeReq.pow(0.75)) + " Z Bosons on next oscillation."
 	document.getElementById("zbSpeed").textContent = shorten(data2.zbs)
+	document.getElementById("wzbSpeed").textContent = tmp.wzb.spd.eq(1)?"":(shiftDown?getWZBosonSpeedDetails():("W & Z Boson Speed: "+shorten(tmp.wzb.spd)+"x (hold shift for details)"))
 }
 
+function getBosonicSpeedMult() {
+	if (!tmp.ngp3c) return 1
+	let m = 1;
+	if (player.ghostify.hb.unl && tmp.hm.watts && player.ghostify.hb.masses.watts) m *= tmp.hm.watts.eff
+	return m;
+}
+
+function getWZBosonSpeed() {
+	let speed = new Decimal(1);
+	if (hasBosonicUpg(31) && tmp.ngp3c) speed = speed.times(tmp.blu[31]);
+	if (hasBosonicUpg(45) && tmp.ngp3c) speed = speed.times(tmp.blu[45].wzb)
+	return speed;
+}
+
+function getWZBosonSpeedDetails() {
+	let d = "";
+	if (hasBosonicUpg(31) && tmp.ngp3c) d += "Bosonic Upgrade 11: "+shorten(tmp.blu[31]||1)+"x, "
+	if (hasBosonicUpg(45) && tmp.ngp3c) d += "Bosonic Upgrade 20: "+shorten(tmp.blu[45].wzb||1)+"x, "
+	return d.slice(0, d.length-2);
+}

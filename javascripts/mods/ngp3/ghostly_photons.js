@@ -10,6 +10,7 @@ function getLightEmpowermentBoost() {
 
 var leBoosts = {
 	reqs: [null, 1, 2, 3, 10, 13, 16, 19, 22, 25],
+	condReqs: [null, 1, 2, 3, 5, 6, 7, 8, 9, 10],
 	max: 9,
 	effects: [
 		null,
@@ -71,7 +72,7 @@ function isLEBoostUnlocked(x) {
 	if (!ghostified) return false
 	if (!player.ghostify.ghostlyPhotons.unl) return false
 	if (x >= 4 && !hasBosonicUpg(32)) return false
-	return player.ghostify.ghostlyPhotons.enpowerments >= leBoosts.reqs[x]
+	return player.ghostify.ghostlyPhotons.enpowerments >= (tmp.ngp3c?leBoosts.condReqs[x]:leBoosts.reqs[x])
 }
 
 function updateGPHUnlocks() {
@@ -130,7 +131,8 @@ function updateLightBoostDisplay(){
 function updateLightThresholdStrengthDisplay(){
 	var gphData=player.ghostify.ghostlyPhotons
 	for (var c = 0; c < 8; c++) {
-		document.getElementById("light" + (c + 1)).textContent = getFullExpansion(gphData.lights[c])
+		let extra = getExtraLight(c)
+		document.getElementById("light" + (c + 1)).textContent = getFullExpansion(gphData.lights[c])+((extra>0)?("+"+getFullExpansion(extra)):"")
 		document.getElementById("lightThreshold" + (c + 1)).textContent = shorten(getLightThreshold(c))
 		if (c > 0) document.getElementById("lightStrength" + c).textContent = shorten(tmp.ls[c-1])
 	}
@@ -169,14 +171,16 @@ function getGHRProduction() {
 	var log = player.ghostify.ghostlyPhotons.amount.sqrt().times(tmp.ngp3c?10:.5).log10()
 	if (player.ghostify.neutrinos.boosts >= 11) log += tmp.nb[11].log10()
 	if (tmp.ngp3c) for (let i=1;i<=8;i++) log += Math.log10(getLightCondenserEff(i));
+	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm.gph && player.ghostify.hb.masses.gph) log += tmp.hm.gph.eff.log10()
 	return Decimal.pow(10, log)
 }
 
 function getGHRCap() {
 	var log = player.ghostify.ghostlyPhotons.darkMatter.pow(0.4).times(1e3).log10()
-	if (player.ghostify.neutrinos.boosts >= 11) log += tmp.nb[11].log10()
+	if (player.ghostify.neutrinos.boosts >= 11 && !tmp.ngp3c) log += tmp.nb[11].log10()
 	if (tmp.ngp3c) for (let i=1;i<=8;i++) log += Math.log10(getLightCondenserEff(i));
 	if (hasBosonicUpg(13) && tmp.ngp3c) log += Math.log10(Math.max(tmp.blu[13], 1));
+	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm.dm && player.ghostify.hb.masses.dm) log += tmp.hm.dm.eff.log10()
 	return Decimal.pow(10, log)
 }
 
@@ -194,7 +198,18 @@ function getLightThresholdIncrease(l) {
 		let y = 1 / tmp.nf.effects.light_threshold_speed
 		if (y < 1) x = Math.pow(x, y)
 	}
+	if (hasBosonicUpg(42) && tmp.ngp3c && l==7) x = Math.pow(x, .96);
 	return x
+}
+
+function getExtraLight(l) {
+	let extra = 0;
+	if (hasBosonicUpg(42) && tmp.ngp3c) {
+		if (l==0) extra += tmp.blu[42].r;
+		else if (l==3) extra += tmp.blu[42].g;
+		else if (l==4) extra += tmp.blu[42].b;
+	}
+	return extra;
 }
 
 function globalLightPower() {

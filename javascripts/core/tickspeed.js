@@ -2,6 +2,7 @@ function getTickSpeedMultiplier() {
 	let ret = new Decimal(getGalaxyTickSpeedMultiplier())
 	if (tmp.be && tmp.qu.breakEternity.upgrades.includes(5) && !tmp.ngp3c) ret = ret.div(getBreakUpgMult(5))
 	if (player.timestudy.studies.includes(25) && player.aarexModifications.ngp3c) ret = ret.div(ts25Eff())
+	if (hasBosonicUpg(34) && tmp.ngp3c) ret = ret.div(tmp.blu[34]);
 	if (inNC(6, 2)) ret = ret.add(player.resets * 1e-3)
 	return ret.min(1)
 }
@@ -26,7 +27,7 @@ function getGalaxyPower(ng, bi, noDil) {
 	else if (ECTimesCompleted("eterc8") > 0) replGalEff = getECReward(8)
 	if (tmp.ngp3) {
 		if (player.masterystudies.includes("t344")) replGalEff *= getMTSMult(344)
-		if (hasBosonicUpg(34)) replGalEff *= tmp.blu[34]
+		if (hasBosonicUpg(34) && !tmp.ngp3c) replGalEff *= tmp.blu[34]
 	}
 	
 	let extraReplGalPower = 0
@@ -39,7 +40,7 @@ function getGalaxyPower(ng, bi, noDil) {
 	else otherGalPower += Math.min(player.replicanti.galaxies, player.replicanti.gal) * (replGalEff - 1) + extraReplGalPower
 	if (!noDil) {
 		let dilGals = Math.floor(player.dilation.freeGalaxies)
-		if (hasBosonicUpg(34)) dilGals *= tmp.blu[34]
+		if (hasBosonicUpg(34) && !tmp.ngp3c) dilGals *= tmp.blu[34]
 		otherGalPower += dilGals * ((player.masterystudies ? player.masterystudies.includes("t343") : false) ? replGalEff : 1)
 	}
 	otherGalPower += tmp.effAeg
@@ -80,7 +81,7 @@ function getGalaxyEff(bi) {
 	if (tmp.ngp3) eff *= colorBoosts.r
 	if (GUBought("rg2")) eff *= Math.pow(player.dilation.freeGalaxies/5e3 + 1, 0.25)
 	if (tmp.rg4) eff *= 1.5
-	if (hasBosonicUpg(34)) eff *= tmp.blu[34]
+	if (hasBosonicUpg(34) && !tmp.ngp3c) eff *= tmp.blu[34]
 	return eff
 }
 

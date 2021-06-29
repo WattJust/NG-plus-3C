@@ -784,7 +784,7 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
 	player.thisEternity = 0
 	player.bestEternity = 9999999999
 	player.eternityUpgrades = bm ? [1, 2, 3, 4, 5, 6] : []
-	if (tmp.ngp3c && bm) player.eternityUpgrades = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+	if (tmp.ngp3c && bm) player.eternityUpgrades = [1, 2, 3, 4, 5, 6, 10, 11, 12];
 	player.epmult = new Decimal(1)
 	player.epmultCost = new Decimal(500)
 	player.infDimensionsUnlocked = resetInfDimUnlocked()
@@ -970,8 +970,8 @@ function doEternityGhostifyResetStuff(implode, bm){
 	EPminpeakType = 'normal'
 	EPminpeak = new Decimal(0)
 	if (bm) {
-		if (player.eternityChallUnlocked > 12) player.timestudy.theorem += masteryStudies.costs.ec[player.eternityChallUnlocked]
-		else player.timestudy.theorem += ([0, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1])[player.eternityChallUnlocked]
+		if (player.eternityChallUnlocked > 12) player.timestudy.theorem = nA(player.timestudy.theorem, masteryStudies.costs.ec[player.eternityChallUnlocked])
+		else player.timestudy.theorem = nA(player.timestudy.theorem, ([0, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1])[player.eternityChallUnlocked])
 	} else performedTS = false
 	player.eternityChallUnlocked = 0
 	player.dilation.bestTP = player.dilation.tachyonParticles

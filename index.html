@@ -122,6 +122,7 @@
 					<td id="dilationTabbtn"><button class="secondarytabbtn" onclick="showEternityTab('dilation')">Time dilation</button></td>
 					<td id="blackHoleTabbtn"><button class="secondarytabbtn" onclick="showEternityTab('blackhole')">Black hole</button></td>
 					<td id="breakEternityTabbtn"><button class="secondarytabbtn" onclick="showEternityTab('breakEternity')">Break Eternity</button></td>
+					<td id="breakDilationTabbtn"><button class="smallsecondarytabbtn" onclick="showEternityTab('breakDilation')">Break Dilation</button></td>
 					<td id="autoEternityTabbtn"><button class="secondarytabbtn" onclick="showEternityTab('autoEternity')">Auto-Eternity</button></td>
 				</tr>
 			</table>
@@ -1250,6 +1251,9 @@
 					</table>
 				</div>
 			</div>
+			<div class="eternitytab" id="breakDilation" style="font-size: 11px">
+				<div id="breakDilationReq"></div>
+			</div>
 			<div class="eternitytab" id="autoEternity">
 				<table id="autoEternityTable">
 					<tr>
@@ -2220,6 +2224,7 @@
 			<div id="normalachievements" class="achtab">
 				<div id="achmultlabel" style="font-size: 140%">Current achievement multiplier on each Dimension: 1x</div>
 				<div id="metaAchMultLabel" style="font-size: 140%">Achievement multiplier to Meta Dimensions: 1x</div>
+				<div id="bosonicAMAchMultLabel" style="font-size: 140%">Achievement multiplier to Bosonic Antimatter gain: 1x</div>
 				<table id="achievementtable" style="margin: auto">
 					<tr id="achRow1">
 						<td>
@@ -2819,10 +2824,10 @@
 						</tr>
 						<tr id="achRowng3p9">
 							<td>
-								<div id="The Holy Particle" class="achievement achievementlocked" style="background-image: url(images/175.png)" ach-tooltip="Get a Higgs Boson. Reward: Bosonic Upgrades and Enchants are 2x cheaper, achievement power boosts bosonic antimatter production at a reduced rate and light empowerements no longer reset photons era resources."></div>
+								<div id="The Holy Particle" class="achievement achievementlocked" style="background-image: url(images/175.png)"></div>
 							</td>
 							<td>
-								<div id="Bright as the Anti-Sun" class="achievement achievementlocked" style="background-image: url(images/176.png)" ach-tooltip="Reach 25 Light Empowerments. Reward: You always have the 12th Bosonic Upgrade."></div>
+								<div id="Bright as the Anti-Sun" class="achievement achievementlocked" style="background-image: url(images/176.png)"></div>
 							</td>
 							<td>
 								<div id="Are these another..." class="achievement achievementlocked" style="background-image: url(images/177.png)"></div>
@@ -3374,7 +3379,7 @@
 						<td id='icngmm_4div' style='display:none'></td>
 						<td id='ic3div'>
 							<div class="infchallengediv" id="postc3div" style="height: 140px; display: none">
-								<span>Tickspeed interval decrease is always at 0%, but for every tickspeed purchase you get a static multiplier on all Normal Dimensions, which increases with galaxies.</span>
+								<span>Tickspeed interval decrease is always at 0%, but for every tickspeed purchase you get a static multiplier on all Normal Dimensions, which increase with galaxies.</span>
 								<br>
 								<br>
 								<div class="outer">
@@ -5237,8 +5242,8 @@
 					</tr>
 					<tr class="neutrinoBoosts" id="neutrinoBoostRow4">
 						<td>They decrease free tickspeed upgrade threshold by -<span class="neutrinos" id="neutrinoBoost10"></span>.</td>
-						<td id="neutrinoBoostCell11">They boost the production and cap of Ghostly Rays by <span class="neutrinos" id="neutrinoBoost11">1.00</span>x.</td>
-						<td></td>
+						<td id="neutrinoBoostCell11">They boost the production<span id="neutrinoBoost11AndCap"> and cap</span> of Ghostly Rays<span id="neutrinoBoost11ExtraEff"></span> by <span class="neutrinos" id="neutrinoBoost11">1.00</span>x.</td>
+						<td id="neutrinoBoostCell12">They raise the start of OS_TS_5 <span class="neutrinos" id="neutrinoBoost12">^1.00</span>.<br>(Nerfed in Big Rip runs)</td>
 					</tr>
 					<tr>
 						<td><button id="neutrinoUnlock" class="gluonupgrade unavailablebtn" onclick="unlockNeutrinoBoost()">Unlock a new boost based on your neutrinos.<br>Cost: <span id="neutrinoUnlockCost">2</span> GhP</button></td>
@@ -5269,6 +5274,10 @@
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg13" onclick="buyNeutrinoUpg(13)" style="font-size: 10px;"><span id="neutrinoUpg13Effect"></span><br>Cost: <span id="neutrinoUpg13Cost"></span> of any neutrinos</button></td>
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg14" onclick="buyNeutrinoUpg(14)" style="font-size: 10px"><span id="neutrinoUpg14Effect"></span><br>Currently: <span id="neutrinoUpg14Pow"></span>x<br>Cost: <span id="neutrinoUpg14Cost"></span> of any neutrinos</button></td>
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg15" onclick="buyNeutrinoUpg(15)" style="font-size: 11px;">Your Nanofield rewards speed up Nanofield<span id="neutrinoUpg15Suffix"></span>.<br>Currently: <span id="neutrinoUpg15Pow"></span>x<br>Cost: <span id="neutrinoUpg15Cost"></span> of any neutrinos</button></td>
+					</tr>
+					<tr id="hmRow">
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg16" onclick="buyNeutrinoUpg(16)" style="font-size: 11px;">Boosts to the Replicanti limit now multiply OoMs between replicate slowdown<br>Currently: <span id="neutrinoUpg16Pow"></span>x<br>Cost: <span id="neutrinoUpg16Cost"></span> of any neutrinos</button></td>
+						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg17" onclick="buyNeutrinoUpg(17)" style="font-size: 11px;">The 2nd Preon effect can surpass your sacrificed galaxies, which provides Antielectronic galaxies.<br>Cost: <span id="neutrinoUpg17Cost"></span> of any neutrinos</button></td>
 					</tr>
 				</table>
 			</div>
@@ -5391,31 +5400,29 @@
 						</div></td>
 						<td id="autoGhost17"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-Extractor Ghost</b><br>
-							(not implemented)<br>
 							Power usage: 3<br>
 							Is active: <input id="isAutoGhostOn17" type="checkbox" onchange="toggleAutoGhost(17)"></input>
 						</div></td>
 						<td id="autoGhost18"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-Electron Multi Ghost</b><br>
-							Power usage: 6<br>
+							Power usage: 4<br>
 							Is active: <input id="isAutoGhostOn18" type="checkbox" onchange="toggleAutoGhost(18)"></input>
 						</div></td>
 					</tr>
 					<tr>
 						<td id="autoGhost19"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-Enchanter Ghost</b><br>
-							(not implemented)<br>
 							Power usage: 3<br>
+							Purchase <input id="autoGhost19a" onchange="changeAutoGhost('19a')"></input>% of levels/s<br>
 							Is active: <input id="isAutoGhostOn19" type="checkbox" onchange="toggleAutoGhost(19)"></input>
 						</div></td>
 						<td id="autoGhost20"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-Bosonic Upgrader Ghost</b><br>
-							Power usage: 9<br>
+							Power usage: 6<br>
 							Is active: <input id="isAutoGhostOn20" type="checkbox" onchange="toggleAutoGhost(20)"></input>
 						</div></td>
 						<td id="autoGhost21"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-W & Z Boson Ghost</b><br>
-							(not implemented)<br>
 							Power usage: 3<br>
 							Is active: <input id="isAutoGhostOn21" type="checkbox" onchange="toggleAutoGhost(21)"></input>
 						</div></td>
@@ -5614,9 +5621,9 @@
 						</td>
 					</tr><tr id="bosonicResets">
 						<td colspan=3>
-							You have <span class="yellow" id="hb" style="font-size:35px">0</span> Higgs Bosons.
+							You have <span class="yellow" id="hb" style="font-size:35px">0</span> Higgs Bosons<span id="hbDirectEff"></span>.
 							<br>
-							<button class="gluonupgrade hb" id="hbReset" onclick="higgsReset()">Reset Bosonic Lab for <span id="hbResetGain">1</span> Higgs.<br>(Requires <span id="hbResetReq"></span> Bosonic Antimatter)</button>
+							<button class="gluonupgrade hb" id="hbReset" onclick="higgsReset()">Reset Bosonic Lab for <span id="hbResetGain">1</span> Higgs.<br>(Next at <span id="hbResetReq"></span> Bosonic Antimatter)</button>
 						</td>
 					</tr></table>
 					<span id="nextParticle"></span><br>
@@ -5627,6 +5634,7 @@
 							<td><button class="secondarytabbtn" onclick="showBLTab('bextab')">Bosonic Enchants</button></td>
 							<td><button id="butabbtn" class="secondarytabbtn" onclick="showBLTab('butab')">Bosonic Upgrades</button></td>
 							<td><button id="wzbtabbtn" class="secondarytabbtn" onclick="showBLTab('wzbtab')">W & Z Bosons</button></td>
+							<td><button id="higgstabbtn" style="display: none;" class="secondarytabbtn" onclick="showBLTab('higgstab')">Higgs Mechanism</button></td>
 						</tr>
 					</table>
 					<div id="bextab" class="bltab">
@@ -5642,7 +5650,7 @@
 					</div>
 					<div id="butab" class="bltab"><table class="table" id="bUpgs" align="center" style="margin: auto"></table></div>
 					<div id="wzbtab" class="bltab">
-						<!--<span id="wzbSpeed"></span>-->
+						<span id="wzbSpeed" style="font-size: 14px;"></span>
 						<table class='qtable'>
 							<tr>
 								<td>
@@ -5676,6 +5684,11 @@
 								</td>
 							</tr>
 						</table>
+					</div>
+					<div id="higgstab" class="bltab">
+						<button class="gluonupgrade small hb" style="font-size: 12px;" onclick="restartHiggs()">Restart Higgs run</button>
+						<br><span id="hmReqDiv">Reach <span id="hmReq">1 Higgs Boson</span> to unlock a new Particle Mass.</span>
+						<br><br><table id="higgsMech" style="font-size: 20px;" class="qtable"></table>
 					</div>
 				</div>
 			</div>
@@ -5790,6 +5803,7 @@
 			<button id="bigRipConfirmBtn" class="storebtn" onclick="toggleBigRipConf()" style="width: 200px; height: 55px; font-size: 15px" style="display: inline"></button>
 			<button id="ghostifyConfirmBtn" class="storebtn" onclick="toggleGhostifyConf()" style="width: 200px; height: 55px; font-size: 15px" style="display: inline"></button>
 			<button id="leConfirmBtn" class="storebtn" onclick="toggleLEConf()" style="width: 200px; height: 55px; font-size: 15px" style="display: inline"></button>
+			<button id="higgsConfirmBtn" class="storebtn" onclick="toggleHiggsConf()" style="width: 200px; height: 55px; font-size: 15px" style="display: inline"></button>
 		</div>
 	</div>
 	<div class="popup optionmenu" id="notationmenu" style="overflow-y:hidden; width: 450px">
@@ -5923,7 +5937,8 @@
 <script type="text/javascript" src="javascripts/mods/ngp3/quarks_gluons.js"></script>
 <script type="text/javascript" src="javascripts/mods/ngp3/replicants.js"></script>
 <script type="text/javascript" src="javascripts/mods/ngp3/tod.js"></script>
-<script type="text/javascript" src="javascripts/mods/condensed.js"></script>
+<script type="text/javascript" src="javascripts/mods/condensed/condensed.js"></script>
+<script type="text/javascript" src="javascripts/mods/condensed/break_dilation.js"></script>
 <script type="text/javascript" src="javascripts/mods/ers.js"></script>
 <script type="text/javascript" src="javascripts/mods/meta.js"></script>
 <script type="text/javascript" src="javascripts/mods/quantum.js"></script>

@@ -22,6 +22,7 @@ function updateNeutrinoBoostDisplay(){
 	if (player.ghostify.neutrinos.boosts >= 9) document.getElementById("neutrinoBoost9").textContent = shorten(tmp.nb[9])
 	if (player.ghostify.neutrinos.boosts >= 10) document.getElementById("neutrinoBoost10").textContent = tmp.nb[10].toFixed(4)
 	if (player.ghostify.neutrinos.boosts >= 11) document.getElementById("neutrinoBoost11").textContent = shorten(tmp.nb[11])
+	if (player.ghostify.neutrinos.boosts >= 12) document.getElementById("neutrinoBoost12").textContent = "^"+tmp.nb[12].toFixed(4) 
 }
 
 function updateNeutrinoAmountDisplay(){
@@ -54,10 +55,14 @@ function updateNeutrinoUpgradeDisplay(){
 		document.getElementById("neutrinoUpg14Pow").textContent=shorten(tmp.nu[5])
 		document.getElementById("neutrinoUpg15Pow").textContent=shorten(tmp.nu[6])
 	}
+	if (player.ghostify.hb.unl && tmp.ngp3c) {
+		document.getElementById("neutrinoUpg16Pow").textContent=tmp.nu[7].toFixed(3)
+	}
 	var sum = player.ghostify.neutrinos.electron.add(player.ghostify.neutrinos.mu).add(player.ghostify.neutrinos.tau).round()
-	for (var u = 1; u < 16; u++) {
+	for (var u = 1; u <= 17; u++) {
 		var e = false
-		if (u > 12) e = player.ghostify.ghostlyPhotons.unl
+		if (u > 15) e = player.ghostify.hb.unl && tmp.ngp3c
+		else if (u > 12) e = player.ghostify.ghostlyPhotons.unl
 		else e = player.ghostify.times + 3 > u || u < 5
 		if (e) {
 			if (hasNU(u)) document.getElementById("neutrinoUpg" + u).className = "gluonupgradebought neutrinoupg"
@@ -93,7 +98,7 @@ function onNotationChangeNeutrinos() {
 	document.getElementById("neutrinoMultUpgCost").textContent=shortenDimensions(Decimal.pow(4, player.ghostify.neutrinos.multPower-1).times(2))
 	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(2, player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent=shortenDimensions(getGHPMultCost())
-	for (var u = 1; u < 16; u++) document.getElementById("neutrinoUpg" + u + "Cost").textContent=shortenDimensions(tmp.nuc[u])
+	for (var u = 1; u <= 17; u++) document.getElementById("neutrinoUpg" + u + "Cost").textContent=shortenDimensions(new Decimal(tmp.nuc[u]))
 }
 
 function getNeutrinoGain() {
@@ -120,7 +125,7 @@ function buyNeutrinoUpg(id) {
 }
 
 function updateNeutrinoBoosts() {
-	for (var b = 1; b <= 11; b++) document.getElementById("neutrinoBoost" + (b % 3 == 1 ? "Row" + (b + 2) / 3 : "Cell" + b)).style.display = player.ghostify.neutrinos.boosts >= b ? "" : "none"
+	for (var b = 1; b <= 12; b++) document.getElementById("neutrinoBoost" + (b % 3 == 1 ? "Row" + (b + 2) / 3 : "Cell" + b)).style.display = player.ghostify.neutrinos.boosts >= b ? "" : "none"
 	document.getElementById("neutrinoUnlock").style.display = player.ghostify.neutrinos.boosts >= getMaxUnlockedNeutrinoBoosts() ? "none" : ""
 	document.getElementById("neutrinoUnlockCost").textContent = shortenDimensions(new Decimal(tmp.nbc[player.ghostify.neutrinos.boosts]))
 }
@@ -138,6 +143,7 @@ function getMaxUnlockedNeutrinoBoosts() {
 	let x = 9
 	if (player.ghostify.wzb.unl) x++
 	if (!tmp.ngp3l && player.ghostify.hb.higgs > 0) x++
+	if (tmp.ngp3c && player.ghostify.hb.higgs > 0) x++
 	return x
 }
 
@@ -282,7 +288,15 @@ var neutrinoBoosts = {
 			let nb11exp = Math.sqrt(nb11neutrinos)
 			let nb11 = Decimal.pow(1.15, nb11exp)
 			return nb11
-		}
+		},
+		12: function(nt) {
+			if (!tmp.ngp3c) return 1;
+			let nb12neutrinos = nt[0].add(1).log10()+nt[1].add(1).log10()+nt[2].add(1).log10()
+			if (hasNU(9)) nb12neutrinos += nt[2].add(1).log10()*2
+			let nb12 = Math.log2(nb12neutrinos+1)*40+1
+			if (tmp.qu.bigRip.active) nb12 = Math.pow(nb12, 1/3);
+			return nb12;
+		},
 	}
 }
 

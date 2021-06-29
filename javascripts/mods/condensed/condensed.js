@@ -29,6 +29,8 @@ function loadCondensedVars() {
 	}
 	if (player.condensed.obsc === undefined) player.condensed.obsc = {}
 	if (tmp.qu.bigRip.tss === undefined) tmp.qu.bigRip.tss = new Decimal(0);
+	if (player.ghostify.hb.masses === undefined) player.ghostify.hb.masses = {};
+	if (player.ghostify.hb.mechType === undefined) player.ghostify.hb.mechType = 0;
 }
 
 function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity, 4: Eternity, 5: Quantum, 6: Ghostify
@@ -76,8 +78,12 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 	}
 	if (preVer<1.24) tmp.qu.bigRip.tss = new Decimal(0);
 	if (preVer<1.25) player.condensed.autoEmp = false;
+	if (preVer<1.28) {
+		player.ghostify.hb.masses = {};
+		player.ghostify.hb.mechType = 0;
+	}
 
-	player.aarexModifications.ngp3c = 1.27;
+	player.aarexModifications.ngp3c = 1.28;
 }
 
 function getTotalCondensers(type) {
@@ -596,6 +602,12 @@ const OBSCUREMENTS = {
 		osID: "MD",
 		res() { return getMetaDimensionMultiplier(1) },
 	},
+	ts263: {
+		title: "TS263",
+		scID: "TS263",
+		osID: "TS263",
+		res() { return getMTSMult(263) },
+	},
 	qk: {
 		title: "Quark Gain",
 		scID: "QK",
@@ -610,6 +622,7 @@ function updateObscurements() {
 		let data = OBSCUREMENTS[Object.keys(OBSCUREMENTS)[i]]
 		let scData = Object.values(softcap_data["ngp3c"+data.scID])
 		let res = new Decimal(data.res())
+		let obscuredEffect = {}
 		if (!player.condensed.obsc[data.osID]) {
 			if (res.gte((typeof scData[0].start == "function") ? scData[0].start() : scData[0].start) && (data.unl?data.unl():true)) player.condensed.obsc[data.osID] = []
 			else continue;
@@ -624,9 +637,22 @@ function updateObscurements() {
 				else continue;
 			}
 			html += "<li>OS_"+data.osID+"_"+(j+1)+": Starts at "+shorten(start)
-			if (newData.func=="pow") html += ", ^"+shorten((typeof newData.pow == "function") ? newData.pow() : newData.pow)
-			else if (newData.func=="expPow") html += ", exponent ^"+shorten((typeof newData.pow == "function") ? newData.pow() : newData.pow)
-			else if (newData.func=="log") html += ", logged ^"+shorten((typeof newData.pow == "function") ? newData.pow() : newData.pow)
+			let p = (typeof newData.pow == "function") ? newData.pow() : newData.pow;
+			if (newData.func=="pow") html += ", ^"+shorten(p)
+			else if (newData.func=="expPow") html += ", exponent ^"+shorten(p)
+			else if (newData.func=="log") html += ", logged ^"+shorten(p)
+			html += "</li>"
+			obscuredEffect[newData.func] = Decimal.mul(obscuredEffect[newData.func]||1, p);
+		}
+		if (scData.length > 0) {
+			html += "<br><li>Overall: "
+			let i2 = 0;
+			for (let x in obscuredEffect) {
+				if (i2!=0) html += ", "
+				let s = obscuredEffect[x].lt(0.01)?("(1 / "+shorten(obscuredEffect[x].pow(-1))+")"):shorten(obscuredEffect[x]);
+				html += (x=="expPow"?"exponent ":(x=="log"?"logged ":""))+"^"+s
+				i2++;
+			}
 			html += "</li>"
 		}
 		html += "</ul><br><br>"
@@ -754,13 +780,16 @@ function updateElecCond() {
 
 function getElecCondenseCost() {
 	let lvl = player.condensed.elec;
-	if (lvl>=15) lvl = Math.pow(lvl, Math.log(lvl)/Math.log(2)-2.9)
+	if (lvl>=15) lvl = Math.pow(lvl, Math.pow(Math.log(lvl)/Math.log(15), 3))
 	if (lvl>=3) lvl = Math.pow(lvl, Math.log(lvl)/Math.log(3))
 	return Math.floor(3000*Math.pow(lvl+1, 0.3))
 }
 
 function getElecCondenseTarget() {
-	return 0
+	let t = Math.pow(tmp.qu.electrons.amount/3000, 10/3)-1;
+	if (t>=3) t = Math.pow(Math.E, Math.sqrt(Math.log(3)*Math.log(t)))
+	if (t>=15) t = Math.pow(Math.E, 2.11102090079*Math.pow(Math.log(t), 1/4))
+	return Math.max(Math.floor(t+1), 0);
 }
 
 function elecCondense(max=false) {
@@ -798,6 +827,7 @@ function getCondPreonEffMult() {
 	if (player.masterystudies.includes("t345")) mult *= getMTSMult(345)
 	if (hasNU(12) && tmp.qu.bigRip.active) mult *= tmp.nu[4].inf;
 	if (hasBosonicUpg(14)) mult *= tmp.blu[14]
+	if (player.ghostify.hb.unl && tmp.hm.preons && player.ghostify.hb.masses.preons) mult *= tmp.hm.preons.eff
 	return mult;
 }
 
@@ -1064,7 +1094,7 @@ function getLightCondenserPow() {
 }
 
 function getLightCondenserEff(x) {
-	let amt = player.condensed.light[x] * getLightCondenserPow();
+	let amt = player.condensed.light[x] * ((tmp.cnd?tmp.cnd.lightPow:1)||1);
 	let eff = Decimal.add(player.ghostify.ghostlyPhotons.ghostlyRays.plus(1).log10() * amt, 1).log10()*amt+1;
 	if (eff>=5) eff = Math.sqrt(eff*5);
 	return eff;

@@ -119,6 +119,7 @@ function assignAll(auto) {
 function getQuarkAssignMult() {
 	let r = new Decimal(1)
 	if (hasBosonicUpg(23) && !tmp.ngp3c) r = r.times(tmp.blu[23])
+	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm.quarks && player.ghostify.hb.masses.quarks) r = r.times(tmp.hm.quarks.eff)
 	return r
 }
 

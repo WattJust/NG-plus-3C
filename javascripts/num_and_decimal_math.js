@@ -61,3 +61,11 @@ function nL(a,b) {
 	if (typeof(b)=="number") return false
 	return a.lt(b)
 }
+
+function nPow(a,b) {
+	if (typeof(a)=="number"&&typeof(b)=="number") {
+		let m=Math.pow(a,b)
+		if (m<1/0) return Math.floor(m)
+	}
+	return nN(Decimal.pow(a,b))
+}

@@ -80,6 +80,7 @@ function getDilPower() {
 
 function getDilUpgPower(x) {
 	let r = player.dilation.rebuyables[x] || 0
+	if (tmp.ngp3c && tmp.hm) if (player.ghostify.hb.unl && tmp.hm.tp && player.ghostify.hb.masses.tp) r += tmp.hm.tp.eff;
 	if (player.aarexModifications.nguspV) r += exDilationUpgradeStrength(x)
 	else if (player.exdilation != undefined && !player.aarexModifications.ngudpV) r *= exDilationUpgradeStrength(x)
 	if (player.achievements.includes("ng3p61") && tmp.ngp3c) r *= 1.2;
@@ -481,6 +482,7 @@ function getTTGenPart(x) {
 	x = x.max(1).log10()
 	let y = player.aarexModifications.ngudpV && !player.aarexModifications.nguepV ? 73 : 80
 	if (x > y) x = Math.sqrt((x - y + 5) * 5) + y - 5
+	if (x > 200) x = Math.sqrt(Math.pow(200, Math.sqrt(Math.log(x)/Math.log(200)))*200)
 	return Decimal.pow(10,x)
 }
 

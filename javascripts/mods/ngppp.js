@@ -489,7 +489,7 @@ function getGHPGain() {
 
 function getGHPMult() {
 	let x = Decimal.pow(2, player.ghostify.multPower - 1)
-	if (player.achievements.includes("ng3p93")) x = x.times(500)
+	if (player.achievements.includes("ng3p93") && !tmp.ngp3c) x = x.times(500)
 	if (player.achievements.includes("ng3p83")) x = x.times(tmp.ngp3c?666:(ranking + 1))
 	if (player.achievements.includes("ng3p97")) x = x.times(Decimal.pow(player.ghostify.times + 1, 1/3))
 	return x
@@ -531,7 +531,7 @@ function ghostify(auto, force) {
 var ghostifyDenied
 function denyGhostify() {
 	ghostifyDenied++
-	if (!tmp.ngp3l && ghostifyDenied >= 15) giveAchievement("You are supposed to become a ghost!")
+	if (!tmp.ngp3l && ghostifyDenied >= 15) giveAchievement("Deny the afterlife")
 }
 
 function ghostifyReset(implode, gain, amount, force) {
@@ -561,7 +561,7 @@ function ghostifyReset(implode, gain, amount, force) {
 	if (bm > 15) giveAchievement("I rather oppose the theory of everything")
 	if (player.eternityPoints.e>=22e4&&player.ghostify.under&&!force) giveAchievement("Underchallenged")
 	if (player.eternityPoints.e>=(tmp.ngp3c?35e3:375e3)&&inQCModifier("ad")&&!force) giveAchievement("Overchallenged")
-	if (inQCModifier("sm") && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
+	if (!tmp.qu.breakEternity.did && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
 	if (player.ghostify.best<=((tmp.ngp3c?10:6))) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
 	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU)
@@ -711,14 +711,18 @@ function setupAutomaticGhostsData() {
 	data[11].lw = 1
 	data[11].cw = 1
 	data[15].a = 1
+	data[19].a = 100
 	return data
 }
 
 var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40]
 var powerConsumed
-var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,6,3,9,3]
+var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,4,3,6,3]
 function getAutoGhostReq(x) {
-	if (tmp.ngp3c && x>=13) return autoGhostRequirements[x]+6;
+	if (tmp.ngp3c) {
+		if (x==13||x==14) return autoGhostRequirements[x]+(x==14?1:3);
+		if (x==16||x==17) return autoGhostRequirements[x]-(x==16?3:5);
+	} 
 	return autoGhostRequirements[x];
 }
 
@@ -757,6 +761,7 @@ function updateAutoGhosts(load) {
 		document.getElementById("autoGhost13t").value = data[13].t
 		document.getElementById("autoGhost13u").value = data[13].u
 		document.getElementById("autoGhost15a").value = formatValue("Scientific", data[15].a, 2, 1)
+		document.getElementById("autoGhost19a").value = data[19].a
 	}
 	document.getElementById("consumedPower").textContent = powerConsumed.toFixed(2)
 	isAutoGhostsSafe = data.power >= powerConsumed
@@ -801,6 +806,9 @@ function changeAutoGhost(o) {
 	} else if (o == "15a") {
 		var num = fromValue(document.getElementById("autoGhost15a").value)
 		if (!isNaN(break_infinity_js ? num : num.l)) player.ghostify.automatorGhosts[15].a = num
+	} else if (o == "19a") {
+		var num = parseFloat(document.getElementById("autoGhost19a").value)
+		if (!isNaN(num) && num >= 0) player.ghostify.automatorGhosts[19].a = num
 	}
 }
 
@@ -871,6 +879,11 @@ function getGhostifiedGain() {
 function toggleLEConf() {
 	player.aarexModifications.leNoConf = !player.aarexModifications.leNoConf
 	document.getElementById("leConfirmBtn").textContent = "Light Empowerment confirmation: O" + (player.aarexModifications.leNoConf ? "FF" : "N")
+}
+
+function toggleHiggsConf() {
+	player.aarexModifications.higgsNoConf = !player.aarexModifications.higgsNoConf
+	document.getElementById("higgsConfirmBtn").textContent = "Higgs Boson confirmation: O" + (player.aarexModifications.higgsNoConf ? "FF" : "N")
 }
 
 //Anti-Preontius' Lair

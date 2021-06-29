@@ -9,14 +9,20 @@ function updateElectronsTab() {
 	if (player.aarexModifications.ngp3c) updateElecCond()
 }
 
-function updateElectrons(retroactive) {
+function updateElectrons(retroactive, updateMult) {
 	if (!tmp.ngp3 || !player.masterystudies.includes("d7")) {
 		document.getElementById("electronstabbtn").style.display = "none"
 		return
 	} else document.getElementById("electronstabbtn").style.display = ""
 	var mult = getElectronGainFinalMult()
 	document.getElementById("electronsGainMult").textContent = mult.toFixed(2)
-	if (retroactive) tmp.qu.electrons.amount = getElectronGainFinalMult() * tmp.qu.electrons.sacGals
+	if (retroactive) {
+		if (updateMult) {
+			tmp.qu.electrons.mult = 6;
+			for (let i=1;i<=4;i++) tmp.qu.electrons.mult += getElectronUpgIncrease(i) * tmp.qu.electrons.rebuyables[i - 1]
+		}
+		tmp.qu.electrons.amount = getElectronGainFinalMult() * tmp.qu.electrons.sacGals
+	}
 	if (!tmp.qu.autoOptions.sacrifice && !tmp.ngp3c) updateElectronsEffect()
 	for (var u = 1; u < 5; u++) {
 		var cost = getElectronUpgCost(u)
@@ -58,7 +64,7 @@ function getElectronBoost(mod) {
 	if (amount > 37460 + s) amount = Math.sqrt((amount-s) * 37460) + s
 	if (tmp.rg4 && mod != "no-rg4" && !player.aarexModifications.ngp3c) amount *= 0.7
 	if (player.masterystudies !== undefined && player.masterystudies.includes("d13") && mod != "noTree") amount *= getTreeUpgradeEffect(4)
-	if (player.aarexModifications.ngp3c && tmp.cnd) amount *= tmp.cnd.elec.eff
+	if (player.aarexModifications.ngp3c && tmp.cnd && tmp.cnd.elec) amount *= tmp.cnd.elec.eff
 	return amount + 1
 }
 
@@ -85,7 +91,7 @@ function getElectronUpgCost(u) {
 	if (player.aarexModifications.ngp3c) base += ([null, 82, 130, 599, 13])[u]
 	else base += ([null, 82, 153, 638, 26])[u]
 
-	if (u == 1) return Math.pow(10, base)
+	if (u == 1) return nPow(10, base)
 	if (u == 4) return Math.max(Math.floor(base), 0)
 	return Decimal.pow(10, base)
 }
@@ -96,14 +102,16 @@ function getElectronUpgCostScalingExp(u) {
 }
 
 function getElectronUpgIncrease(u) {
-	if (player.achievements.includes("ng3p61") && tmp.ngp3c) return 0.3;
-	return 0.25
+	let inc = 0.25;
+	if (player.achievements.includes("ng3p61") && tmp.ngp3c) inc = 0.3;
+	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm.electrons && player.ghostify.hb.masses.electrons) inc += tmp.hm.electrons.eff / getElectronGainMult()
+	return inc;
 }
 
 function buyElectronUpg(u, quick) {
 	if (!canBuyElectronUpg(u)) return false
 	var cost = getElectronUpgCost(u)
-	if (u == 1) player.timestudy.theorem -= cost
+	if (u == 1) player.timestudy.theorem = nS(player.timestudy.theorem, cost)
 	else if (u == 2) player.dilation.dilatedTime = player.dilation.dilatedTime.sub(cost)
 	else if (u == 3) player.meta.antimatter = player.meta.antimatter.sub(cost)
 	else if (u == 4 && (tmp.ngp3l || !player.achievements.includes("ng3p64"))) {
@@ -123,5 +131,5 @@ function canBuyElectronUpg(id) {
 	if (id > 3) return player.meta.resets >= getElectronUpgCost(4)
 	if (id > 2) return player.meta.antimatter.gte(getElectronUpgCost(3))
 	if (id > 1) return player.dilation.dilatedTime.gte(getElectronUpgCost(2))
-	return player.timestudy.theorem >= getElectronUpgCost(1)
+	return !nL(player.timestudy.theorem, getElectronUpgCost(1))
 }

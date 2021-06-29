@@ -54,7 +54,7 @@ function updateTemp() {
 	updateInfiniteTimeTemp()
 	updateAntiElectronGalaxiesTemp()
 	updateIntergalacticTemp() // starts with if (tmp.ngp3)
-	if (hasBosonicUpg(41)) {
+	if (hasBosonicUpg(41) && !tmp.ngp3c) {
 		tmp.blu[41] = bu.effects[41]()
 		tmp.it = tmp.it.times(tmp.blu[41].it)
 		tmp.ig = tmp.ig.times(tmp.blu[41].ig)
@@ -91,9 +91,9 @@ let tmp = {
 	be: false,
 	beu: {},
 	bm: [200,175,150,100,50,40,30,25,20,15,10,5,4,3,2,1],
-	nbc: [1,2,4,6,15,50,1e3,1e14,1e35,"1e900","1e3000"],
+	nbc: [1,2,4,6,15,50,1e3,1e14,1e35,"1e900","1e3000", 1e185],
 	nu: [],
-	nuc: [null,1e6,1e7,1e8,2e8,5e8,2e9,5e9,75e8,1e10,7e12,1e18,1e55,1e125,1e160,1e280],
+	nuc: [null,1e6,1e7,1e8,2e8,5e8,2e9,5e9,75e8,1e10,7e12,1e18,1e55,1e125,1e160,1e280,"1e1240", "1e1350"],
 	lt: [12800,16e4,48e4,16e5,6e6,5e7,24e7,125e7],
 	lti: [2,4,1.5,10,4,1e3,2.5,3],
 	effL: [0,0,0,0,0,0,0],
@@ -155,14 +155,14 @@ function updateEffectiveLightAmountsTemp(){
 	let leBonus5Unl = isLEBoostUnlocked(5)
 	let leGlobal = globalLightPower();
 	for (var c = 7; c >= 0; c--) {
-		var x = player.ghostify.ghostlyPhotons.lights[c]
+		var x = player.ghostify.ghostlyPhotons.lights[c] + getExtraLight(c)
 		if (tmp.ngp3c) {
 			if (x>=15) x = Math.sqrt(x*15);
 			x *= getLightCondenserEff(c+1);
 		}
 		var y = tmp.leBoost
 		if ((c == 6 && !isLEBoostUnlocked(4)) || c == 7) y += leGlobal
-		else if (leBonus5Unl) y += Math.pow(tmp.effL[c + 1] * tmp.leBonus[5].mult + Math.root(leGlobal, tmp.leBonus[5].exp), tmp.leBonus[5].exp)
+		else if (leBonus5Unl) y += Math.pow(tmp.effL[c + 1] * tmp.leBonus[5].mult + Math.pow(leGlobal, 1/tmp.leBonus[5].exp), tmp.leBonus[5].exp)
 		else y += Math.sqrt(tmp.effL[c + 1] + Math.pow(leGlobal, 2))
 		tmp.ls[c] = y
 		if (c == 0) {
@@ -190,7 +190,7 @@ function updateFixedLightTemp() {
 		if (!isLEBoostUnlocked(b)) break
 		if (b != 4 && b != 5) {
 			tmp.leBonus[b] = leBoosts.effects[b]()
-			if (b == 8) tmp.apgw += Math.floor(tmp.leBonus[9])
+			if (b == 9) tmp.apgw += Math.floor(tmp.leBonus[9])
 		}
 	}
 }
@@ -259,9 +259,10 @@ function updateIntergalacticTemp() {
 function updateAntiElectronGalaxiesTemp(){
 	tmp.aeg = 0
 	if (hasBosonicUpg(14) && !tmp.ngp3c && !player.quantum.bigRip.active) tmp.aeg = Math.max(tmp.blu[14] - tmp.qu.electrons.sacGals, 0)
+	if (hasNU(17) && tmp.ngp3c && tmp.cnd) tmp.aeg = Math.max(tmp.cnd.pe - tmp.qu.electrons.sacGals, 0)
 	tmp.effAeg = tmp.aeg
 	if (tmp.aeg > 0) {
-		if (hasBosonicUpg(34)) tmp.effAeg *= tmp.blu[34]
+		if (hasBosonicUpg(34) && !tmp.ngp3c) tmp.effAeg *= tmp.blu[34]
 	}
 }
 
@@ -350,6 +351,7 @@ function updateGhostifyTempStuff(){
 		updateNeutrinoUpgradesTemp()
 		updateNeutrinoBoostsTemp()
 	}
+	if (player.ghostify.hb.unl && tmp.ngp3c) updateNU16Temp()
 }
 
 function updateNeutrinoBoostsTemp() {
@@ -365,6 +367,7 @@ function updateNeutrinoBoostsTemp() {
 	tmp.nbc[2] = tmp.ngp3c?3:4;
 	tmp.nbc[8] = tmp.ngp3c?4e19:1e35;
 	tmp.nbc[9] = tmp.ngp3c?1e96:"1e900";
+	tmp.nbc[10] = tmp.ngp3c?1e125:"1e3000"
 }
 
 function updateNU1Temp(){
@@ -428,6 +431,11 @@ function updateNU14Temp(){
 function updateNU15Temp(){
 	tmp.nu[6] = Decimal.pow(2,(tmp.qu.nanofield.rewards>90?Math.sqrt(90*tmp.qu.nanofield.rewards):tmp.qu.nanofield.rewards) / (tmp.ngp3c?4:2.5)) 
 	//NU15
+}
+
+function updateNU16Temp() {
+	tmp.nu[7] = Math.sqrt(Decimal.add(getReplicantiCap(), 1).log(Number.MAX_VALUE)/(tmp.qu.bigRip.active?1e9:1e10)+1)
+	//NU16
 }
 
 function updateNeutrinoUpgradesTemp(){
@@ -647,7 +655,7 @@ function updateBosonicAMDimReturnsTemp() {
 	if (tmp.ngp3l) return
 	if (!player.ghostify.wzb.unl) return
 
-	data.start = getHiggsRequirement()
+	data.start = getHiggsRequirement((player.achievements.includes("ng3p93") && tmp.ngp3c)?Math.max(Math.ceil(player.ghostify.hb.higgs*1.5-1), player.ghostify.hb.higgs):player.ghostify.hb.higgs)
 	data.base = getHiggsRequirementMult()
 	data.offset = 1 / Math.log(data.base) - 1
 	data.offset2 = 1 - Math.log10(data.offset + 1) / Math.log10(data.base)
@@ -686,6 +694,8 @@ function updateWZBosonsTemp(){
 	}
 	
 	data.wbt = Decimal.pow((tmp.newNGP3E||tmp.ngp3c) ? 5 : 3, bosonsExp) //W Bosons boost to extract time
+	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm && tmp.hm.wb && player.ghostify.hb.masses.wb) data.wbt = data.wbt.times(tmp.hm.wb.eff).sqrt().max(data.wbt)
+	
 	data.wbo = Decimal.pow(10, Math.max(bosonsExp, 0)) //W Bosons boost to Z Neutrino oscillation requirement
 	
 	let wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(tmp.ngp3c?((player.ghostify.bl.upgrades.length>1)?.01:.1):100).max(1)
@@ -695,6 +705,9 @@ function updateWZBosonsTemp(){
 	var zbslog = player.ghostify.wzb.zb.div(10).add(1).sqrt().log10()
 	if (tmp.ngp3c) zbslog *= Math.log10(player.ghostify.bl.upgrades.length + 1) + 1
 	data.zbs = Decimal.pow(10, Math.pow(zbslog, tmp.ngp3c?.8:1)) //Z Bosons boost to W Quark
+	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm && player.ghostify.hb.masses.zb) data.zbs = data.zbs.pow(1+tmp.hm.zb.eff);
+
+	data.spd = getWZBosonSpeed();
 }
 
 function updateNanoEffectUsages() {
@@ -712,7 +725,9 @@ function updateNanoEffectUsages() {
 	nanoRewards.effectsUsed[5] = data2
 
 	//Seventh reward
-	var data2 = [hasBosonicUpg(22) ? "neutrinos" : "remote_start", "preon_charge"]
+	let bu22 = hasBosonicUpg(22)
+	var data2 = [bu22 ? "neutrinos" : "remote_start", "preon_charge"]
+	if (tmp.ngp3c && bu22) data2.push("remote_start")
 	nanoRewards.effectsUsed[7] = data2
 
 	//Used Nanofield rewards
@@ -750,6 +765,22 @@ function updateNanoRewardTemp() {
 
 	updateNanoEffectUsages()
 	//The rest is calculated by updateTemp().
+}
+
+function updateHiggsMechanismTemp() {
+	if (!tmp.hb.unl) return;
+
+	if (!tmp.hm) tmp.hm = {};
+	tmp.hm.baseEff = Math.log((player.ghostify.hb.higgs||0)/10+1)
+	tmp.hm.gb = getParticleMassGainBase()
+	tmp.hm.unlocks = 0;
+	for (let type in hm) {
+		if (type=="limit") continue;
+		if (!tmp.hm[type]) tmp.hm[type] = {};
+		tmp.hm[type].gain = hm[type].gain(tmp.hb.higgs||0);
+		tmp.hm[type].eff = hm[type].eff(tmp.hb.masses[type]||new Decimal(0));
+		if (tmp.hb.masses[type]!==undefined) tmp.hm.unlocks++;
+	}
 }
 
 function updateCondenseTemp() {
@@ -791,7 +822,9 @@ function updateCondenseTemp() {
 	tmp.cnd.elec.eff = getElecCondEff()
 	
 	tmp.cnd.pe = 0
-	if (player.masterystudies.includes("d10")) tmp.cnd.pe = Math.min(Math.floor(getCondPreonEff()), player.quantum.electrons.sacGals)
-	
+	if (player.masterystudies.includes("d10")) tmp.cnd.pe = Math.min(Math.floor(getCondPreonEff()), hasNU(17)?(1/0):player.quantum.electrons.sacGals)
+
 	tmp.ts413 = getMTSMult(413);
+
+	tmp.cnd.lightPow = getLightCondenserPow()
 }

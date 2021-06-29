@@ -491,7 +491,11 @@ var softcap_data = {
 		},
 		5: {
 			func: "pow",
-			start: Decimal.pow(10, 250e9),
+			start() {
+				let start = Decimal.pow(10, 250e9);
+				if (player.ghostify.neutrinos.boosts >= 12 && tmp.ngp3c && tmp.nb) start = start.pow(tmp.nb[12]||1);
+				return start;
+			},
 			pow: 1/13,
 			derv: false,
 		},
@@ -673,6 +677,11 @@ var softcap_data = {
 			start: Decimal.pow(10, 1e9),
 			pow: 1e9/9,
 		},
+		3: {
+			func: "expPow",
+			start: Decimal.pow(10, 1e10),
+			pow: .3,
+		},
 	},
 	ngp3cDT: {
 		1: {
@@ -706,6 +715,11 @@ var softcap_data = {
 				return start;
 			},
 			pow: 0.95,
+		},
+		4: {
+			func: "expPow",
+			start: new Decimal("1e15000"),
+			pow: 0.75,
 		},
 	},
 	ngp3cTP: {
@@ -759,8 +773,15 @@ var softcap_data = {
 		},
 		2: {
 			func: "pow",
-			start() { return new Decimal(tmp.qu.bigRip.active ? "1e500000" : 1/0) },
+			start: new Decimal("1e500000"),
 			pow: 0.15,
+		},
+	},
+	ngp3cTS263: {
+		1: {
+			func: "expPow",
+			start: new Decimal("1e30000"),
+			pow: 0.2
 		},
 	},
 	ngp3cQK: {

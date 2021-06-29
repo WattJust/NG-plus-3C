@@ -149,7 +149,7 @@ var masteryStudies = {
 		263: function(){
 			let x = player.meta.resets
 			if (!tmp.ngp3l) x = x * (x + 10) / 60
-			if (player.aarexModifications.ngp3c) return Decimal.pow(2, x).times(Decimal.pow(x + 1, 20))
+			if (player.aarexModifications.ngp3c) return softcap(Decimal.pow(2, x).times(Decimal.pow(x + 1, 20)), "ngp3cTS263")
 			return x + 1
 		},
 		264: function(){
@@ -746,7 +746,7 @@ function buyingDilationStudy(id){
 function buyMasteryStudy(type, id, quick=false) {
 	if (quick) setMasteryStudyCost(id,type)
 	if (!canBuyMasteryStudy(type, id)) return
-	player.timestudy.theorem -= masteryStudies.costs[masteryStudies.types[type]][id]
+	player.timestudy.theorem = nS(player.timestudy.theorem, masteryStudies.costs[masteryStudies.types[type]][id])
 	if (type == 'ec') {
 		player.eternityChallUnlocked = id
 		player.etercreq = id
@@ -820,16 +820,16 @@ function buyMasteryStudy(type, id, quick=false) {
 function canBuyMasteryStudy(type, id) {
 	if (type == 't') {
 		if (inQCModifier("sm") && masteryStudies.bought >= 20) return false
-		if (player.timestudy.theorem < masteryStudies.costs.time[id] || player.masterystudies.includes('t' + id) || player.eternityChallUnlocked > 12 || !masteryStudies.timeStudies.includes(id)) return false
+		if (nL(player.timestudy.theorem, masteryStudies.costs.time[id]) || player.masterystudies.includes('t' + id) || player.eternityChallUnlocked > 12 || !masteryStudies.timeStudies.includes(id)) return false
 		if (masteryStudies.latestBoughtRow > Math.floor(id / 10) && !player.aarexModifications.ngp3c) return false
 		if (!(masteryStudies.studyReqConditions[id] ? masteryStudies.studyReqConditions[id]() : true) && player.aarexModifications.ngp3c) return false
 		if (!masteryStudies.spentable.includes(id)) return false
 	} else if (type == 'd') {
-		if (player.timestudy.theorem < masteryStudies.costs.dil[id] || player.masterystudies.includes('d' + id)) return false
+		if (nL(player.timestudy.theorem, masteryStudies.costs.dil[id]) || player.masterystudies.includes('d' + id)) return false
 		if (!ghostified && !(masteryStudies.unlockReqConditions[id] && masteryStudies.unlockReqConditions[id]())) return false
 		if (!masteryStudies.spentable.includes("d" + id)) return false
 	} else {
-		if (player.timestudy.theorem < masteryStudies.costs.ec[id] || player.eternityChallUnlocked) return false
+		if (nL(player.timestudy.theorem, masteryStudies.costs.ec[id]) || player.eternityChallUnlocked) return false
 		if (!masteryStudies.spentable.includes("ec" + id)) return false
 		if (player.etercreq == id) return true
 		if (id == 13) return player.resets >= masteryStudies.ecReqsStored[13]
@@ -964,7 +964,7 @@ function getMasteryStudyMultiplier(id, uses = ""){
 }
 
 function getMTSMult(id, uses = "") {
-	if (uses == "" && masteryStudies.unlocked.includes(id)) return tmp.mts[id]
+	if (uses == "" && masteryStudies.unlocked.includes(id)) return tmp.mts?tmp.mts[id]:new Decimal(1)
 	return masteryStudies.timeStudyEffects[id](uses)
 }
 

@@ -406,6 +406,27 @@ button {
     border-radius: 4px;
 }
 
+.smallsecondarytabbtn {
+    background: #E0E0E0;
+    font-weight: bold;
+    border: 2px solid #4980CC;
+    border-radius: 4px;
+    transition-duration: 0.2s;
+    cursor: pointer;
+    width: 150px;
+    height: 25px;
+    font-family: Typewriter;
+    font-size: 0.8rem;
+}
+
+.smallsecondarytabbtn:hover {
+    color: #FFFFFF;
+    background: #4980CC;
+    font-weight: bold;
+    border: 2px solid #4980CC;
+    border-radius: 4px;
+}
+
 .GP {
     right: 75%;
     position: absolute;
@@ -2399,7 +2420,7 @@ br {
 	height: 90px
 }
 
-#autoGhost11pc, #autoGhost11pw, #autoGhost11lw, #autoGhost11cw {
+#autoGhost11pc, #autoGhost11pw, #autoGhost11lw, #autoGhost11cw, #autoGhost19a {
 	width: 50px
 }
 
@@ -2684,7 +2705,7 @@ td.lEp {
 }
 
 .subFactorA {
-	color: #c73415
+	color: #8b240f
 }
 
 td.subFactorA {
@@ -2692,7 +2713,7 @@ td.subFactorA {
 }
 
 .subFactorE {
-	color: #38cbea
+	color: #1a7a8d
 }
 
 td.subFactorE {
@@ -2700,7 +2721,7 @@ td.subFactorE {
 }
 
 .subFactorZ {
-	color: #7f7f7f
+	color: #808080
 }
 
 td.subFactorZ {
@@ -2708,7 +2729,7 @@ td.subFactorZ {
 }
 
 .subFactorH {
-	color: #bfbf00
+	color: #8a8a00
 }
 
 td.subFactorH {

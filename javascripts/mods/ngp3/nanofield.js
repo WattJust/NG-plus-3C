@@ -139,6 +139,7 @@ var nanoRewards = {
 		supersonic_start: function(x) {
 			let y = Math.max(x - 3.5, 0);
 			if (hasBosonicUpg(25) && tmp.ngp3c) y *= tmp.blu[25];
+			if (player.achievements.includes("ng3p96") && tmp.ngp3c) y *= 1.5
 			if (tmp.ngp3c) y = Math.sqrt(y) / 3
 			return Math.floor(y * 75e5)
 		},
@@ -249,12 +250,13 @@ function getNanoRewardPower(reward, rewards) {
 	}
 	let pow = x * tmp.nf.powerEff
 	if (tmp.ngp3c && tmp.cnd) pow += tmp.cnd.nano[reward];
+	if (hasBosonicUpg(35) && tmp.ngp3c) pow += tmp.blu[35]
 	return pow;
 }
 
 function getNanoRewardPowerEff() {
 	let x = 1
-	if (hasBosonicUpg(31)) x *= tmp.blu[31]
+	if (hasBosonicUpg(31) && !tmp.ngp3c) x *= tmp.blu[31]
 	return x
 }
 

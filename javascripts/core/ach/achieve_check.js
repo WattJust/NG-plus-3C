@@ -248,7 +248,7 @@ function ngP3AchieveCheck(){
 		}
 	} else if (player.money.log10() >= 1.6e11 && player.timeDimension1.amount.eq(0)) giveAchievement("ERROR 404: DIMENSIONS NOT FOUND");
 	if (player.money.log10() >= 8e6 && inQC(6) && inQC(8, true)) giveAchievement("Impossible expectations")
-	if (player.timestudy.theorem >= 1.1e7 && tmp.qu.wasted) giveAchievement("Studies are wasted")
+	if (nG(player.timestudy.theorem, 1.1e7) && tmp.qu.wasted) giveAchievement("Studies are wasted")
 	if (tmp.qu.replicants.requirement.gte("1e12500000")) giveAchievement("Stop blocking me!")
 	if (player.infinityPoints.gte(Decimal.pow(10, tmp.ngp3c?1.15e5:2.75e5)) && ableToGetRid6) giveAchievement("Are you currently dying?")
 	if (tmp.qu.nanofield.rewards >= 21 && noTree) giveAchievement("But I don't want to grind!")
@@ -287,13 +287,12 @@ function ngP3AchieveCheck(){
 
 	if (tmp.ngp3l) return // NG+3.1 achievements from this point on
 
-	if (player.ghostify.hb.higgs >= 1) giveAchievement("The Holy Particle")
-	if (player.ghostify.ghostlyPhotons.enpowerments >= 25) giveAchievement("Bright as the Anti-Sun")
-	if (player.quantum.quarks.log10() >= 55555) giveAchievement("Are these another...")
+	if (player.ghostify.ghostlyPhotons.enpowerments >= (tmp.ngp3c?10:25)) giveAchievement("Bright as the Anti-Sun")
+	if (tmp.ngp3c?(player.ghostify.hb.higgs>=5):(player.quantum.quarks.log10() >= 55555)) giveAchievement("Are these another...")
 	if (player.ghostify.reference && (!tmp.ngp3c||!player.masterystudies.includes("t432")) && minUQ.decays >= 2) giveAchievement("... references to EC8?")
 	if (player.ghostify.hb.bosonicSemipowerment && player.ghostify.ghostlyPhotons.lights[7] >= tmp.leReq / 2) giveAchievement("Bosonic Semipowerment")
-	if (player.ghostify.times >= Math.pow(Number.MAX_VALUE, 1/4)) giveAchievement("The Ghostliest Side")
-	if (player.money.log10() >= 1e18) giveAchievement("Meta-Quintillion")
+	if (player.ghostify.times >= Math.pow(Number.MAX_VALUE, tmp.ngp3c?0.1:1/4)) giveAchievement("The Ghostliest Side")
+	if (tmp.ngp3c?(new Decimal(tmp.ig||0).max(1).log10()>=1e18):(player.money.log10() >= 1e18)) giveAchievement("Meta-Quintillion")
 	if (!tmp.ngp3c) if (player.unstableThisGhostify <= 10 && getTwoDecaysBool()) giveAchievement("... references to EC8?")
 }
 

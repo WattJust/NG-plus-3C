@@ -492,8 +492,8 @@ function setR22Tooltip(){
 
 function setR23Tooltip(){
 	// Row 23 (ng3p9) (3/8)
-	//ng3p91/////
-	//ng3p92/////
+	let holyparticle = document.getElementById("The Holy Particle")
+	let antisun = document.getElementById("Bright as the Anti-Sun")
 	let aretheseanother = document.getElementById("Are these another...")
 	let refToEC8 = document.getElementById("... references to EC8?");
 	//ng3p95/////
@@ -502,11 +502,13 @@ function setR23Tooltip(){
 	let metae18 = document.getElementById("Meta-Quintillion")
 
 	//ACHIEVEMENT ROW 23
-	ghostliest.setAttribute('ach-tooltip', "Get " + shorten(Math.pow(Number.MAX_VALUE, 1/4)) + " Ghostifies. Reward: Ghostifies boost the gain of Ghost Particles at a reduced rate.")
-	metae18.setAttribute('ach-tooltip', "Get " + shortenCosts(Decimal.pow(10, 1e18)) + " antimatter. Reward: Distant Antimatter Galaxies scaling is 10% weaker and Higgs Bosons produce Bosonic Antimatter at a linear rate.")
-	aretheseanother.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 55555)) + " Quarks. Reward: Gain 500x more Quarks and Ghost Particles.")
+	holyparticle.setAttribute('ach-tooltip', "Get a Higgs Boson. Reward: Bosonic Upgrades and Enchants are 2x cheaper"+(tmp.ngp3c?" per Higgs Boson (up to 5x cheaper)":"")+", achievement power boosts bosonic antimatter production at a reduced rate and light empowerements no longer reset photons era resources.")
+	antisun.setAttribute('ach-tooltip', "Reach "+(tmp.ngp3c?10:25)+" Light Empowerments. Reward: You always have the 12th Bosonic Upgrade"+(tmp.ngp3c?", you can change selected Particle Mass without being forced to Higgs reset, and the selected Particle Mass grows 5x faster.":"."))
+	ghostliest.setAttribute('ach-tooltip', "Get " + shorten(Math.pow(Number.MAX_VALUE, tmp.ngp3c?0.1:1/4)) + " Ghostifies. Reward: Ghostifies boost the gain of Ghost Particles at a reduced rate.")
+	metae18.setAttribute('ach-tooltip', (tmp.ngp3c?("Get an Intergalactic reward of "+shortenCosts(Decimal.pow(10, 1e18))+"x"):("Get " + shortenCosts(Decimal.pow(10, 1e18)) + " antimatter"))+". Reward: Distant Antimatter Galaxies scaling is 10% weaker and Higgs Bosons "+(tmp.ngp3c?"boost the Bosonic AM gain exponent.":"produce Bosonic Antimatter at a linear rate."))
+	aretheseanother.setAttribute('ach-tooltip', tmp.ngp3c?("Reach 5 Higgs Bosons. Reward: Bosonic Runes are extracted 10x faster, and the Higgs reduction to Bosonic Antimatter production only starts when you can increase your Higgs Bosons by 50%."):("Reach " + shortenCosts(Decimal.pow(10, 55555)) + " Quarks. Reward: Gain 500x more Quarks and Ghost Particles."))
 	refToEC8.setAttribute('ach-tooltip', "Get at least 2 Radioactive Decays of every color with at most 10 gains of Unstable Quarks"+(tmp.ngp3c?" and without TS432":"")+". Reward: Gain 1 level of Branch upgrade 2 per 1 Radioactive Decay.")
-	notsoverychall.setAttribute('ach-tooltip', tmp.ngp3c?"Become a ghost while Big Ripped with the Supermastery modifier. Reward: Neutrino Boost 1 is 50% stronger.":"Get 190 Paired Challenges ranking. Reward: Quantum and Paired Challenge goals are decreased by 5%, except during Big Rip.")
+	notsoverychall.setAttribute('ach-tooltip', tmp.ngp3c?"Become a ghost without Breaking Eternity in this Ghostify. Reward: Neutrino Boost 1 & Nanofield Reward 1 are 50% stronger, Bosonic Upgrade 1 is 15% stronger, and all Particle Masses are always selected.":"Get 190 Paired Challenges ranking. Reward: Quantum and Paired Challenge goals are decreased by 5%, except during Big Rip.")
 }
 
 function setPreNGP3AchievementTooltip() {

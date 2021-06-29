@@ -11,7 +11,7 @@ function updateToDSpeedDisplay(){
 
 function getTreeUpgradeEfficiencyDisplayText(){
 	s = getTreeUpgradeEfficiencyText()
-	if (!shiftDown) s = "Tree upgrade efficiency: "+(tmp.tue*100).toFixed(1)+"%"
+	if (!shiftDown) s = "Tree upgrade efficiency: "+(tmp.tue*100).toFixed(1)+"% (hold shift for details)"
 	return s
 }
 
@@ -62,17 +62,9 @@ function updateTreeOfDecayTab(){
 			document.getElementById("treeupg" + u + "lvl").textContent = getFullExpansion(lvl) + (tmp.tue > 1 ? " -> " + getFullExpansion(Math.floor(lvl * tmp.tue)) : "")
 			document.getElementById("treeupg" + u + "cost").textContent = start + shortenMoney(getTreeUpgradeCost(u)) + " " + colors[lvl % 3] + end
 		}
-		/*
-		if (ghostified){
-			document.getElementById("treeUpgradeEff").textContent = getTreeUpgradeEfficiencyDisplayText()
-			document.getElementById("treeUpgradeEff").style.display = ""
-		} else {
-			document.getElementById("treeUpgradeEff").style.display = "none"
-		} 
-		// This currently isnt working so hm....
-		*/
-		setAndMaybeShow("treeUpgradeEff", ghostified, '"Tree upgrade efficiency: "+(tmp.tue*100).toFixed(1)+"%"')
-		// I want to make it getTreeUpgradeEfficiencyDisplay(), but that doesnt work, so leaveing it out for now
+
+		setAndMaybeShow("treeUpgradeEff", ghostified, 'getTreeUpgradeEfficiencyDisplayText()')
+
 	}
 	updateToDSpeedDisplay()
 }
@@ -556,10 +548,11 @@ function getMaximumUnstableQuarks() {
 
 function getTreeUpgradeEfficiencyText(){
 	let text = ""
-	if (player.ghostify.neutrinos.boosts >= 7) text += "Neutrino Boost 7: +" + shorten(tmp.nb[7]) + ", "
+	if (player.ghostify.neutrinos.boosts >= 7 && tmp.qu.bigRip.active) text += "Neutrino Boost 7: +" + shorten(tmp.nb[7]*100) + "%, "
 	if (!tmp.ngp3l) {
 		if (player.achievements.includes("ng3p62") && !tmp.qu.bigRip.active) text += "Finite Time Reward: +10%, "
-		if (hasBosonicUpg(43)) text += "Bosonic Lab Upgrade 18: " + shorten(tmp.blu[43]) + "x, "
+		if (hasBosonicUpg(41) && tmp.ngp3c) text += "Bosonic Lab Upgrade 16: +" + shorten(tmp.blu[41]*100) + "%, "
+		if (hasBosonicUpg(43) && !tmp.ngp3c) text += "Bosonic Lab Upgrade 18: " + shorten(tmp.blu[43]) + "x, "
 	}
 	if (text == "") return "No multipliers currently"
 	return text.slice(0, text.length-2)
@@ -570,7 +563,8 @@ function getTreeUpgradeEfficiency(mod) {
 	if (player.ghostify.neutrinos.boosts >= 7 && (tmp.qu.bigRip.active || mod == "br") && mod != "noNB") r += tmp.nb[7]
 	if (!tmp.ngp3l) {
 		if (player.achievements.includes("ng3p62") && !tmp.qu.bigRip.active) r += 0.1
-		if (hasBosonicUpg(43)) r *= tmp.blu[43]
+		if (hasBosonicUpg(41) && tmp.ngp3c) r += tmp.blu[41]
+		if (hasBosonicUpg(43) && !tmp.ngp3c) r *= tmp.blu[43]
 	}
 	return r
 }

@@ -558,7 +558,7 @@ function dov7tov10(){
 
 	if (player.version < 9.5) {
 		player.version = 9.5
-		if (player.timestudy.studies.includes(191)) player.timestudy.theorem += 100
+		if (player.timestudy.studies.includes(191)) player.timestudy.theorem = nA(player.timestudy.theorem, 100)
 	}
 
 	if (player.version < 10) {
@@ -581,7 +581,7 @@ function doNGM1Versions(){
         }
         if (player.aarexModifications.newGameMinusVersion < 1.1) {
                 player.totalTimePlayed+=1728000
-                player.timestudy.theorem+=1
+                player.timestudy.theorem=nA(player.timestudy.theorem,1)
                 player.timestudy.ipcost=Decimal.div(player.timestudy.ipcost,2)
                 if (player.eternityChalls.eterc1==undefined) player.eternityChalls.eterc1=-6
                 else player.eternityChalls.eterc1-=6
@@ -596,7 +596,7 @@ function doNGM1Versions(){
                 } player.infinitiedBank -= 996
                 player.spreadingCancer -= 9000
                 player.timeDimension1.power = player.timeDimension1.power.mul(2)
-                player.timestudy.theorem--
+                player.timestudy.theorem = nS(player.timestudy.theorem, 1)
                 player.timestudy.ipcost = player.timestudy.ipcost.div(5e11)
                 player.dilation.nextThreshold.e = 6
                 player.dilation.totalTachyonParticles = new Decimal(500)
@@ -609,11 +609,11 @@ function doNGM1Versions(){
         if (player.aarexModifications.newGameMinusVersion < 2.1) {
                 player.timeDimension1.power = player.timeDimension1.power.mul(8)
                 player.timeDimension4.power = player.timeDimension4.power.mul(4)
-                player.timestudy.theorem--
+                player.timestudy.theorem = nS(player.timestudy.theorem, 1)
                 player.dilation.totalTachyonParticles = player.dilation.totalTachyonParticles.add(1500)
         }
         if (player.aarexModifications.newGameMinusVersion < 2.2) {
-                player.timestudy.theorem += 3;
+                player.timestudy.theorem = nA(player.timestudy.theorem, 3);
                 const pow_div = [0,160,5/3,1,3,100,80,100/3,20];
                 for (i=1;i<=8;i++) player["timeDimension"+i].power = player["timeDimension"+i].power.div(pow_div[i]);
                 if (player.eternityChalls.eterc11 == 1) delete player.eternityChalls.eterc11
@@ -1817,6 +1817,7 @@ function setConfirmationsDisplay(){
         document.getElementById("bigRipConfirmBtn").style.display = (player.masterystudies === undefined ? false : tmp.qu.bigRip.times) ? "inline-block" : "none"
         document.getElementById("ghostifyConfirmBtn").style.display = ghostified ? "inline-block" : "none"
         document.getElementById("leConfirmBtn").style.display = ghostified && player.ghostify.ghostlyPhotons.enpowerments ? "inline-block" : "none"
+        document.getElementById("higgsConfirmBtn").style.display = ghostified && player.ghostify.hb.higgs ? "inline-block" : "none"
 
         document.getElementById("confirmation").checked = !player.options.sacrificeConfirmation
         document.getElementById("sacConfirmBtn").textContent = "Sacrifice confirmation: O" + (player.options.sacrificeConfirmation ? "N" : "FF")
@@ -1830,6 +1831,7 @@ function setConfirmationsDisplay(){
         document.getElementById("bigRipConfirmBtn").textContent = "Big Rip confirmation: O" + ((player.masterystudies === undefined ? false : tmp.qu.bigRip.conf) ? "N" : "FF")
         document.getElementById("ghostifyConfirmBtn").textContent = "Ghostify confirmation: O" + (player.aarexModifications.ghostifyConf ? "N" : "FF")
         document.getElementById("leConfirmBtn").textContent = "Light Empowerment confirmation: O" + (player.aarexModifications.leNoConf ? "FF" : "N")
+        document.getElementById("higgsConfirmBtn").textContent = "Higgs Boson confirmation: O"+ (player.aarexModifications.higgsNoConf ? "FF" : "N")
 }
 
 function setOptionsDisplaysStuff1(){
@@ -2087,6 +2089,8 @@ function updateNGp3DisplayStuff(){
         document.getElementById("neutrinoBoost6Effect").textContent = tmp.ngp3c ? "They reduce Dilation rebuyable upgrade cost scaling by " : "They slow down Distant Antimatter Galaxies by "
         document.getElementById("neutrinoBoost8Effect").textContent = tmp.ngp3c ? "make Dilation Condensers " : "make the first Big Rip upgrade "
         document.getElementById("neutrinoBoost9Effect").textContent = tmp.ngp3c ? "multiply the start of OS_EC13_1 by " : "multiply the IC3 reward for each tickspeed purchase by "
+        document.getElementById("neutrinoBoost11AndCap").textContent = tmp.ngp3c ? "" : " and cap"
+        document.getElementById("neutrinoBoost11ExtraEff").textContent = tmp.ngp3c ? " and Bosonic Antimatter" : ""
         document.getElementById("neutrinoUpg12Affected").textContent = tmp.ngp3c ? "dimension-related condenser" : "galaxy"
         document.getElementById("neutrinoUpg12Suffix").textContent = tmp.ngp3c ? ", and remove the Replicanti limit in Big Rips" : ""
         document.getElementById("neutrinoUpg5CondEff").textContent = tmp.ngp3c ? ", and gain 1% of Eternitied stat gain every second" : ""
@@ -2126,6 +2130,9 @@ function updateNGp3DisplayStuff(){
         updateBLUpgUnlocks()
         if (!tmp.ngp3l) updateNextParticleUnlockDisplay();
         updateHiggsUnlocks()
+        if (tmp.ngp3c) {
+                updateHiggsMechanismTab(new Decimal(0), true)
+        }
 }
 
 function setSomeQuantumAutomationDisplay(){
@@ -2955,7 +2962,7 @@ function conToDeciGhostify(){
                 tmp.qu.bigRip.bestThisRun = new Decimal(tmp.qu.bigRip.bestThisRun)
                 tmp.qu.bigRip.totalAntimatter = new Decimal(tmp.qu.bigRip.totalAntimatter)
                 tmp.qu.bigRip.spaceShards = new Decimal(tmp.qu.bigRip.spaceShards)
-				if (tmp.ngp3c)  tmp.qu.bigRip.tss = new Decimal(tmp.qu.bigRip.tss)
+		if (tmp.ngp3c)  tmp.qu.bigRip.tss = new Decimal(tmp.qu.bigRip.tss)
                 tmp.qu.breakEternity.eternalMatter = new Decimal(tmp.qu.breakEternity.eternalMatter)
                 player.ghostify.times = nP(player.ghostify.times)
                 player.ghostify.ghostParticles = new Decimal(player.ghostify.ghostParticles)
@@ -2986,6 +2993,9 @@ function conToDeciGhostify(){
                         player.ghostify.wzb.wnb=new Decimal(player.ghostify.wzb.wnb)
                         player.ghostify.wzb.zb=new Decimal(player.ghostify.wzb.zb)
                 }
+                if (tmp.hb && tmp.ngp3c) {
+                        for (let i in tmp.hb.masses) tmp.hb.masses[i] = new Decimal(tmp.hb.masses[i]||0)
+                }
         }
 }
 
@@ -2993,6 +3003,7 @@ function transformSaveToDecimal() {
         conToDeciPreEter()
         player.eternities = nP(player.eternities)
         if (player.eternitiesBank !== undefined) player.eternitiesBank = nP(player.eternitiesBank)
+        player.timestudy.theorem = nP(player.timestudy.theorem)
         conToDeciTD()
         conToDeciLateEter()
         conToDeciMS()
