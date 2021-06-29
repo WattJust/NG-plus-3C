@@ -1020,7 +1020,7 @@ function getBrandNewGhostifyData(){
 		automatorGhosts: setupAutomaticGhostsData(),
 		ghostlyPhotons: getBrandNewPhotonsData(),
 		bl: getBrandNewBosonicLabData(),
-		wzb: getBrandNewWZBosonsData()
+		wzb: getBrandNewWZBosonsData(),
 	}
 }
 
@@ -1083,6 +1083,7 @@ function doNGPlusThreeNewPlayer(){
 	for (var g = 1; g < br.maxLimit; g++) player.ghostify.bl.glyphs.push(0)
 	player.options.animations.ghostify = true
 	player.aarexModifications.ghostifyConf = true
+	if (!tmp.ngp3l) setupHiggsSave()
 }
 
 function doEternityRespeccedNewPlayer(){
@@ -5261,7 +5262,7 @@ function ghostifyAutomationUpdating(diff){
 		if (isAutoGhostActive(15)) if (tmp.qu.bigRip.active && getGHPGain().gte(player.ghostify.automatorGhosts[15].a)) ghostify(true)
 		if (tmp.ngp3l) return
 		if (isAutoGhostActive(16)) maxNeutrinoMult()
-		let constantElectronUpdates = tmp.ngp3c ? (player.ghostify.hb.unl && tmp.hm.electrons && Decimal.gt(player.ghostify.hb.masses.electrons||0, 0)) : false
+		let constantElectronUpdates = (tmp.ngp3c&&tmp.hm) ? (player.ghostify.hb.unl && tmp.hm.electrons && Decimal.gt(player.ghostify.hb.masses.electrons||0, 0)) : false
 		if (isAutoGhostActive(18)) {
 			var added = 0
 			var addedTotal = 0

@@ -768,8 +768,6 @@ function updateNanoRewardTemp() {
 }
 
 function updateHiggsMechanismTemp() {
-	if (!tmp.hb.unl) return;
-
 	if (!tmp.hm) tmp.hm = {};
 	tmp.hm.baseEff = Math.log((player.ghostify.hb.higgs||0)/10+1)
 	tmp.hm.gb = getParticleMassGainBase()
