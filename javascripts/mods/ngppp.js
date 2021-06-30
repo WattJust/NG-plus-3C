@@ -562,7 +562,7 @@ function ghostifyReset(implode, gain, amount, force) {
 	if (player.eternityPoints.e>=22e4&&player.ghostify.under&&!force) giveAchievement("Underchallenged")
 	if (player.eternityPoints.e>=(tmp.ngp3c?35e3:375e3)&&inQCModifier("ad")&&!force) giveAchievement("Overchallenged")
 	if (!tmp.qu.breakEternity.did && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
-	if (player.ghostify.best<=((tmp.ngp3c?10:6))) giveAchievement("Running through Big Rips")
+	if (player.ghostify.best<=((tmp.ngp3c?20:6))) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
 	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU)
 	

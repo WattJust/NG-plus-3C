@@ -463,7 +463,7 @@ function setR21Tooltip(){
 	mi.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" infinities. Reward: You gain banked infinites and eternities when going Quantum or Big Ripping the universe.")
 	wd.setAttribute('ach-tooltip', "Get "+shortenCosts(Decimal.pow(10, 1e12))+(tmp.ngp3c?" Quantum":" Infinity")+" Unstable Quarks for each Branch without Big Ripping in this Ghostify." + (tmp.ngp3l ? "" : " Reward: Normal replicant autobuyer buys max."))
 	radioDecay.setAttribute('ach-tooltip', "Get 10 total Radioactive Decays." + (!tmp.ngp3l ? " Reward: You get 1 galaxy worth of generated neutrinos per second." : ""))
-	rtbr.setAttribute('ach-tooltip', "Become a ghost in "+(tmp.ngp3c?"1.0":"0.6")+" seconds. Reward: Going Quantum doesn't require meta-antimatter if you got the meta-antimatter requirement in your current Ghostify.")
+	rtbr.setAttribute('ach-tooltip', "Become a ghost in "+(tmp.ngp3c?"2.0":"0.6")+" seconds. Reward: Going Quantum doesn't require meta-antimatter if you got the meta-antimatter requirement in your current Ghostify.")
 	ultimate.setAttribute('ach-tooltip', (tmp.ngp3c?"Purchase the first Electron buyable 8 times":"Have at least 48 Mastery Studies")+". Reward: When you become a ghost, you start with all Eternity Challenges and all Time Studies bought.")
 	arent.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 1.8e6)) + " IP while dilated and Big Ripped and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify." + (tmp.ngp3l ? "" : " Reward: Your 8th Tree Upgrade's level speeds up Nanofield."))
 }

@@ -85,7 +85,7 @@ function updateNeutrinosTab(){
 	
 	if (player.ghostify.ghostParticles.gte(tmp.nbc[player.ghostify.neutrinos.boosts])) document.getElementById("neutrinoUnlock").className = "gluonupgrade neutrinoupg"
 	else document.getElementById("neutrinoUnlock").className = "gluonupgrade unavailablebtn"
-	if (player.ghostify.ghostParticles.gte(Decimal.pow(4,player.ghostify.neutrinos.multPower-1).times(2))) document.getElementById("neutrinoMultUpg").className = "gluonupgrade neutrinoupg"
+	if (player.ghostify.ghostParticles.gte(Decimal.pow(4,scaleNeutrinoMulti(player.ghostify.neutrinos.multPower)-1).times(2))) document.getElementById("neutrinoMultUpg").className = "gluonupgrade neutrinoupg"
 	else document.getElementById("neutrinoMultUpg").className = "gluonupgrade unavailablebtn"
 	if (sum.gte(getGHPMultCost())) document.getElementById("ghpMultUpg").className = "gluonupgrade neutrinoupg"
 	else document.getElementById("ghpMultUpg").className = "gluonupgrade unavailablebtn"
@@ -95,7 +95,7 @@ function onNotationChangeNeutrinos() {
 	if (player.masterystudies == undefined) return
 	document.getElementById("neutrinoUnlockCost").textContent=shortenDimensions(new Decimal(tmp.nbc[player.ghostify.neutrinos.boosts]))
 	document.getElementById("neutrinoMult").textContent=shortenDimensions(Decimal.pow(5, player.ghostify.neutrinos.multPower - 1))
-	document.getElementById("neutrinoMultUpgCost").textContent=shortenDimensions(Decimal.pow(4, player.ghostify.neutrinos.multPower-1).times(2))
+	document.getElementById("neutrinoMultUpgCost").textContent=shortenDimensions(Decimal.pow(4, scaleNeutrinoMulti(player.ghostify.neutrinos.multPower)-1).times(2))
 	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(2, player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent=shortenDimensions(getGHPMultCost())
 	for (var u = 1; u <= 17; u++) document.getElementById("neutrinoUpg" + u + "Cost").textContent=shortenDimensions(new Decimal(tmp.nuc[u]))
@@ -151,24 +151,33 @@ function hasNU(id) {
 	return ghostified ? player.ghostify.neutrinos.upgrades.includes(id) : false
 }
 
+function scaleNeutrinoMulti(x, reversed=false) {
+	if (reversed) {
+		if (x >= 400) x = Math.sqrt(x*400)
+	} else {
+		if (x >= 400) x = Math.pow(x, 2)/400
+	}
+	return x;
+}
+
 function buyNeutrinoMult() {
-	let cost = Decimal.pow(4, player.ghostify.neutrinos.multPower - 1).times(2)
+	let cost = Decimal.pow(4, scaleNeutrinoMulti(player.ghostify.neutrinos.multPower) - 1).times(2)
 	if (!player.ghostify.ghostParticles.gte(cost)) return
 	player.ghostify.ghostParticles=player.ghostify.ghostParticles.sub(cost).round()
 	player.ghostify.neutrinos.multPower++
 	document.getElementById("neutrinoMult").textContent=shortenDimensions(Decimal.pow(5, player.ghostify.neutrinos.multPower-1))
-	document.getElementById("neutrinoMultUpgCost").textContent=shortenDimensions(Decimal.pow(4, player.ghostify.neutrinos.multPower-1).times(2))
+	document.getElementById("neutrinoMultUpgCost").textContent=shortenDimensions(Decimal.pow(4, scaleNeutrinoMulti(player.ghostify.neutrinos.multPower)-1).times(2))
 }
 
 function maxNeutrinoMult() {
-	let cost = Decimal.pow(4,player.ghostify.neutrinos.multPower-1).times(2)
+	let cost = Decimal.pow(4,scaleNeutrinoMulti(player.ghostify.neutrinos.multPower)-1).times(2)
 	if (!player.ghostify.ghostParticles.gte(cost)) return
-	let toBuy = Math.floor(player.ghostify.ghostParticles.div(cost).times(3).add(1).log(4))
+	let toBuy = Math.max(Math.floor(scaleNeutrinoMulti(player.ghostify.ghostParticles.times(3).add(1).log(4), true)-player.ghostify.neutrinos.multPower+1), 1)
 	let toSpend = Decimal.pow(4,toBuy).sub(1).div(3).times(cost)
 	player.ghostify.ghostParticles = player.ghostify.ghostParticles.sub(toSpend.min(player.ghostify.ghostParticles)).round()
 	player.ghostify.neutrinos.multPower += toBuy
 	document.getElementById("neutrinoMult").textContent = shortenDimensions(Decimal.pow(5, player.ghostify.neutrinos.multPower - 1))
-	document.getElementById("neutrinoMultUpgCost").textContent = shortenDimensions(Decimal.pow(4, player.ghostify.neutrinos.multPower - 1).times(2))
+	document.getElementById("neutrinoMultUpgCost").textContent = shortenDimensions(Decimal.pow(4, scaleNeutrinoMulti(player.ghostify.neutrinos.multPower) - 1).times(2))
 }
 
 var neutrinoBoosts = {
