@@ -5276,7 +5276,7 @@ function ghostifyAutomationUpdating(diff){
 			if (addedTotal > 0 && !constantElectronUpdates) updateElectrons(true)
 			if (tmp.ngp3c) elecCondense(true)
 		}
-		if (isAutoGhostActive(19)) maxAllBosonicEnchants(player.ghostify.automatorGhosts[19].a*diff/100)
+		if (isAutoGhostActive(19)) maxAllBosonicEnchants((player.ghostify.automatorGhosts[19].a||0)*diff/100)
 		if (isAutoGhostActive(20)) buyMaxBosonicUpgrades()
 		if (constantElectronUpdates) updateElectrons(true, true);
 	} 
