@@ -808,7 +808,7 @@ function changeAutoGhost(o) {
 		if (!isNaN(break_infinity_js ? num : num.l)) player.ghostify.automatorGhosts[15].a = num
 	} else if (o == "19a") {
 		var num = parseFloat(document.getElementById("autoGhost19a").value)
-		if (!isNaN(num) && num >= 0) player.ghostify.automatorGhosts[19].a = num
+		if (!isNaN(num) && num >= 0 && num <= 100) player.ghostify.automatorGhosts[19].a = num
 	}
 }
 
