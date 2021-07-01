@@ -59,10 +59,10 @@ function getBatteryGainPerSecond(toSub){
 	if (tmp.ngp3c && !player.ghostify.bl.UPGSUNL) return new Decimal(0)
 	let batteryMult = new Decimal(1)
 	if (player.ghostify.bl.usedEnchants.includes(24)) batteryMult = batteryMult.times(tmp.bEn[24])
-	let toAdd = toSub.div(tmp.ngp3c?1e4:1e6).times(batteryMult)
+	let toAdd = toSub.div(tmp.ngp3c?1e4:1e6).times(tmp.ngp3c?1:batteryMult)
 	if (tmp.ngp3c) toAdd = toAdd.times(player.ghostify.bl.upgrades.length+1).sqrt();
 	if (toAdd.gt(1e3)) toAdd = Decimal.pow(toAdd.log10() + 7, 3) 
-	return toAdd.div(10)
+	return toAdd.div(10).times(tmp.ngp3c?batteryMult:1)
 }
 
 function useAntiPreons(use, diff=0, apDiff=new Decimal(0), changeUse=false) {
@@ -602,7 +602,9 @@ var bEn = {
 			return Decimal.pow(player.ghostify.bl.am.add(10).log10(), exp)
 		},
 		24: function(l) {
-			return Decimal.pow(Decimal.add(l, 100).log10(), tmp.ngp3c?2.5:4).div(tmp.ngp3c?Math.pow(2, 2.5):16)
+			let eff = Decimal.pow(Decimal.add(l, 100).log10(), tmp.ngp3c?2.5:4).div(tmp.ngp3c?Math.pow(2, 2.5):16);
+			if (tmp.ngp3c) eff = Decimal.pow(2, Math.pow(eff.log2(), .25))
+			return eff;
 		},
 		34: function(l) {
 			return Decimal.pow(Math.pow(player.ghostify.hb.higgs, tmp.ngp3c?0.5:1) / (tmp.ngp3c?Math.sqrt(20):20) + 1, l.add(1).log10() / 5)
