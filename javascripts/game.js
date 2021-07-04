@@ -5342,6 +5342,7 @@ function nanofieldProducingChargeUpdating(diff){
 }
 
 function nanofieldUpdating(diff){
+	let extra = tmp.nf?tmp.nf.extra:0
 	var AErate = getQuarkAntienergyProduction()
 	var toAddAE = AErate.times(diff).min(getQuarkChargeProductionCap().sub(tmp.qu.nanofield.antienergy))
 	if (tmp.qu.nanofield.producingCharge) nanofieldProducingChargeUpdating(diff)
@@ -5351,14 +5352,14 @@ function nanofieldUpdating(diff){
 		updateNextPreonEnergyThreshold()
 		if (tmp.qu.nanofield.power > tmp.qu.nanofield.rewards) {
 			tmp.qu.nanofield.rewards = tmp.qu.nanofield.power
-			if (tmp.nf.extra==0) doAPGW()
+			if (extra==0) doAPGW()
 		}
 	}
-	if (tmp.nf.extra>0) doAPGW()
+	if (extra>0) doAPGW()
 }
 
 function doAPGW() {
-	if (!tmp.qu.nanofield.apgWoke && tmp.qu.nanofield.rewards+tmp.nf.extra >= tmp.apgw) {
+	if (!tmp.qu.nanofield.apgWoke && (tmp.qu.nanofield.rewards+(tmp.nf?tmp.nf.extra:0)) >= tmp.apgw) {
 		tmp.qu.nanofield.apgWoke = tmp.apgw
 		$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
 		showTab("quantumtab")

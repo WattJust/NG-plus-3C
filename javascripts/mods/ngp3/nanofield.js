@@ -19,7 +19,7 @@ function updateNanoverseTab(){
 	document.getElementById("quarkChargeProductionCap").textContent = shortenMoney(getQuarkChargeProductionCap())
 	document.getElementById("rewards").textContent = getFullExpansion(rewards)+(tmp.nf.extra>0?(" + "+getFullExpansion(tmp.nf.extra)):"")
 
-	rewards += tmp.nf.extra
+	rewards += tmp.nf.extra||0
 
 	for (var reward = 1; reward < 9; reward++) {
 		document.getElementById("nfReward" + reward).className = reward > rewards ? "nfRewardlocked" : "nfReward"
@@ -242,7 +242,7 @@ function getNanofieldFinalSpeed() {
 }
 
 function getNanoRewardPower(reward, rewards) {
-	let r = rewards + tmp.nf.extra
+	let r = rewards + (tmp.nf.extra||0)
 	let x = Math.ceil((r - reward + 1) / 8)
 	let apgw = tmp.apgw
 	if (r >= apgw) {
