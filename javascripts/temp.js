@@ -1,7 +1,9 @@
 function updateTemp() {
 	if (typeof player != "undefined") {
-		if (player.money) tmp.ri = player.money.gte(getLimit()) && ((player.currentChallenge != "" && player.money.gte(player.challengeTarget)) || !onPostBreak())
-		else tmp.ri = false
+		if (player.money) {
+			if (!(player.money instanceof Decimal)) player.money = new Decimal(player.money)
+			tmp.ri = player.money.gte(getLimit()) && ((player.currentChallenge != "" && player.money.gte(player.challengeTarget)) || !onPostBreak())
+		} else tmp.ri = false
 	} else {
 		tmp.ri = false
 		return
@@ -354,7 +356,7 @@ function updateGhostifyTempStuff(){
 		updateNeutrinoUpgradesTemp()
 		updateNeutrinoBoostsTemp()
 	}
-	if (player.ghostify.hb.unl && tmp.ngp3c) {
+	if (tmp.ngp3c && player.ghostify.hb) if (player.ghostify.hb.unl) {
 		updateNU16Temp()
 		updateNU18Temp()
 	}
