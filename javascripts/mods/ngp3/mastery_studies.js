@@ -171,7 +171,9 @@ var masteryStudies = {
 			var intensity = 5
 			if (ghostified && player.ghostify.neutrinos.boosts > 1 && !uses.includes("pn")) intensity += tmp.nb[2]
 			if (uses.includes("intensity")) return intensity
-			return Decimal.max(Math.log10(player.replicanti.chance + 1), 1).pow(intensity)
+			let eff = Decimal.max(Math.log10(player.replicanti.chance + 1), 1).pow(intensity)
+			if (tmp.ngp3c) return softcap(eff, "ngp3cTS273")
+			else return eff
 		},
 		281: function(){
 			return Decimal.pow(player.aarexModifications.ngp3c?1e5:10, Math.pow(tmp.rm.max(1).log10(), 0.25) / 10 * (tmp.newNGP3E ? 2 : 1))

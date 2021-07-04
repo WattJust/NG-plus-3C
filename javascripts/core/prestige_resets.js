@@ -179,7 +179,8 @@ function doQuantumResetStuff(bigRip, challid){
 			2: 0,
 			3: 0,
 			4: 0,
-		}
+		},
+		break: player.dilation.break,
 	}
 	if (speedrunMilestonesReached > 5 && isRewardEnabled(4) && (!bigRip || tmp.qu.bigRip.upgrades.includes(12)) && player.aarexModifications.ngp3c) player.dilation.upgrades = [4,5,6,7,8,9,"ngpp1","ngpp2","ngp3c1","ngp3c2","ngp3c3","ngp3c4","ngp3c5","ngp3c6","ngp3c7","ngp3c8"]
 	player.exdilation = player.exdilation != undefined ? {
@@ -604,10 +605,10 @@ function getToDOnGhostifyData(){
 	return ret
 }
 
-function getBigRipOnGhostifyData(nBRU){
+function getBigRipOnGhostifyData(nBRU, resetQCs=true){
 	var bm = player.ghostify.milestones
 	let data = {
-		active: false,
+		active: resetQCs?false:tmp.qu.bigRip.active,
 		conf: tmp.qu.bigRip.conf,
 		times: 0,	
 		bestThisRun: new Decimal(0),
@@ -632,7 +633,7 @@ function getBreakEternityDataOnGhostify(nBEU, bm){
 	}
 }
 
-function getQuantumOnGhostifyData(bm, nBRU, nBEU){
+function getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs=true){
 	return {
 		reached: true,
 		times: 0,
@@ -684,13 +685,13 @@ function getQuantumOnGhostifyData(bm, nBRU, nBEU){
 			mult: bm > 2 ? tmp.qu.electrons.mult : bm ? 6 : 2,
 			rebuyables: bm > 2 ? tmp.qu.electrons.rebuyables : [0,0,0,0]
 		},
-		challenge: [],
+		challenge: resetQCs?[]:player.quantum.challenge,
 		challenges: {},
 		nonMAGoalReached: tmp.qu.nonMAGoalReached,
 		challengeRecords: {},
 		pairedChallenges: {
-			order: bm ? tmp.qu.pairedChallenges.order : {},
-			current: 0,
+			order: (bm||!resetQCs) ? tmp.qu.pairedChallenges.order : {},
+			current: resetQCs?0:player.quantum.pairedChallenges.current,
 			completed: bm ? 4 : 0,
 			completions: tmp.qu.pairedChallenges.completions,
 			fastest: tmp.qu.pairedChallenges.fastest,
@@ -713,7 +714,7 @@ function getQuantumOnGhostifyData(bm, nBRU, nBEU){
 		},
 		reachedInfQK: bm,
 		tod: getToDOnGhostifyData(),
-		bigRip: getBigRipOnGhostifyData(nBRU),
+		bigRip: getBigRipOnGhostifyData(nBRU, resetQCs),
 		breakEternity: getBreakEternityDataOnGhostify(nBEU, bm),
 		notrelative: true,
 		wasted: true,
@@ -738,7 +739,7 @@ function getQuantumOnGhostifyData(bm, nBRU, nBEU){
 	}
 }
 
-function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
+function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs=true){
 	var bm = player.ghostify.milestones
 	player.galacticSacrifice = resetGalacticSacrifice()
 	completelyResetNormalDimensions()
@@ -860,7 +861,8 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
 			2: 0,
 			3: 0,
 			4: 0,
-		}
+		},
+		break: player.dilation.break,
 	}
 	player.exdilation = player.exdilation != undefined ? {
 		unspent: new Decimal(0),
@@ -880,7 +882,7 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU){
 	/*function */ doMetaDimensionsReset(false, false, 0) //meta dimboosts are set on the next line
 	player.meta.resets = bm ? 4 : 0
 	player.masterystudies = bm ? player.masterystudies : []
-	player.quantum = getQuantumOnGhostifyData(bm, nBRU, nBEU)
+	player.quantum = getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs)
 	player.old = false
 	player.dontWant = true	
 	player.unstableThisGhostify = 0
@@ -1001,9 +1003,9 @@ function doEternityGhostifyResetStuff(implode, bm){
 	updateMasteryStudyButtons()
 }
 
-function doQuantumGhostifyResetStuff(implode, bm){
+function doQuantumGhostifyResetStuff(implode, bm, resetQCs=true){
 	if (!tmp.ngp3l) tmp.qu.quarkEnergy = new Decimal(0)
-	tmp.qu.qcsMods.current = []
+	if (resetQCs) tmp.qu.qcsMods.current = []
 	tmp.qu.replicants.amount = new Decimal(0)
 	tmp.qu.replicants.requirement = getReplicantBaseReq()
 	tmp.qu.replicants.quarks = new Decimal(0)

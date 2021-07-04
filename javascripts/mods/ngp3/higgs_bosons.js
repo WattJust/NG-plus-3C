@@ -137,14 +137,27 @@ function getHiggsRequirementBase() {
 }
 
 function getHiggsRequirementMult() {
-	return new Decimal(100)
+	let mult = new Decimal(100)
+	if (player.ghostify.bl.usedEnchants.includes(15) && tmp.ngp3c) mult = mult.root(tmp.bEn[15] || 1);
+	return mult;
 }
 
 var higgs_scaling = {
 	1: {
+		name: "Distant",
 		start: 50,
 		exp: 1.5,
 	},
+}
+
+function getHiggsScalingName(h) {
+	let name = "";
+	for (let i=1;i<=Object.keys(higgs_scaling).length;i++) {
+		if (h<higgs_scaling[i].start) break;
+		else name = higgs_scaling[i].name;
+	}
+	if (name.length>0) name += " ";
+	return name;
 }
 
 function getHiggsScalingData(index) {
@@ -330,6 +343,6 @@ function particleMassSelected(id) {
 function getHiggsDirectEffHTML() {
 	if (!tmp.ngp3c) return ""
 	let html = ""
-	if (player.achievements.includes("ng3p98")) html += ", which increases the Bosonic AM gain exponent by <span class='yellow' style='font-size: 30px;'>"+shorten(tmp.hm.baseEff||0)+"</span>"
+	if (player.achievements.includes("ng3p98")) html += ", which increase the Bosonic AM gain exponent by <span class='yellow' style='font-size: 30px;'>"+shorten(tmp.hm.baseEff||0)+"</span>"
 	return html;
 }

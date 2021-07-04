@@ -46,6 +46,8 @@ function getDilTimeGainPerSecond() {
 	if (player.aarexModifications.ngp3c) gain = softcap(gain, "ngp3cDT")
 	if (player.dilation.upgrades.includes("ngp3c1") && player.aarexModifications.ngp3c) gain = gain.times(50)
 	if (player.dilation.upgrades.includes("ngp3c2") && player.aarexModifications.ngp3c) gain = gain.times(100)
+
+	if (tmp.ngp3c && tmp.bd && tmp.bdt) if (tmp.bd.unl && tmp.bd.active) gain = gain.div(tmp.bdt.radEff||1);
 	return gain;
 }
 
@@ -117,6 +119,7 @@ function getDilExp(disable) {
 	if (tmp.ngp3) {
 		if ((!tmp.qu.bigRip.active || tmp.qu.bigRip.upgrades.includes(11)) && player.masterystudies.includes("d13") && disable != "TU3") ret += getTreeUpgradeEffect(2)
 		if (ghostified && player.ghostify.neutrinos.boosts && disable != "neutrinos") ret += tmp.nb[1]
+		if (hasBDUpg(1)) ret += tmp.bdt.upgs[1];
 	}
 	return ret
 }

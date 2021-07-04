@@ -417,6 +417,7 @@ var softcap_data = {
 			pow() {
 				let pow = 1/3;
 				if (player.timestudy.studies.includes(63)) pow = Math.sqrt(pow)
+				if (inQCModifier("sp")) pow /= 5
 				return pow;
 			},
 			derv: false,
@@ -431,6 +432,7 @@ var softcap_data = {
 			pow() {
 				let pow = 1/4;
 				if (player.timestudy.studies.includes(63)) pow = Math.sqrt(pow)
+				if (inQCModifier("sp")) pow /= 5
 				return pow;
 			},
 			derv: false,
@@ -438,19 +440,31 @@ var softcap_data = {
 		3: {
 			func: "pow",
 			start: new Decimal("1e10000"),
-			pow: 1/7,
+			pow() {
+				let pow = 1/7
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 		4: {
 			func: "pow",
 			start: new Decimal("1e25000000"),
-			pow: 1/11,
+			pow() {
+				let pow = 1/11
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 		5: {
 			func: "pow",
 			start: new Decimal("1e175000000"),
-			pow: 1/17,
+			pow() {
+				let pow = 1/17
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 		6: {
@@ -460,7 +474,11 @@ var softcap_data = {
 				if (player.masterystudies.includes("d13") && tmp.ngp3c) start = start.times(getTreeUpgradeEffect(10));
 				return start;
 			},
-			pow: 1/23,
+			pow() {
+				let pow = 1/23
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 	},
@@ -468,25 +486,41 @@ var softcap_data = {
 		1: {
 			func: "pow",
 			start: Number.MAX_VALUE,
-			pow() { return QCIntensity(7)?1/2:(player.challenges.includes("postcngc_2")?2/5:1/3) },
+			pow() { 
+				let pow = QCIntensity(7)?1/2:(player.challenges.includes("postcngc_2")?2/5:1/3) 
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 		2: {
 			func: "pow",
 			start: new Decimal("1e1000"),
-			pow() { return QCIntensity(7)?0.43:(player.challenges.includes("postcngc_2")?13/40:1/4) },
+			pow() { 
+				let pow = QCIntensity(7)?0.43:(player.challenges.includes("postcngc_2")?13/40:1/4)
+				if (inQCModifier("sp")) pow /= 5
+				return pow 
+			},
 			derv: false,
 		},
 		3: {
 			func: "pow",
 			start: new Decimal("1e25000"),
-			pow() { return QCIntensity(7)?0.2324:1/7 },
+			pow() { 
+				let pow = QCIntensity(7)?0.2324:1/7 
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 		4: {
 			func: "pow",
 			start: new Decimal("1e120000000"),
-			pow() { return QCIntensity(7)?0.16556:1/11 },
+			pow() { 
+				let pow = QCIntensity(7)?0.16556:1/11 
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 		5: {
@@ -496,7 +530,11 @@ var softcap_data = {
 				if (player.ghostify.neutrinos.boosts >= 12 && tmp.ngp3c && tmp.nb) start = start.pow(tmp.nb[12]||1);
 				return start;
 			},
-			pow: 1/13,
+			pow() {
+				let pow = 1/13
+				if (inQCModifier("sp")) pow /= 5
+				return pow
+			},
 			derv: false,
 		},
 	},
@@ -728,7 +766,9 @@ var softcap_data = {
 			start: new Decimal(1e10),
 			pow() {
 				let ret = 1/3;
-				if (player.dilation.upgrades.includes("ngp3c9")) {
+				let bd5 = hasBDUpg(5)
+				if (bd5) ret = Math.pow(ret, (1-tmp.bdt.upgs[5])*Math.pow(.9, 7/3))
+				else if (player.dilation.upgrades.includes("ngp3c9")) {
 					let mag = 1 + player.dilation.upgrades.filter(function(x) {
 						let ngpp = String(x).split("ngpp")[1];
 						if (ngpp ? (Number(ngpp) ? Number(ngpp)>=3 : false) : false) return true;
@@ -748,9 +788,18 @@ var softcap_data = {
 		},
 		3: {
 			func: "pow",
-			start: new Decimal(Number.MAX_VALUE),
+			start() { 
+				let exp = 1;
+				if (player.achievements.includes("ng3pc11") && !tmp.qu.bigRip.active) exp = 15;
+				return Decimal.pow(Number.MAX_VALUE, exp);
+			},
 			pow: 1/5,
 			derv: false,
+		},
+		4: {
+			func: "expPow",
+			start: new Decimal("1e10000"),
+			pow: .95,
 		},
 	},
 	ngp3cMPTD: {
@@ -784,6 +833,13 @@ var softcap_data = {
 			pow: 0.2
 		},
 	},
+	ngp3cTS273: {
+		1: {
+			func: "pow",
+			start: new Decimal(5e92),
+			pow: .4,
+		},
+	},
 	ngp3cQK: {
 		1: {
 			func: "pow",
@@ -793,6 +849,14 @@ var softcap_data = {
 				if (hasBosonicUpg(12)) s = s.times(tmp.blu[12])
 				return s;
 			},
+			pow: 1/3,
+			derv: false,
+		},
+	},
+	ngp3cGHP: {
+		1: {
+			func: "pow",
+			start: Decimal.pow(Number.MAX_VALUE, 1.4),
 			pow: 1/3,
 			derv: false,
 		},

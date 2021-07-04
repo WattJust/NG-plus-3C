@@ -31,6 +31,12 @@ function loadCondensedVars() {
 	if (tmp.qu.bigRip.tss === undefined) tmp.qu.bigRip.tss = new Decimal(0);
 	if (player.ghostify.hb.masses === undefined) player.ghostify.hb.masses = {};
 	if (player.ghostify.hb.mechType === undefined) player.ghostify.hb.mechType = 0;
+	
+	if (player.dilation.break === undefined) initBreakDilationPlayerData();
+	else {
+		player.dilation.break.rads = new Decimal(player.dilation.break.rads||0);
+		matchTempPlayerBD();
+	}
 }
 
 function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity, 4: Eternity, 5: Quantum, 6: Ghostify
@@ -58,6 +64,7 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 	}
 	if (resetNum>=7) {
 		player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0]
+		initBreakDilationPlayerData();
 	}
 	
 	if (preVer<1.1) {
@@ -83,7 +90,15 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		player.ghostify.hb.mechType = 0;
 	}
 
-	player.aarexModifications.ngp3c = 1.28;
+	player.aarexModifications.ngp3c = 1.29;
+}
+
+function updateCondensedUnlocks() {
+	updateBreakDilationUnlocks();
+}
+
+function doCondensedUnlocks() {
+	if (tmp.bd?(!tmp.bd.unl):false) if (canUnlockBD()) unlockBreakDilation();
 }
 
 function getTotalCondensers(type) {
@@ -608,11 +623,23 @@ const OBSCUREMENTS = {
 		osID: "TS263",
 		res() { return getMTSMult(263) },
 	},
+	ts273: {
+		title: "TS273",
+		scID: "TS273",
+		osID: "TS273",
+		res() { return getMTSMult(273) },
+	},
 	qk: {
 		title: "Quark Gain",
 		scID: "QK",
 		osID: "QK",
 		res() { return getQuarkGain() },
+	},
+	ghp: {
+		title: "Ghost Particle Gain",
+		scID: "GHP",
+		osID: "GHP",
+		res() { return getGHPGain() }
 	},
 }
 
@@ -1090,6 +1117,7 @@ function maxCondenseLight(x) {
 function getLightCondenserPow() {
 	let pow = 1;
 	if (hasBosonicUpg(25)) pow *= tmp.blu[25]
+	if (isLEBoostUnlocked(10)) pow *= tmp.leBonus[10]
 	return pow;
 }
 
@@ -1102,6 +1130,12 @@ function getLightCondenserEff(x) {
 
 function getBENTotalLevelEffect() {
 	let eff = Math.log2(tmp.bEn.totalLvl.plus(1).log10()+1);
-	if (player.ghostify.bl.upgrades.length>6) return Math.max(Decimal.log2(tmp.bEn.totalLvl.plus(1).cbrt()), eff);
-	else return eff
+	if (player.ghostify.bl.upgrades.length>6) return Math.max(Decimal.log2(tmp.bEn.totalLvl.plus(1).cbrt()), eff) * getBENTotalLevelEffectMult();
+	else return eff * getBENTotalLevelEffectMult()
+}
+
+function getBENTotalLevelEffectMult() {
+	let mult = 1
+	if (player.ghostify.bl.usedEnchants.includes(25)) mult = mult *= (tmp.bEn[25] || 1);
+	return mult;
 }

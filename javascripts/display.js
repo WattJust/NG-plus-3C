@@ -836,9 +836,9 @@ function ABTypeDisplay(){
 	else document.getElementById("galaxybulk").style.display = "none"
 	if (getEternitied() > 99 && player.meta) document.getElementById("toggleautoetermode").style.display = "inline-block"
 	else document.getElementById("toggleautoetermode").style.display = "none"
-	if (getEternitied() > 99 && player.achievements.includes("ng3p52")) document.getElementById('aftereternity').style.display = "inline-block"
+	if (getEternitied() > 99 && player.achievements.includes("ng3p52") && !player.aarexModifications.hideAutoEternity) document.getElementById('aftereternity').style.display = "inline-block"
 	else document.getElementById('aftereternity').style.display = "none"
-	if (getEternitied() > 99 && player.achievements.includes("ng3p52")) document.getElementById('autoEternityTabbtn').style.display = ""
+	if (getEternitied() > 99 && player.achievements.includes("ng3p52") && !player.aarexModifications.hideAutoEternity) document.getElementById('autoEternityTabbtn').style.display = ""
 	else document.getElementById('autoEternityTabbtn').style.display = "none"
 }
 

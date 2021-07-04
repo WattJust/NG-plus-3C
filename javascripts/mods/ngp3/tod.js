@@ -124,10 +124,16 @@ function getUnstableGainDiv(over=false) {
 	else return over?"1e420":"1e300"
 }
 
+function getRDNegPower(branch) {
+	let power = getRDPower(branch);
+	if (hasBDUpg(4)) power /= tmp.bdt.upgs[4].rd+1
+	return power;
+}
+
 function getUnstableGain(branch) {
 	let ret = tmp.qu.usedQuarks[branch].div(getUnstableGainDiv(true)).add(1).log10()
 	if (ret < 2 && !tmp.ngp3c) ret = Math.max(tmp.qu.usedQuarks[branch].div(getUnstableGainDiv()).div(99).log10() / 60,0)
-	let power = getBU2Power(branch) - getRDPower(branch)
+	let power = getBU2Power(branch) - getRDNegPower(branch)
 	ret = Decimal.pow(2, power).times(ret)
 	if (ret.gt(1)) ret = Decimal.pow(ret, Math.pow(2, power + 1))
 	return ret.times(Decimal.pow(2, getRDPower(branch) + 1)).min(Decimal.pow(10, Math.pow(2, 51)))
@@ -289,6 +295,7 @@ function getEffectiveTreeUpgLevel(upg){
 	if (upg == 5) if (lvl > 500 && !player.achievements.includes("ng3p87")) lvl = Math.sqrt(lvl / 500) * 500
 	if (upg == 7) if (lvl > 100) lvl -= Math.sqrt(lvl) - 10
 	if (upg == 8) if (lvl > 1111) lvl = 1111 + (lvl - 1111) / 2
+	if (upg == 11) if (lvl > 400) lvl = Math.sqrt(100*x+120e3)
 	return lvl
 }
 
@@ -346,7 +353,7 @@ function getTreeUpgradeEffectDesc(upg) {
 	if (upg == 2) return getDilExp("TU3").toFixed(2) + " -> " + getDilExp().toFixed(2)
 	if (upg == 4) return "^" + getFullExpansion(Math.round(getElectronBoost("noTree"))) + " -> ^" + getFullExpansion(Math.round(tmp.mpte))
 	if (upg == 8) return getTreeUpgradeEffect(8).toFixed(2)
-	if (upg == 11) return (100*getTreeUpgradeEffect(11)).toFixed(5)
+	if (upg == 11) return (100*getTreeUpgradeEffect(11)).toFixed(7)
 	if (upg == 12) return shorten(getTreeUpgradeEffect(12))
 	return shortenMoney(getTreeUpgradeEffect(upg))
 }
@@ -415,11 +422,11 @@ function getUQName(shorthand) {
 			if (amt % 5) ret = (["radioactive", "infinity", "eternal", "quantum"])[amt % 5 - 1] + " " + ret
 		} else if (amt < 110) {
 			amt -= 50
-			if (amt > 4) ret = "ethereal" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
+			if (amt > 4) ret = "cosmic" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
 			if (amt % 5) ret = (["radioactive", "infinity", "eternal", "quantum"])[amt % 5 - 1] + " " + ret
 		} else if (amt < 165) {
 			amt -= 105
-			if (amt > 4) ret = "superethereal" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
+			if (amt > 4) ret = "ethereal" + (amt > 9 ? "^" + Math.floor(amt / 5) : "") + " " + ret
 			if (amt % 5) ret = (["radioactive", "infinity", "eternal", "quantum"])[amt % 5 - 1] + " " + ret
 		} else {
 			ret = "unstable^" + amt

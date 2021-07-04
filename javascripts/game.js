@@ -2181,6 +2181,14 @@ function toggleProductionTab() {
 	if (document.getElementById("production").style.display == "block") showDimTab("antimatterdimensions")
 }
 
+function toggleAutoEternityTabShown() {
+	if (!player.achievements.includes("ng3p52")) return;
+	player.aarexModifications.hideAutoEternity=!player.aarexModifications.hideAutoEternity
+	document.getElementById("hideAutoEternity").textContent = (player.aarexModifications.hideAutoEternity?"Show":"Hide")+" Auto-Eternity tab"
+	if (document.getElementById("autoEternity").style.display == "block") showEternityTab('timestudies')
+
+}
+
 function toggleRepresentation() {
 	// 0 == visible, 1 == not visible
 	player.aarexModifications.hideRepresentation=!player.aarexModifications.hideRepresentation
@@ -3859,6 +3867,8 @@ function updateRespecButtons() {
 function doCheckECCompletionStuff(){
 	var forceRespec = false
 	if (player.currentEternityChall !== "") {
+		if (tmp.ngp3c && tmp.qu) if (tmp.qu.bigRip.active && player.currentEternityChall === "eterc14" && player.eternityChalls.eterc14==5) giveAchievement("Really?")
+
 		if (player.eternityChalls[player.currentEternityChall] === undefined) {
 			player.eternityChalls[player.currentEternityChall] = 1
 		} else if (player.eternityChalls[player.currentEternityChall] < 5) {
@@ -4861,6 +4871,7 @@ function doNGP3UnlockStuff(){
 	if (canUnlockWZB() && tmp.ngp3c && !player.ghostify.wzb.WZBUNL) doWZBUnlockStuff()
 	if (canUnlockBosonicUpgrades() && tmp.ngp3c && !player.ghostify.bl.UPGSUNL) doBosonicUpgUnlockStuff()
 	if (!tmp.ng3l) unlockHiggs()
+	if (tmp.ngp3c) doCondensedUnlocks()
 }
 
 function updateResetTierButtons(){
@@ -5282,18 +5293,25 @@ function ghostifyAutomationUpdating(diff){
 	} 
 }
 
-function WZBosonsUpdating(diff){
+function WZBosonsUpdating(diff) {
 	var data = player.ghostify.bl
-	var wattGained = Math.max(getBosonicWattGain(), data.watt)
-	var wattMult = getBosonicSpeedMult();
-	data.speed = Math.max(Math.min(wattGained * wattMult + (data.watt * wattMult - data.speed) * 2, wattGained * wattMult), data.speed)
-	data.watt = wattGained
+	updateBosonicWatts()
 	if (data.speed > 0) {
 		var limitDiff = Math.min(diff,data.speed * 14400)
 		let change = (data.speed-limitDiff / 28800) * limitDiff;
 		bosonicTick(change);
-		data.speed = Math.max(data.speed-limitDiff/ 14400, 0)
+		data.speed = Math.max(data.speed-limitDiff/14400, 0)
 	}
+}
+
+function updateBosonicWatts(keepSpd=true) {
+	var data = player.ghostify.bl
+	if (!keepSpd) tmp.bEn.totalLvlEffect = tmp.ngp3c?getBENTotalLevelEffect():new Decimal(1);
+	var wattGained = Math.max(getBosonicWattGain(), keepSpd?data.watt:(data.watt-tmp.bEn.totalLvlEffect))
+	var wattMult = getBosonicSpeedMult();
+	var effectiveWattGain = wattGained * wattMult
+	data.speed = Math.max(Math.min(effectiveWattGain + (effectiveWattGain - data.speed) * 2, effectiveWattGain), keepSpd?data.speed:0)
+	data.watt = wattGained
 }
 
 function ghostlyPhotonsUpdating(diff){
@@ -5333,14 +5351,19 @@ function nanofieldUpdating(diff){
 		updateNextPreonEnergyThreshold()
 		if (tmp.qu.nanofield.power > tmp.qu.nanofield.rewards) {
 			tmp.qu.nanofield.rewards = tmp.qu.nanofield.power
-			if (!tmp.qu.nanofield.apgWoke && tmp.qu.nanofield.rewards >= tmp.apgw) {
-				tmp.qu.nanofield.apgWoke = tmp.apgw
-				$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
-				showTab("quantumtab")
-				showQuantumTab("nanofield")
-				showNFTab("antipreon")
-			}
+			if (tmp.nf.extra==0) doAPGW()
 		}
+	}
+	if (tmp.nf.extra>0) doAPGW()
+}
+
+function doAPGW() {
+	if (!tmp.qu.nanofield.apgWoke && tmp.qu.nanofield.rewards+tmp.nf.extra >= tmp.apgw) {
+		tmp.qu.nanofield.apgWoke = tmp.apgw
+		$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
+		showTab("quantumtab")
+		showQuantumTab("nanofield")
+		showNFTab("antipreon")
 	}
 }
 
@@ -6257,6 +6280,7 @@ function gameLoop(diff) {
 		if (ghostified) {
 			if (player.ghostify.wzb.unl) WZBosonsUpdating(diff) // Bosonic Lab
 			if (player.ghostify.ghostlyPhotons.unl) ghostlyPhotonsUpdating(diff) // Ghostly Photons
+			if (tmp.ngp3c && tmp.bd) if (tmp.bd.unl) breakDilationTick(diff) // Break Dilation
 		}
 	}
 	

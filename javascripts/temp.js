@@ -67,6 +67,9 @@ function updateTemp() {
 	updateMatterSpeed()
 
 	updateCondenseTemp()
+	if (tmp.ngp3c) {
+		updateTempBreakDilation()
+	}
 	
 	tmp.tsReduce = getTickSpeedMultiplier()
 	updateInfinityPowerEffects()
@@ -93,7 +96,7 @@ let tmp = {
 	bm: [200,175,150,100,50,40,30,25,20,15,10,5,4,3,2,1],
 	nbc: [1,2,4,6,15,50,1e3,1e14,1e35,"1e900","1e3000", 1e185],
 	nu: [],
-	nuc: [null,1e6,1e7,1e8,2e8,5e8,2e9,5e9,75e8,1e10,7e12,1e18,1e55,1e125,1e160,1e280,"1e1240", "1e1350"],
+	nuc: [null,1e6,1e7,1e8,2e8,5e8,2e9,5e9,75e8,1e10,7e12,1e18,1e55,1e125,1e160,1e280,"1e1240", "1e1350", "1e1700"],
 	lt: [12800,16e4,48e4,16e5,6e6,5e7,24e7,125e7],
 	lti: [2,4,1.5,10,4,1e3,2.5,3],
 	effL: [0,0,0,0,0,0,0],
@@ -268,7 +271,7 @@ function updateAntiElectronGalaxiesTemp(){
 
 function updateTS232Temp() {
 	var exp = 0.2
-	if (tmp.ngp3 && player.galaxies >= 1e4 && !tmp.be) exp *= Math.max(6 - player.galaxies / 2e3,0)
+	if (tmp.ngp3 && player.galaxies >= 1e4 && !tmp.be && !(hasBosonicUpg(52) && tmp.ngp3c)) exp *= Math.max(6 - player.galaxies / 2e3,0)
 	tmp.ts232 = Math.pow(1 + initialGalaxies() / 1000, exp)
 }
 
@@ -351,7 +354,10 @@ function updateGhostifyTempStuff(){
 		updateNeutrinoUpgradesTemp()
 		updateNeutrinoBoostsTemp()
 	}
-	if (player.ghostify.hb.unl && tmp.ngp3c) updateNU16Temp()
+	if (player.ghostify.hb.unl && tmp.ngp3c) {
+		updateNU16Temp()
+		updateNU18Temp()
+	}
 }
 
 function updateNeutrinoBoostsTemp() {
@@ -436,6 +442,13 @@ function updateNU15Temp(){
 function updateNU16Temp() {
 	tmp.nu[7] = Math.sqrt(Decimal.add(getReplicantiCap(), 1).log(Number.MAX_VALUE)/(tmp.qu.bigRip.active?1e9:1e10)+1)
 	//NU16
+}
+
+function updateNU18Temp() {
+	let e = player.ghostify.ghostlyPhotons.enpowerments;
+	if (e>=25) e = Math.sqrt(e*25)
+	tmp.nu[8] = Math.round(e)
+	//NU18
 }
 
 function updateNeutrinoUpgradesTemp(){
@@ -748,6 +761,8 @@ function updateNanoRewardPowers() {
 }
 
 function updateNanoRewardEffects() {
+	tmp.nf.extra = getExtraNanoRewards()
+	
 	var data = {}
 	tmp.nf.effects = data
 
@@ -825,4 +840,13 @@ function updateCondenseTemp() {
 	tmp.ts413 = getMTSMult(413);
 
 	tmp.cnd.lightPow = getLightCondenserPow()
+}
+
+function updateTempBreakDilation() {
+	if (!tmp.bdt) tmp.bdt = {};
+
+	tmp.bdt.radGain = getCherenkovRadGain();
+	tmp.bdt.radEff = getCherenkovRadEff(); 
+	if (!tmp.bdt.upgs) tmp.bdt.upgs = {};
+	for (let i=1;i<=BDUpgs.amt;i++) tmp.bdt.upgs[i] = BDUpgs[i].eff();
 }

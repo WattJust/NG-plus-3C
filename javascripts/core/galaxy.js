@@ -82,6 +82,7 @@ function getGalaxyRequirement(offset = 0, display) {
 	if (!player.boughtDims) {
 		tmp.grd.speed = 1
 		let ghostlySpeed = tmp.be ? 55 : 1
+		
 		let div = 1e4
 		let over = tmp.grd.galaxies / (302500 / ghostlySpeed)
 		if (over >= 1) {
@@ -89,7 +90,8 @@ function getGalaxyRequirement(offset = 0, display) {
 				div /= Math.pow(over, 6) / 729
 				scaling = 6
 			}
-			if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2]
+			if (tmp.ngp3c && player.achievements.includes("ng3pc12")) div *= 2;
+			if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2];
 			tmp.grd.speed = Math.pow(2, (tmp.grd.galaxies + 1 - 302500 / ghostlySpeed) * ghostlySpeed / div)
 			scaling = Math.max(scaling, 5)
 		}

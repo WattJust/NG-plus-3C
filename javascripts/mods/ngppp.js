@@ -484,7 +484,10 @@ function getGHPGain() {
 		if (!player.achievements.includes("ng3p84")) x = Math.min(x, 600 / y)
 		log += x
 	}
-	return Decimal.pow(10, log).times(getGHPMult()).floor()
+	let gain = Decimal.pow(10, log).times(getGHPMult())
+	
+	if (tmp.ngp3c) gain = softcap(gain, "ngp3cGHP")
+	return gain.floor()
 }
 
 function getGHPMult() {
@@ -496,7 +499,7 @@ function getGHPMult() {
 }
 
 ghostified = false
-function ghostify(auto, force) {	
+function ghostify(auto, force, resetQCs=true) {	
 	if (!force&&(!isQuantumReached()||!tmp.qu.bigRip.active||implosionCheck)) return
 	if (!auto && !force && player.aarexModifications.ghostifyConf && !confirm("Becoming a ghost resets everything Quantum resets, and also resets your banked stats, best TP & MA, quarks, gluons, electrons, Quantum Challenges, Replicants, Nanofield, and Tree of Decay to gain a Ghost Particle. Are you ready for this?")) {
 		denyGhostify()
@@ -519,12 +522,12 @@ function ghostify(auto, force) {
 		}, seconds * 250)
 		setTimeout(function(){
 			if (Math.random()<1e-3) giveAchievement("Boo!")
-			ghostifyReset(true, gain, amount)
+			ghostifyReset(true, gain, amount, resetQCs)
 		}, seconds * 500)
 		setTimeout(function(){
 			implosionCheck=0
 		}, seconds * 1000)
-	} else ghostifyReset(false, 0, 0, force)
+	} else ghostifyReset(false, 0, 0, force, resetQCs)
 	updateAutoQuantumMode()
 }
 
@@ -534,7 +537,7 @@ function denyGhostify() {
 	if (!tmp.ngp3l && ghostifyDenied >= 15) giveAchievement("Deny the afterlife")
 }
 
-function ghostifyReset(implode, gain, amount, force) {
+function ghostifyReset(implode, gain, amount, force, resetQCs=true) {
 	var bulk = getGhostifiedGain()
 	if (!force) {
 		if (!tmp.ngp3l && tmp.qu.times >= 1e3 && player.ghostify.milestones >= 16) giveAchievement("Scared of ghosts?")
@@ -564,14 +567,14 @@ function ghostifyReset(implode, gain, amount, force) {
 	if (!tmp.qu.breakEternity.did && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
 	if (player.ghostify.best<=((tmp.ngp3c?20:6))) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
-	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU)
+	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs)
 	
 	tmp.qu = player.quantum
 	updateInQCs()
 	doPreInfinityGhostifyResetStuff()
 	doInfinityGhostifyResetStuff(implode, bm)
 	doEternityGhostifyResetStuff(implode, bm)	
-	doQuantumGhostifyResetStuff(implode, bm)
+	doQuantumGhostifyResetStuff(implode, bm, resetQCs)
 	doGhostifyGhostifyResetStuff(bm, force)
 
 	//After that...
@@ -886,6 +889,11 @@ function toggleHiggsConf() {
 	document.getElementById("higgsConfirmBtn").textContent = "Higgs Boson confirmation: O" + (player.aarexModifications.higgsNoConf ? "FF" : "N")
 }
 
+function toggleBDConf() {
+	player.aarexModifications.bdNoConf = !player.aarexModifications.bdNoConf
+	document.getElementById("bdConfirmBtn").textContent = "Fix Dilation confirmation: O" + (player.aarexModifications.bdNoConf ? "FF" : "N")
+}
+
 //Anti-Preontius' Lair
 function getAntiPreonGhostWake() {
 	return 104
@@ -897,7 +905,12 @@ function setNonlegacyStuff() {
 
 function displayNonlegacyStuff() {
 	//QC Modifiers
-	for (var m = 1; m < qcm.modifiers.length; m++) document.getElementById("qcm_" + qcm.modifiers[m]).style.display = tmp.ngp3l ? "none" : ""
+	for (var m = 1; m <= 2; m++) document.getElementById("qcm_" + qcm.modifiers[m]).style.display = tmp.ngp3l ? "none" : ""
+}
+
+function displayCondensedStuff() {
+	//QC Modifiers
+	for (var m = 3; m < qcm.modifiers.length; m++) document.getElementById("qcm_" + qcm.modifiers[m]).style.display = tmp.ngp3c ? "" : "none"
 }
 
 function getOldAgeRequirement() {

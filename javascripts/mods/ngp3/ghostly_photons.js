@@ -5,13 +5,14 @@ function updateLightEmpowermentReq() {
 function getLightEmpowermentBoost() {
 	let r = player.ghostify.ghostlyPhotons.enpowerments
 	if (hasBosonicUpg(13)) r *= tmp.blu[13]
+	if (isLEBoostUnlocked(11) && tmp.ngp3c) r *= tmp.leBonus[11]
 	return r
 }
 
 var leBoosts = {
-	reqs: [null, 1, 2, 3, 10, 13, 16, 19, 22, 25],
-	condReqs: [null, 1, 2, 3, 5, 6, 7, 8, 9, 10],
-	max: 9,
+	reqs: [null, 1, 2, 3, 10, 13, 16, 19, 22, 25, 1/0, 1/0],
+	condReqs: [null, 1, 2, 3, 5, 6, 7, 8, 9, 10, 20, 25],
+	max: 11,
 	effects: [
 		null,
 		//Boost #1
@@ -64,6 +65,17 @@ var leBoosts = {
 		function() {
 			return Math.pow(tmp.effL[1] / 10 + 1, 1/3) - 1
 		},
+		//Boost #10 (NG+3C exclusive)
+		function() {
+			let x = tmp.leBoost / 100;
+			if (x>=1) x = Math.sqrt(x)
+			if (x>=2) x = Math.log2(x) + 1
+			return x + 1
+		},
+		// Boost #11 (NG+3C exclusive)
+		function() {
+			return Math.sqrt(tmp.effL[7] / 40 + 1)
+		},
 	]
 }
 
@@ -72,6 +84,7 @@ function isLEBoostUnlocked(x) {
 	if (!ghostified) return false
 	if (!player.ghostify.ghostlyPhotons.unl) return false
 	if (x >= 4 && !hasBosonicUpg(32)) return false
+	if (x >= 10 && !(hasBosonicUpg(52) && tmp.ngp3c)) return false
 	return player.ghostify.ghostlyPhotons.enpowerments >= (tmp.ngp3c?leBoosts.condReqs[x]:leBoosts.reqs[x])
 }
 
@@ -165,6 +178,8 @@ function updateLEmpowermentBoosts(){
 	if (boosts >= 7) document.getElementById("leBoost7").textContent = (tmp.leBonus[7] * 100).toFixed(1)
 	if (boosts >= 8) document.getElementById("leBoost8").textContent = (tmp.leBonus[8] * 100).toFixed(1)
 	if (boosts >= 9) document.getElementById("leBoost9").textContent = tmp.leBonus[9].toFixed(2)
+	if (boosts >= 10) document.getElementById("leBoost10").textContent = (tmp.leBonus[10] * 100).toFixed(1)
+	if (boosts >= 11) document.getElementById("leBoost11").textContent = (tmp.leBonus[11] * 100).toFixed(1)
 }
 
 function getGHRProduction() {

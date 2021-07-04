@@ -189,6 +189,14 @@ const allAchievements = {
   ng3p96 : "Not-so-very-challenging",
   ng3p97 : "The Ghostliest Side",
   ng3p98 : "Meta-Quintillion",
+  ng3pc11 : "Shattered in the 25th Century",
+  ng3pc12 : "Bosonic Infinity when?",
+  ng3pc13 : "Tornado Valley",
+  ng3pc14 : "The True Emperor",
+  ng3pc15 : "ng3pc15",
+  ng3pc16 : "ng3pc16",
+  ng3pc17 : "ng3pc17",
+  ng3pc18 : "ng3pc18",
   s11 : "The first one's always free",
   s12 : "Just in case",
   s13 : "It pays to have respect",
@@ -315,6 +323,7 @@ function giveAchievement(name, noUpdate) {
 	}
 
 	if (allAchievementNums[name].split("ng3p")[1] && !tmp.ngp3) return false
+    if (allAchievementNums[name].split("ng3pc")[1] && !tmp.ngp3c) return false
 
 	if (player.boughtDims) {
 		var r = allAchievementNums[name].split("r")[1]
@@ -388,6 +397,10 @@ function giveAchievement(name, noUpdate) {
             }
         } else updateQuantumChallenges()
     }
+    if (name == "Shattered in the 25th Century") {
+        updateBosonicLimits();
+        updateBosonicStuffCosts();
+    }
     if (!noUpdate) {
 	    if (name == "A sound financial decision") localStorage.setItem(btoa("dsAM_asfd"),"")
 		else $.notify(name, "success");
@@ -399,11 +412,15 @@ function updateAchievements() {
 	var amount = 0
 	var rowsShown = 0
 	var rowsNum = 0
-	for (var i = 1; i < 25; i++) {
+	for (var i = 1; i < 26; i++) {
 		var shown=true
 		var rowid = i
 		var rownum = i
-		if (i > 15) {
+        if (i > 24) {
+            shown = tmp.ngp3c
+            rownum = i - 24
+            rowid = "ng3pc" + rownum
+		} else if (i > 15) {
 			shown =! (!player.masterystudies)
 			rownum = i - 15
 			if (rownum > 8) shown = shown && !tmp.ngp3l
@@ -430,17 +447,19 @@ function updateAchievements() {
 					else if (realAchNum == 41) realAchNum = 76
 				}
 				var achId = "r" + achNum
-				if (achNum > 160) achId="ng3p" + (achNum - 150)
+                if (achNum > 250) achId="ng3pc" + (achNum - 240)
+                else if (achNum > 160) achId="ng3p" + (achNum - 150)
 				else if (achNum > 150) achId = "ngpp" + (achNum - 140)
 				else if (achNum == 145) achId = "ngpp13"
 				else if (achNum == 147) achId = "ngpp18"
 				else if (achNum > 140) achId = "ngud" + (achNum - 130)
 				var name = allAchievements[achId]
+                if (achNum > 250 && name!=achId) document.getElementById(name).innerHTML = "<span class='achievementtext'>"+allAchievements[achId]+"</span>";
 				if (player.achievements.includes(achId)) {
 					n++
 					document.getElementById(name).className = "achievementunlocked"
 				} else {
-					document.getElementById(name).className = "achievementlocked"
+					document.getElementById(name).className = (name==achId&&achNum>250)?"achievementhidden":"achievementlocked"
 				}
 			}
 			if (n == 8) {
@@ -562,6 +581,7 @@ function achMultLabelUpdate() {
         var label = "Normal"
         if (player.achievements.includes("r75")) label += "/Infinity"
         if (player.eternityUpgrades.includes(4)) label += "/Time"
+        if (player.achievements.includes("ng3pc11")) label += "/Emperor"
         return label
 }
 

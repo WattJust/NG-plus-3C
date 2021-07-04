@@ -375,7 +375,7 @@ function setR18Tooltip(){
 	let dying = document.getElementById("Are you currently dying?")
 
 	//ACHIEVEMENT ROW 18
-	notrelative.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 411))+" dilated time without gaining tachyon particles." + (tmp.ngp3l ? "" : " Reward: You gain more DT based on the amount of Nanofield rewards."))
+	notrelative.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 411))+" dilated time without dilating time during this Quantum." + (tmp.ngp3l ? "" : " Reward: You gain more DT based on the amount of Nanofield rewards."))
 	error404.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, tmp.ngp3c?1.6e11:1.6e12))+" antimatter "+(tmp.ngp3c?"without any First Time Dimensions.":"while having only the 1st Dimensions of each type of Dimension and at least 2 normal galaxies."))
 	ie.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 8e6)) + " antimatter in a paired challenge with the PC6+8 combination." + (tmp.ngp3l ? "" : " Reward: Automatically buy the Quark multiplier to dimensions every second if you have the 8th brave milestone."))
 	wasted.setAttribute('ach-tooltip', "Get " + shorten(1.1e7) + " TT without having TT generation, keeping your previous TT, and respeccing studies. Reward: While you have less than 1 hour worth of TT production, you gain 10x as much TT.")
@@ -427,7 +427,7 @@ function setR20Tooltip(){
 
 	//ACHIEVEMENT ROW 20
 	finite.setAttribute('ach-tooltip', "Get " + shortenCosts(1e33) + " Space Shards without Breaking Eternity within this Ghostify." + (tmp.ngp3l ? "" : " Reward: Outside of Big Rips, Tree Upgrades are 10% stronger. "+(tmp.ngp3c?"":"In Big Rips, 8th Time Dimensions gain an small exponent boost based on your current Ghostify time.")))
-	really.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 5000)) + " matter in Big Rip." + (tmp.ngp3l ? "":" Reward: Buying Electron upgrades doesn't consume Meta-Dimension Boosts."))
+	really.setAttribute('ach-tooltip', (tmp.ngp3c?"Complete EC14 with 5 completions in Big Rip.":("Reach " + shortenCosts(Decimal.pow(10, 5000)) + " matter in Big Rip.")) + (tmp.ngp3l ? "":" Reward: Buying Electron upgrades doesn't consume Meta-Dimension Boosts."))
 	grind.setAttribute('ach-tooltip', "Get the 21st Nanofield reward without having Tree Upgrades. " + (tmp.ngp3l ? "" : "Reward: Gain more Quarks based on Radioactive Decays."))
 	willenough.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, player.aarexModifications.ngudpV ? 268435456 : 36000000))+" replicanti." + (willenoughReward != "" ? " Reward: " + willenoughReward + "." : ""))
 	oppose.setAttribute('ach-tooltip', "Become a ghost with at most 1x quantumed stat." + (tmp.ngp3l ? "" : (" Reward: You gain more Quarks based on your quantumed stat"+(tmp.ngp3c?", keep Nano-Condensers on Ghostify reset, and Nano-Condenser costs scale 25% slower.":"."))))
@@ -511,6 +511,17 @@ function setR23Tooltip(){
 	notsoverychall.setAttribute('ach-tooltip', tmp.ngp3c?"Become a ghost without Breaking Eternity in this Ghostify. Reward: Neutrino Boost 1 & Nanofield Reward 1 are 50% stronger, Bosonic Upgrade 1 is 15% stronger, and all Particle Masses are always selected.":"Get 190 Paired Challenges ranking. Reward: Quantum and Paired Challenge goals are decreased by 5%, except during Big Rip.")
 }
 
+function setR24Tooltip() {
+	// Row 24 (ng3pc1)
+
+	//ng3pc11///// 
+	let bInf = document.getElementById("Bosonic Infinity when?")
+	//ng3pc13/////
+	//ng3pc14/////
+
+	bInf.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Bosonic Antimatter. Reward: Ghostly Galaxies scaling is 50% weaker.")
+}
+
 function setPreNGP3AchievementTooltip() {
 	setR1Tooltip()
 	setR2Tooltip()
@@ -547,8 +558,13 @@ function setNGP3p1AchievementTooltip(){
 	setR23Tooltip()
 }
 
+function setNGP3CAchievementTooltip() {
+	setR24Tooltip()
+}
+
 function setAchieveTooltip() { 
 	setPreNGP3AchievementTooltip()
 	if (tmp.ngp3) setPreNGP3p1AchievementTooltip()
 	if (!tmp.ngp3l) setNGP3p1AchievementTooltip()
+	if (tmp.ngp3c) setNGP3CAchievementTooltip()
 }

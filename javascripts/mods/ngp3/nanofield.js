@@ -17,7 +17,9 @@ function updateNanoverseTab(){
 	document.getElementById("quarkAntienergy").textContent = shortenMoney(tmp.qu.nanofield.antienergy)
 	document.getElementById("quarkAntienergyRate").textContent = shortenMoney(getQuarkAntienergyProduction())
 	document.getElementById("quarkChargeProductionCap").textContent = shortenMoney(getQuarkChargeProductionCap())
-	document.getElementById("rewards").textContent = getFullExpansion(rewards)
+	document.getElementById("rewards").textContent = getFullExpansion(rewards)+(tmp.nf.extra>0?(" + "+getFullExpansion(tmp.nf.extra)):"")
+
+	rewards += tmp.nf.extra
 
 	for (var reward = 1; reward < 9; reward++) {
 		document.getElementById("nfReward" + reward).className = reward > rewards ? "nfRewardlocked" : "nfReward"
@@ -32,7 +34,7 @@ function updateNanoverseTab(){
 
 function updateNanofieldAntipreon(){
 	var rewards = tmp.qu.nanofield.rewards
-	document.getElementById("rewards_AP").textContent = getFullExpansion(rewards)
+	document.getElementById("rewards_AP").textContent = getFullExpansion(rewards)+(tmp.nf.extra>0?(" + "+getFullExpansion(tmp.nf.extra)):"")
 	document.getElementById("rewards_wake").textContent = getFullExpansion(tmp.apgw)
 	document.getElementById("sleepy").style.display = tmp.qu.nanofield.apgWoke ? "none" : ""
 	document.getElementById("woke").style.display = tmp.qu.nanofield.apgWoke ? "" : "none"
@@ -82,6 +84,7 @@ function getQuarkEnergyProduction() {
 function getQuarkAntienergyProduction() {
 	let ret = tmp.qu.nanofield.charge.sqrt()
 	if (player.masterystudies.includes("t401")) ret = ret.div(getMTSMult(401))
+	if (hasBosonicUpg(51)) ret = ret.div(tmp.blu[51])
 	if (tmp.qu.nanofield.power > tmp.apgw) ret = ret.times(Decimal.pow(2, (tmp.qu.nanofield.power - tmp.apgw) / 2))
 	ret = ret.times(getNanofieldFinalSpeed())
 	return ret
@@ -91,6 +94,7 @@ function getQuarkChargeProductionCap() {
 	let cap = tmp.qu.nanofield.charge.times(2500).sqrt()
 	if (tmp.ngp3c && player.masterystudies.includes("t403")) cap = cap.times(getMTSMult(403))
 	if (hasBosonicUpg(23) && tmp.ngp3c && tmp.qu.bigRip.active) cap = cap.times(tmp.blu[23])
+	if (hasBosonicUpg(51)) cap = cap.times(tmp.blu[51])
 	return cap;
 }
 
@@ -238,14 +242,15 @@ function getNanofieldFinalSpeed() {
 }
 
 function getNanoRewardPower(reward, rewards) {
-	let x = Math.ceil((rewards - reward + 1) / 8)
+	let r = rewards + tmp.nf.extra
+	let x = Math.ceil((r - reward + 1) / 8)
 	let apgw = tmp.apgw
-	if (rewards >= apgw) {
+	if (r >= apgw) {
 		if (tmp.ngp3c) x += 0.5
 		else {
 			let sbsc = Math.ceil((apgw - reward + 1) / 8)
 			x = Math.sqrt((x / 2 + sbsc / 2) * sbsc)
-			if (reward == (rewards - 1) % 8 + 1) x += 0.5
+			if (reward == (r - 1) % 8 + 1) x += 0.5
 		}
 	}
 	let pow = x * tmp.nf.powerEff
@@ -258,6 +263,12 @@ function getNanoRewardPowerEff() {
 	let x = 1
 	if (hasBosonicUpg(31) && !tmp.ngp3c) x *= tmp.blu[31]
 	return x
+}
+
+function getExtraNanoRewards() {
+	let extra = 0;
+	if (hasNU(18) && tmp.ngp3c) extra += tmp.nu[8]
+	return extra;
 }
 
 function getNanoRewardReq(additional){

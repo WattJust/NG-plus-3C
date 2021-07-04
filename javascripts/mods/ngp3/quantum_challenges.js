@@ -359,26 +359,31 @@ function updatePCTable() {
 }
 
 var qcm={
-	modifiers:["ad", "sm"],
+	modifiers:["ad", "sm", "sp"],
 	names:{
 		ad: "Anti-Dilation",
-		sm: "Supermastery"
+		sm: "Supermastery",
+		sp: "Spiritual"
 	},
 	reqs:{
 		ad: 100,
-		sm: 165
+		sm: 165,
+		sp: 1/0
 	},
 	condReqs: {
 		ad() { return player.ghostify.wzb.unl },
 		sm() { return player.ghostify.hb.unl },
+		sp() { return player.dilation.break.unl },
 	},
 	condReqDescs: {
 		ad: "Unlock Bosonic Lab",
 		sm: "Unlock Higgs Bosons",
+		sp: "Unlock Break Dilation",
 	},
 	descs:{
 		ad: "You always have no Tachyon particles. You can dilate time, but you can't gain Tachyon particles.",
-		sm: "You can't have normal Time Studies, and can't have more than 20 normal Mastery Studies."
+		sm: "You can't have normal Time Studies, and can't have more than 20 normal Mastery Studies.",
+		sp: "Starting a Quantum Challenge forces a Ghostify reset, and all Normal Dimension & Tickspeed Obscurements are 400% stronger."
 	},
 	on: []
 }

@@ -234,6 +234,7 @@ function getBosonicAMProduction() {
 	if (player.ghostify.bl.usedEnchants.includes(34)) ret = ret.times(tmp.bEn[34] || 1)
 	if (player.achievements.includes("ng3p91")) ret = ret.times(getAchBAMMult())
 	if (player.ghostify.neutrinos.boosts >= 11 && tmp.ngp3c) ret = ret.times(tmp.nb[11])
+	if (hasBDUpg(3)) ret = ret.times(tmp.bdt.upgs[3].bam)
 	if (player.achievements.includes("ng3p98") && !tmp.ngp3c) ret = ret.plus(Decimal.pow(player.ghostify.hb.higgs, 2))
 
 	// ret = softcap(ret, "bam")
@@ -252,6 +253,7 @@ function updateBosonicLimits() {
 
 	//Bosonic Runes / Extractor / Enchants
 	br.limit = br.maxLimit
+	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) br.limit = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) br.limit = 3
 	if (tmp.ngp3c && !player.ghostify.wzb.WZBUNL) br.limit = 2
 	var width = 100 / br.limit
@@ -267,11 +269,13 @@ function updateBosonicLimits() {
 
 	//Bosonic Upgrades
 	bu.rows = bu.maxRows
+	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) bu.rows = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) bu.rows = 2
 	for (var r = 3; r <= bu.maxRows; r++) document.getElementById("bUpgRow" + r).style.display = bu.rows >= r ? "" : "none"
 
 	//Bosonic Enchants
 	bEn.limit = bEn.maxLimit
+	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) bEn.limit = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) bEn.limit = 2
 	if (tmp.ngp3c && !player.ghostify.wzb.WZBUNL) bEn.limit = 1
 }
@@ -331,7 +335,7 @@ function updateBosonicLabTab(){
 		if (player.ghostify.hb.unl) {
 			var req = getHiggsRequirement()
 			document.getElementById("hb").textContent = getFullExpansion(player.ghostify.hb.higgs)
-			document.getElementById("hbDirectEff").innerHTML = getHiggsDirectEffHTML()
+			document.getElementById("hbDirectEff").innerHTML = getHiggsScalingName(player.ghostify.hb.higgs)+"Higgs Bosons"+getHiggsDirectEffHTML()
 			document.getElementById("hbReset").className = "gluonupgrade " + (player.ghostify.bl.am.gte(req) ? "hb" : "unavailablebtn")
 			document.getElementById("hbResetReq").textContent = shorten(getHiggsRequirement(tmp.hb.higgs+getHiggsGain()))
 			document.getElementById("hbResetGain").textContent = getFullExpansion(getHiggsGain())
@@ -448,6 +452,8 @@ function canUseEnchant(id) {
 	return true
 }
 
+function enchantsSpendRunes() { return !(hasBosonicUpg(55) && tmp.ngp3c) }
+
 function takeEnchantAction(id) {
 	let data = player.ghostify.bl
 	if (bEn.action == "upgrade") {
@@ -455,8 +461,10 @@ function takeEnchantAction(id) {
 		let g1 = Math.floor(id / 10)
 		let g2 = id % 10
 		if (!canBuyEnchant(id)) return
-		data.glyphs[g1 - 1] = data.glyphs[g1 - 1].sub(getBosonicFinalCost(costData[0])).round()
-		data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(getBosonicFinalCost(costData[1])).round()
+		if (enchantsSpendRunes()) {
+			data.glyphs[g1 - 1] = data.glyphs[g1 - 1].sub(getBosonicFinalCost(costData[0])).round()
+			data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(getBosonicFinalCost(costData[1])).round()
+		}
 		if (data.enchants[id] == undefined) data.enchants[id] = new Decimal(1)
 		else data.enchants[id] = data.enchants[id].add(1).round()
 	} else if (bEn.action == "max") buyMaxEnchant(id)
@@ -468,6 +476,8 @@ function takeEnchantAction(id) {
 					var newData = []
 					for (var u = 0; u < data.usedEnchants.length; u++) if (data.usedEnchants[u] != id) newData.push(data.usedEnchants[u])
 					data.usedEnchants = newData
+
+					if (id==25) updateBosonicWatts(false)
 				} else data.usedEnchants.push(id)
 			}
 		}
@@ -476,19 +486,21 @@ function takeEnchantAction(id) {
 
 function buyMaxEnchant(id, r=1) {
 	let data = player.ghostify.bl
-	let lvl = getMaxEnchantLevelGain(id).times(r).round()
+	let lvl = getMaxEnchantLevelGain(id).times(r)
 	let costData = bEn.costs[id]
 	let g1 = Math.floor(id / 10)
 	let g2 = id % 10
 	if (!canBuyEnchant(id)) return
-	data.glyphs[g1 - 1] = data.glyphs[g1 - 1].sub(lvl.times(getBosonicFinalCost(costData[0])).min(data.glyphs[g1 - 1]))
-	data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(lvl.times(getBosonicFinalCost(costData[1])).min(data.glyphs[g2 - 1]))
-	if (r==1) {
-		data.glyphs[g1 - 1] = data.glyphs[g1 - 1].round()
-		data.glyphs[g2 - 1] = data.glyphs[g2 - 1].round()
+	if (enchantsSpendRunes()) {
+		data.glyphs[g1 - 1] = data.glyphs[g1 - 1].sub(lvl.times(getBosonicFinalCost(costData[0])).min(data.glyphs[g1 - 1]))
+		data.glyphs[g2 - 1] = data.glyphs[g2 - 1].sub(lvl.times(getBosonicFinalCost(costData[1])).min(data.glyphs[g2 - 1]))
+		if (r==1) {
+			data.glyphs[g1 - 1] = data.glyphs[g1 - 1].round()
+			data.glyphs[g2 - 1] = data.glyphs[g2 - 1].round()
+		}
 	}
 	if (data.enchants[id] == undefined) data.enchants[id] = new Decimal(lvl)
-	else data.enchants[id] = data.enchants[id].add(lvl).round()
+	else data.enchants[id] = data.enchants[id].add(lvl)
 }
 
 function maxAllBosonicEnchants(r=1) {
@@ -507,7 +519,7 @@ function getEnchantEffect(id, desc) {
 	let l = new Decimal(0)
 	if (bEn.effects[id] === undefined) return
 	if (desc ? data.enchants[id] : data.usedEnchants.includes(id)) l = new Decimal(data.enchants[id])
-	return bEn.effects[id](l)
+	return bEn.effects[id](l.round())
 }
 
 function updateBosonExtractorTab(){
@@ -544,19 +556,21 @@ function updateEnchantDescs() {
 }
 
 var br = {
-	names: [null, "Infinity", "Eternity", "Quantum", "Ghostly", "Ethereal", "Sixth", "Seventh", "Eighth", "Ninth"], //Current maximum limit of 9.
-	maxLimit: 4,
+	names: [null, "Infinity", "Eternity", "Quantum", "Ghostly", "Cosmic", "Sixth", "Seventh", "Eighth", "Ninth"], //Current maximum limit of 9.
+	maxLimit: 5,
 	scalings: {
 		1: 60,
 		2: 120,
 		3: 600,
-		4: 6e7
+		4: 6e7,
+		5: 5e27
 	},
 	condScalings: {
 		1: 5,
 		2: 12,
 		3: 100,
-		4: 1e7
+		4: 1e7,
+		5: 5e27
 	}
 }
 
@@ -567,7 +581,9 @@ var bEn = {
 		23: [1e4,2e3],
 		14: [1e6, 2],
 		24: [1e6, 10],
-		34: [1,0]
+		34: [1,0],
+		15: [4e31, 10],
+		25: [3e35, 7.2e8],
 	},
 	descs: {
 		12: "You automatically extract Bosonic Runes.",
@@ -575,7 +591,9 @@ var bEn = {
 		23: "Bosonic Antimatter boosts oscillate speed.",
 		14: "Divide the requirement of Higgs and start with some Bosonic Upgrades, even if it is disabled.",
 		24: "You gain more Bosonic Battery.",
-		34: "Higgs Bosons produce more Bosonic Antimatter."
+		34: "Higgs Bosons produce more Bosonic Antimatter.",
+		15: "Bosonic Watts reduce the Higgs Boson requirement base.",
+		25: "Anti-Preons boost the effect of your Total Enchant Level.",
 	},
 	effects: {
 		12: function(l) {
@@ -608,7 +626,21 @@ var bEn = {
 		},
 		34: function(l) {
 			return Decimal.pow(Math.pow(player.ghostify.hb.higgs, tmp.ngp3c?0.5:1) / (tmp.ngp3c?Math.sqrt(20):20) + 1, l.add(1).log10() / 5)
-		}
+		},
+		15: function(l) {
+			let x = Math.log2(tmp.bl.watt+1);
+			let y = Decimal.add(l, 1).log10();
+			let z = Decimal.mul(x, y).plus(1).log2()/40
+			if (z>=1) z = Math.log2(z+1)
+			return z+1
+		},
+		25: function(l) {
+			let x = Math.log2(player.ghostify.wzb.dP.plus(1).log10()+1)
+			let y = Decimal.add(l, 1).log10();
+			let z = Decimal.mul(x, y).plus(1).log2()/25
+			if (z>=1) z = Math.log2(z+1)
+			return z+1
+		},
 	},
 	effectDescs: {
 		12: function(x) {
@@ -620,17 +652,21 @@ var bEn = {
 		},
 		14: function(x) {
 			return "/" + shorten(x.higgs) + " to Higgs requirement, " + getFullExpansion(x.bUpgs) + " starting upgrades"
-		}
+		},
+		15: function(x) {
+			return "100.00 -> "+shorten(Decimal.root(100, x))
+		},
 	},
 	action: "upgrade",
 	actions: ["upgrade", "max", "use"],
-	maxLimit: 4,
+	maxLimit: 7,
 	autoScalings:{
 		1: 1.5,
 		2: 3,
 		3: 12,
 		4: 1e6,
-		5: 1/0
+		5: 5e25,
+		6: 1/0
 	}
 }
 
@@ -701,7 +737,7 @@ function updateBosonicUpgradeDescs() {
 }
 
 var bu = {
-	maxRows: 4,
+	maxRows: 5,
 	costs: {
 		11: {
 			am: 200,
@@ -802,6 +838,11 @@ var bu = {
 			am: 2e76,
 			g2: 2e14,
 			g4: 4e8
+		},
+		51: {
+			am: 2e144,
+			g4: 1e29,
+			g5: 4e8
 		}
 	},
 	reqData: {},
@@ -825,7 +866,7 @@ var bu = {
 		42: "Red power boosts the first Bosonic Upgrade.",
 		43: "Green power effect boosts Tree Upgrades.",
 		44: "Blue power makes replicate interval increase slower.",
-		45: "Dilated time weakens the Distant Antimatter Galaxies scaling."
+		45: "Dilated time weakens the Distant Antimatter Galaxies scaling.",
 	},
 	condDescs: {
 		11: 'Bosonic Antimatter boosts "Intergalactic", which also affects First Infinity Dimensions (All Meta Dimensions in BR).',
@@ -848,6 +889,11 @@ var bu = {
 		43: "Green Power makes Distant Replicated Galaxy scaling start later.",
 		44: "Higgs Bosons boost Overdrive, & Blue Power boosts Particle Mass gain base.",
 		45: "Light Empowerments & Dark Matter weaken Distant Galaxies scaling and boost W & Z Boson speed.",
+		51: "Anti-Preons extend the Preon Anti-Energy limit & divide Preon Anti-Energy gain.",
+		52: "Unlock new Light Boosts at LE20 & LE25, and TS232 is no longer weakened outside of Big Rip.",
+		// bu53
+		// bu54
+		55: "Buying Bosonic Enchants does not spend Bosonic Runes.",
 	},
 	effects: {
 		11: function() {
@@ -1016,7 +1062,11 @@ var bu = {
 					wzb: eff.div(5).pow(2),
 				}
 			} else return softcap(player.dilation.dilatedTime.add(1).pow(.0005), "bu45").toNumber()
-		}
+		},
+		51: function() {
+			if (!tmp.ngp3c) return new Decimal(1);
+			else return player.ghostify.wzb.dP.plus(1).pow(2.5)
+		},
 	},
 	effectDescs: {
 		11: function(x) {

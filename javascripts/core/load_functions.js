@@ -1818,6 +1818,7 @@ function setConfirmationsDisplay(){
         document.getElementById("ghostifyConfirmBtn").style.display = ghostified ? "inline-block" : "none"
         document.getElementById("leConfirmBtn").style.display = ghostified && player.ghostify.ghostlyPhotons.enpowerments ? "inline-block" : "none"
         document.getElementById("higgsConfirmBtn").style.display = ghostified && player.ghostify.hb.higgs ? "inline-block" : "none"
+        document.getElementById("bdConfirmBtn").style.display = (tmp.ngp3c && ghostified && tmp.bd.unl) ? "inline-block" : "none"
 
         document.getElementById("confirmation").checked = !player.options.sacrificeConfirmation
         document.getElementById("sacConfirmBtn").textContent = "Sacrifice confirmation: O" + (player.options.sacrificeConfirmation ? "N" : "FF")
@@ -1832,6 +1833,7 @@ function setConfirmationsDisplay(){
         document.getElementById("ghostifyConfirmBtn").textContent = "Ghostify confirmation: O" + (player.aarexModifications.ghostifyConf ? "N" : "FF")
         document.getElementById("leConfirmBtn").textContent = "Light Empowerment confirmation: O" + (player.aarexModifications.leNoConf ? "FF" : "N")
         document.getElementById("higgsConfirmBtn").textContent = "Higgs Boson confirmation: O"+ (player.aarexModifications.higgsNoConf ? "FF" : "N")
+        document.getElementById("bdConfirmBtn").textContent = "Fix Dilation confirmation: O"+ (player.aarexModifications.bdNoConf ? "FF" : "N")
 }
 
 function setOptionsDisplaysStuff1(){
@@ -1873,6 +1875,8 @@ function setOptionsDisplaysStuff1(){
         document.getElementById("decimalMode").textContent = "Big number library: "+(break_infinity_js?"break_infinity (slow)":"logarithmica_numerus (fast)")
         document.getElementById("decimalMode").style.visibility = Decimal.gt(player.totalmoney,Decimal.pow(10, 9e15)) ? "hidden" : ""
         document.getElementById("hideProductionTab").textContent = (player.aarexModifications.hideProductionTab?"Show":"Hide")+" production tab"
+        document.getElementById("hideAutoEternity").style.display = player.achievements.includes("ng3p52")?"":"none"
+        document.getElementById("hideAutoEternity").textContent = (player.aarexModifications.hideAutoEternity?"Show":"Hide")+" Auto-Eternity tab"
         document.getElementById("hideRepresentation").textContent=(player.aarexModifications.hideRepresentation?"Show":"Hide")+" antimatter representation"
         document.getElementById("showAchRowNums").textContent=(player.aarexModifications.showAchRowNums?"Hide":"Show")+" achievement row info"
         document.getElementById("hideCompletedAchs").textContent=(player.aarexModifications.hideCompletedAchs?"Show":"Hide")+" completed achievement rows"
@@ -2016,6 +2020,7 @@ function setTSDisplay(){
 
 function updateNGp3DisplayStuff(){
         displayNonlegacyStuff()
+        displayCondensedStuff()
 		setupMasteryStudiesHTML()
         for (var i=0;i<masteryStudies.timeStudies.length;i++) {
                 var t=masteryStudies.timeStudies[i]
@@ -2132,6 +2137,7 @@ function updateNGp3DisplayStuff(){
         updateHiggsUnlocks()
         if (tmp.ngp3c) {
                 updateHiggsMechanismTab(new Decimal(0), true)
+                updateCondensedUnlocks()
         }
 }
 
