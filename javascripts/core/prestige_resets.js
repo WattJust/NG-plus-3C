@@ -1026,8 +1026,8 @@ function doQuantumGhostifyResetStuff(implode, bm, resetQCs=true){
 	}
 	if (bm > 6) {
 		tmp.qu.replicants.limit = 10
-		tmp.qu.replicants.limitCost = Decimal.pow(200, tmp.qu.replicants.limitDim * 9).times(getReplicantLimitBaseCost())
-		tmp.qu.replicants.quantumFoodCost = Decimal.pow(5, tmp.qu.replicants.limitDim * 30).times(getQFBaseCost())
+		tmp.qu.replicants.limitCost = Decimal.pow(getWorkerLimitCostBase(), tmp.qu.replicants.limitDim * 9).times(getReplicantLimitBaseCost())
+		tmp.qu.replicants.quantumFoodCost = Decimal.pow(getQuantumFoodCostBase(), tmp.qu.replicants.limitDim * 30).times(getQFBaseCost())
 	}
 	if (bm > 3) {
 		var colors = ['r', 'g', 'b']

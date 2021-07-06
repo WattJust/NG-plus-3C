@@ -516,10 +516,16 @@ function setR24Tooltip() {
 
 	//ng3pc11///// 
 	let bInf = document.getElementById("Bosonic Infinity when?")
-	//ng3pc13/////
+	let tornado = document.getElementById("Tornado Valley")
 	//ng3pc14/////
+	//ng3pc15/////
+	//ng3pc16/////
+	let litImp = document.getElementById("This Should Be Literally Impossible")
+	//ng3pc18/////
 
 	bInf.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Bosonic Antimatter. Reward: Ghostly Galaxies scaling is 50% weaker.")
+	tornado.setAttribute('ach-tooltip', "Reach "+shortenCosts(Decimal.pow(10, 1e7))+" EP while Big Ripped with at least two active QC Modifiers. Reward: You can gain Eternal Matter outside of Big Rip at a reduced rate.")
+	litImp.setAttribute('ach-tooltip', "Reach ??? Antimatter in QC6+8 without buying any Normal Tickspeed Upgrades or Normal, Infinity, Time, or Meta Dimensions or Condensers.")
 }
 
 function setPreNGP3AchievementTooltip() {

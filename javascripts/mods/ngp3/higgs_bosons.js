@@ -72,10 +72,10 @@ function bosonicLabReset() {
 		odSpeed: player.ghostify.bl.odSpeed,
 		UPGSUNL: tmp.ngp3c?true:undefined,
 	}
-	var order = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45]
+	var order = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55]
 	//tmp.bl.upgrades needs to be updated (also 12 needs to be added)
 	for (let i = 0; i < startingEnchants; i++){
-		if (i == 20) break
+		if (i == 20 && !tmp.ngp3c) break
 		player.ghostify.bl.upgrades.push(order[i])
 	}
 	if (!player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)

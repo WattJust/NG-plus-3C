@@ -194,9 +194,9 @@ const allAchievements = {
   ng3pc13 : "Tornado Valley",
   ng3pc14 : "The True Emperor",
   ng3pc15 : "ng3pc15",
-  ng3pc16 : "ng3pc16",
+  ng3pc16 : "Where did the Gravitons go?",
   ng3pc17 : "ng3pc17",
-  ng3pc18 : "ng3pc18",
+  ng3pc18 : "This Should Be Literally Impossible",
   s11 : "The first one's always free",
   s12 : "Just in case",
   s13 : "It pays to have respect",
@@ -605,6 +605,12 @@ function bosonicAMAchMultLabelUpdate() {
     var bosonMult = getAchBAMMult()
     if (player.achievements.includes("ng3p91")) {
         document.getElementById("bosonicAMAchMultLabel").style.display = "block"
-        document.getElementById("bosonicAMAchMultLabel").textContent = "Achievement multiplier to Bosonic Antimatter gain: " + shorten(bosonMult) + "x"
+        document.getElementById("bosonicAMAchMultLabel").textContent = "Achievement multiplier to "+bosonicAchMultLabelTypes()+" gain: " + shorten(bosonMult) + "x"
     } else document.getElementById("bosonicAMAchMultLabel").style.display = "none"
+}
+
+function bosonicAchMultLabelTypes() {
+    let types = "Bosonic Antimatter"
+    if (player.achievements.includes("ng3pc16") && tmp.ngp3c) types += "/Watt"
+    return types;
 }

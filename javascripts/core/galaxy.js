@@ -64,7 +64,7 @@ document.getElementById("secondSoftReset").onclick = function() {
 function getGalaxyRequirement(offset = 0, display) {
 	tmp.grd = {} //Galaxy requirement data
 	tmp.grd.galaxies = player.galaxies + offset
-	if (tmp.ngp3c) tmp.grd.darkStart = 3300
+	if (tmp.ngp3c) tmp.grd.darkStart = getDarkMatterGalaxyStart()
 	let mult = getGalaxyReqMultiplier()
 	let base = tmp.grd.galaxies * mult
 	let amount = 80 + base
@@ -82,9 +82,10 @@ function getGalaxyRequirement(offset = 0, display) {
 	if (!player.boughtDims) {
 		tmp.grd.speed = 1
 		let ghostlySpeed = tmp.be ? 55 : 1
+		let ghostlyStart = getGhostlyGalaxyScalingStart()
 		
 		let div = 1e4
-		let over = tmp.grd.galaxies / (302500 / ghostlySpeed)
+		let over = tmp.grd.galaxies / (ghostlyStart / ghostlySpeed)
 		if (over >= 1) {
 			if (over >= 3) {
 				div /= Math.pow(over, 6) / 729
@@ -92,7 +93,7 @@ function getGalaxyRequirement(offset = 0, display) {
 			}
 			if (tmp.ngp3c && player.achievements.includes("ng3pc12")) div *= 2;
 			if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2];
-			tmp.grd.speed = Math.pow(2, (tmp.grd.galaxies + 1 - 302500 / ghostlySpeed) * ghostlySpeed / div)
+			tmp.grd.speed = Math.pow(2, (tmp.grd.galaxies + 1 - ghostlyStart / ghostlySpeed) * ghostlySpeed / div)
 			scaling = Math.max(scaling, 5)
 		}
 
@@ -198,4 +199,16 @@ function getRemoteScalingStart(galaxies) {
 		if (galaxies > 1/0 && !tmp.be) n -= galaxies - 1/0 
 	}
 	return n
+}
+
+function getDarkMatterGalaxyStart() {
+	let start = 3300;
+	if (hasBDUpg(7) && !tmp.qu.bigRip.active) start += tmp.bdt.upgs[7];
+	return start;
+}
+
+function getGhostlyGalaxyScalingStart() {
+	let start = 302500;
+	if (hasBDUpg(7) && !tmp.qu.bigRip.active) start += tmp.bdt.upgs[7];
+	return start;
 }

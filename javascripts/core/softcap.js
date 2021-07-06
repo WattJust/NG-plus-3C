@@ -1,4 +1,16 @@
 var softcap_data = {
+	tickspeedToInfDims: {
+		1: {
+			func: "expPow",
+			start: Decimal.pow(10, 5e15),
+			pow: 0.5,
+		},
+		2: {
+			func: "expPow",
+			start: Decimal.pow(10, 1e16),
+			pow: 0.25,
+		},
+	},
 	dt_log: {
 		1: {
 			func: "pow",
@@ -35,31 +47,51 @@ var softcap_data = {
 		1: {
 			func: "pow",
 			start: 1e6,
-			pow: 0.75,
+			pow() { 
+				let pow = 0.75
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/(Math.log10(player.galaxies+1)+1))
+				return pow;
+			},
 			derv: false
 		},
 		2: {
 			func: "pow",
 			start: 2e6,
-			pow: 0.70,
+			pow() { 
+				let pow = 0.70
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/Math.sqrt(Math.log10(player.galaxies+1)+1))
+				return pow;
+			},
 			derv: false
 		},
 		3: {
 			func: "pow",
 			start: 3e6,
-			pow: 0.65,
+			pow() { 
+				let pow = 0.65
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/Math.pow(Math.log10(player.galaxies+1)+1, 1/3))
+				return pow;
+			},
 			derv: false
 		},
 		4: {
 			func: "pow",
 			start: 4e6,
-			pow: 0.60,
+			pow() { 
+				let pow = 0.60
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/Math.pow(Math.log10(player.galaxies+1)+1, 1/4))
+				return pow;
+			},
 			derv: false
 		},
 		5: {
 			func: "pow",
 			start: 5e6,
-			pow: 0.55,
+			pow() { 
+				let pow = 0.55
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/(Math.log10(Math.log10(player.galaxies+1)+1)+1))
+				return pow;
+			},
 			derv: false
 		}
 	},
@@ -67,13 +99,21 @@ var softcap_data = {
 		1: {
 			func: "pow",
 			start: 1e4,
-			pow: 0.75,
+			pow() { 
+				let pow = 0.75
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/(Math.log10(player.galaxies+1)+1))
+				return pow;
+			},
 			derv: false
 		},
 		2: {
 			func: "pow",
 			start: 2e4,
-			pow: 0.65,
+			pow() { 
+				let pow = 0.65
+				if (hasBosonicUpg(53) && tmp.ngp3c) pow = Math.pow(pow, 1/Math.sqrt(Math.log10(player.galaxies+1)+1))
+				return pow;
+			},
 			derv: false
 		}
 	},

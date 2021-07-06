@@ -225,8 +225,8 @@ function getInfCondenserCostDiv() {
 
 function getInfCondenserCostScaling() {
 	let scaling = 1
-	if (player.eternityUpgrades.includes(12)) scaling *= 2/3
-	scaling *= 1-tmp.qcRewards[8]
+	if (player.eternityUpgrades.includes(12)) scaling *= 2/3 //0.67
+	scaling *= 1-tmp.qcRewards[8] //0.02
 	if (player.masterystudies.includes("d13")) scaling *= 1-getTreeUpgradeEffect(11)
 	return scaling;
 }
@@ -238,7 +238,7 @@ function getInfCondenserCost(x) {
 }
 
 function getInfCondenserTarget(x) {
-	if (!player.aarexModifications.ngp3c) return new Decimal(0);
+	if (!player.aarexModifications.ngp3c) return 0;
 	let res = player.infinityPoints
 	return Math.floor(Math.pow(res.times(getInfCondenserCostDiv()).div(Decimal.pow(CONDENSER_START[x], 2.5)).max(1).log10()/Decimal.log10(Decimal.pow(CONDENSER_BASE[x], getInfCondenserCostScaling())), 1/3.5)+1)
 }
@@ -252,6 +252,7 @@ function getInfCondenserPow() {
 	if (player.timestudy.studies.includes(13)) ret = ret.times(ts13Eff())
 	if (player.dilation.upgrades.includes("ngp3c2")) ret = ret.times(3)
 	if (player.masterystudies.includes("t267")) ret = ret.times(1.5)
+	if (hasBosonicUpg(53) && !tmp.qu.bigRip.active) ret = ret.times(2e4)
 	return ret;
 }
 
@@ -284,7 +285,7 @@ function maxInfCondense(x) {
 	let cost = getInfCondenserCost(x)
 	if (res.lt(cost)) return;
 	player.condensed.inf[x] = Math.max(player.condensed.inf[x], getInfCondenserTarget(x))
-	player.infinityPoints = player.infinityPoints.sub(cost)
+	player.infinityPoints = player.infinityPoints.sub(cost).max(0)
 }
 
 function getPostInfi70Mult() {

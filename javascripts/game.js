@@ -4970,6 +4970,10 @@ function doPerSecondNGP3Stuff(){
 	if (player.achievements.includes("ng3p43")) if (player.ghostify.milestones >= 8) maxUpgradeColorDimPower()
 	if (tmp.qu.autoOptions.assignQK && player.ghostify.milestones > 7) assignAll(true) 
 	givePerSecondNeuts()
+
+	if (tmp.ngp3c) {
+		if (isAutoGhostActive(22)) for (let i=1;i<=8;i++) maxCondenseLight(i);
+	}
 }
 
 function checkGluonRounding(){
@@ -6132,7 +6136,7 @@ function passiveQuantumLevelStuff(diff){
 		}
 		if (player.ghostify.milestones>15) tmp.qu.quarks=tmp.qu.quarks.add(quarkGain().times(diff / 100))
 	}
-	if (tmp.be && player.ghostify.milestones>14) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
+	if ((tmp.be && player.ghostify.milestones>14)||(tmp.qu.breakEternity.break && player.achievements.includes("ng3pc13") && tmp.ngp3c)) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
 	updateQuarkDisplay()
 	updateQuantumWorth("quick")
 }

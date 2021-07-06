@@ -718,9 +718,9 @@ function setupAutomaticGhostsData() {
 	return data
 }
 
-var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40]
+var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40,36]
 var powerConsumed
-var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,4,3,6,3]
+var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,4,3,6,3,2.5]
 function getAutoGhostReq(x) {
 	if (tmp.ngp3c) {
 		if (x==13||x==14) return autoGhostRequirements[x]+(x==14?1:3);
@@ -830,7 +830,7 @@ function rotateAutoUnstable() {
 }
 
 function getMaxAutoGhosts() {
-	return tmp.ngp3l ? 15 : 21
+	return tmp.ngp3c ? (autoGhostRequirements.length+3) : (tmp.ngp3l ? 15 : 21)
 }
 
 //v2.1

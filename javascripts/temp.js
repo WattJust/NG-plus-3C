@@ -244,12 +244,12 @@ function updateIntergalacticTemp() {
 		tmp.ig = Decimal.pow(10, igLog)
 		return
 	}
-	if ((player.aarexModifications.ngudpV || !tmp.ngp3l) && !tmp.ngp3c && igLog > 1e15) { //Further
-		igLog = Math.pow(10 + 6 * Math.log10(igLog), 7.5)
+	if ((player.aarexModifications.ngudpV || !tmp.ngp3l) && igLog > (tmp.ngp3c?4e18:1e15)) { //Further
+		igLog = Math.pow(10 + 6 * Math.log10(igLog), tmp.ngp3c?8.92195:7.5)
 		tmp.igs = 2
 	}
-	if (player.aarexModifications.ngudpV && !tmp.ngp3c && igLog > 1e16) { //Remote
-		igLog = Math.pow(84 + Math.log10(igLog), 8)
+	if (player.aarexModifications.ngudpV && igLog > (tmp.ngp3c?7e18:1e16)) { //Remote
+		igLog = Math.pow(84 + Math.log10(igLog), tmp.ngp3c?9.36436:8)
 		tmp.igs = 3
 	}
 
@@ -787,7 +787,10 @@ function updateNanoRewardTemp() {
 
 function updateHiggsMechanismTemp() {
 	if (!tmp.hm) tmp.hm = {};
-	tmp.hm.baseEff = Math.log((player.ghostify.hb.higgs||0)/10+1)
+
+	let h = (player.ghostify.hb.higgs||0);
+	if (player.ghostify.bl.usedEnchants.includes(35) && tmp.ngp3c) h *= (tmp.bEn[35] || 1);
+	tmp.hm.baseEff = Math.log(h/10+1)
 	tmp.hm.gb = getParticleMassGainBase()
 	tmp.hm.unlocks = 0;
 	for (let type in hm) {
@@ -846,10 +849,28 @@ function updateCondenseTemp() {
 }
 
 function updateTempBreakDilation() {
+	updateTempCosmicOrbs();
+
 	if (!tmp.bdt) tmp.bdt = {};
+	tmp.bdt.upgPow = getBDUpgPower()
+	if (!tmp.bdt.upgs) tmp.bdt.upgs = {};
+	for (let i=1;i<=BDUpgs.amt;i++) tmp.bdt.upgs[i] = BDUpgs[i].eff(tmp.bdt.upgPow);
 
 	tmp.bdt.radGain = getCherenkovRadGain();
 	tmp.bdt.radEff = getCherenkovRadEff(); 
-	if (!tmp.bdt.upgs) tmp.bdt.upgs = {};
-	for (let i=1;i<=BDUpgs.amt;i++) tmp.bdt.upgs[i] = BDUpgs[i].eff();
+}
+
+function updateTempCosmicOrbs() {
+	if (!tmp.co) tmp.co = {};
+	tmp.co.amt = tmp.bd?(tmp.bd.cp||0):0
+
+	tmp.co.posAmt = tmp.co.amt * posCosmicOrbPower();
+	tmp.co.plus1 = cosmicOrbEffects.plus1(tmp.co.posAmt)
+	tmp.co.plus2 = cosmicOrbEffects.plus2(tmp.co.posAmt)
+	tmp.co.plus3 = cosmicOrbEffects.plus3(tmp.co.amt) // not affected by Positive Cosmic Orb Power
+
+	tmp.co.negAmt = tmp.co.amt * negaCosmicOrbPower();
+	tmp.co.minus1 = cosmicOrbEffects.minus1(tmp.co.negAmt)
+	tmp.co.minus2 = cosmicOrbEffects.minus2(tmp.co.negAmt)
+	tmp.co.minus3 = cosmicOrbEffects.minus3(tmp.co.negAmt)
 }

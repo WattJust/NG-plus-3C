@@ -1090,13 +1090,13 @@ function doNGp3v199tov19995(){
         if (player.aarexModifications.newGame3PlusVersion < 1.9987) player.eternitiesBank=0
         if (player.aarexModifications.newGame3PlusVersion < 1.99871) {
                 tmp.qu.replicants.limit=Math.min(tmp.qu.replicants.limit,10)
-                tmp.qu.replicants.limitCost=Math.pow(200,tmp.qu.replicants.limit-1)*getReplicantLimitBaseCost()
+                tmp.qu.replicants.limitCost=Math.pow(getWorkerLimitCostBase(),tmp.qu.replicants.limit-1)*getReplicantLimitBaseCost()
                 tmp.qu.replicants.workers=Decimal.min(tmp.qu.replicants.workers,10)
                 if (tmp.qu.replicants.workers.eq(10)) tmp.qu.replicants.workerProgress=0
         }
         if (player.aarexModifications.newGame3PlusVersion < 1.998711) {
                 tmp.qu.quantumFood=0
-                tmp.qu.quantumFoodCost=getQFBaseCost()*Math.pow(5,Math.round(new Decimal(tmp.qu.replicants.workers).toNumber()*3+new Decimal(tmp.qu.replicants.workerProgress).toNumber()))
+                tmp.qu.quantumFoodCost=getQFBaseCost()*Math.pow(getQuantumFoodCostBase(),Math.round(new Decimal(tmp.qu.replicants.workers).toNumber()*3+new Decimal(tmp.qu.replicants.workerProgress).toNumber()))
         }
         if (player.aarexModifications.newGame3PlusVersion < 1.99873) {
                 tmp.qu.pairedChallenges.completions = {}

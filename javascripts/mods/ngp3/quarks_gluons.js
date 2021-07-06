@@ -16,6 +16,7 @@ function updateQuantumWorth(mode) {
 				automaticCharge *= 1.25;
 				if (automaticCharge>=20) automaticCharge = Math.sqrt(automaticCharge*20);
 				if (automaticCharge>=25) automaticCharge = Math.sqrt(automaticCharge*25);
+				if (automaticCharge>=35.5) automaticCharge = Math.pow(automaticCharge, 1.5)/Math.sqrt(35.5)
 			}
 			player.ghostify.automatorGhosts.power = Math.max(automaticCharge, player.ghostify.automatorGhosts.power)
 			if (mode != "quick") {

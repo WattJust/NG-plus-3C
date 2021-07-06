@@ -1,7 +1,7 @@
 function updateNeutrinoBoostDisplay(){
 	if (player.ghostify.neutrinos.boosts >= 1) {
-		document.getElementById("preNeutrinoBoost1").textContent = getDilExp("neutrinos").toFixed(2)
-		document.getElementById("neutrinoBoost1").textContent = getDilExp().toFixed(2)
+		document.getElementById("preNeutrinoBoost1").textContent = getFullExpansion(Math.round(getDilExp("neutrinos")*100)/100)
+		document.getElementById("neutrinoBoost1").textContent = getFullExpansion(Math.round(getDilExp()*100)/100)
 	}
 	if (player.ghostify.neutrinos.boosts >= 2) {
 		document.getElementById("preNeutrinoBoost2").textContent = "^" + shorten(getMTSMult(273, "pn"))

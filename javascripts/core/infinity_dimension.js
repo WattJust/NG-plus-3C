@@ -11,6 +11,8 @@ function getInfinityDimensionMultiplier(tier){
 function maxAllID() {
 	if (player.pSac !== undefined) maxAllIDswithAM()
 	for (var t = 1; t <= 8; t++) {
+		if (player.aarexModifications.ngp3c && player.infDimensionsUnlocked[t - 1]) maxInfCondense(t)
+
 		var dim = player["infinityDimension"+t]
 		var cost = getIDCost(t)
 		if (player.infDimensionsUnlocked[t - 1] && player.infinityPoints.gte(dim.cost)) {
@@ -26,7 +28,6 @@ function maxAllID() {
 			dim.power=dim.power.times(Decimal.pow(getInfBuy10Mult(t),toBuy))
 			dim.cost=dim.cost.times(Decimal.pow(costMult,toBuy))
 		}
-		if (player.aarexModifications.ngp3c && player.infDimensionsUnlocked[t - 1]) maxInfCondense(t)
 	}
 }
 
@@ -94,7 +95,9 @@ function DimensionProduction(tier) {
 	if (player.aarexModifications.ngmX > 3) ret = ret.div(100)
 	ret = ret.times(DimensionPower(tier))
 	if (player.pSac!=undefined) ret = ret.times(player.chall2Pow)
-	if (player.challenges.includes("postc6") && !inQC(3)) return ret.times(Decimal.div(1000, dilates(player.tickspeed)).pow(0.0005))
+	if (player.challenges.includes("postc6") && !inQC(3)) {
+		return ret.times(softcap(Decimal.div(1000, dilates(player.tickspeed)).pow(0.0005), "tickspeedToInfDims"))
+	}
 	return ret
 }
 

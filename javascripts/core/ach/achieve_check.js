@@ -301,8 +301,10 @@ function ngP3CAchieveCheck() {
 
 	if (tmp.bd.active) giveAchievement("Shattered in the 25th Century")
 	if (tmp.bl && tmp.bl.am.gte(Number.MAX_VALUE)) giveAchievement("Bosonic Infinity when?")
-	if (player.eternityPoints.e>=1/0 && tmp.qu.bigRip.active && tmp.qu.qcsMods.current.length>=2) giveAchievement("Tornado Valley")
+	if (player.eternityPoints.e>=1e7 && tmp.qu.bigRip.active && tmp.qu.qcsMods.current.length>=2) giveAchievement("Tornado Valley")
 	if (tmp.eds[8].perm>=1315 && !tmp.bd.active && player.dilation.tachyonParticles.max(player.dilation.bestTPOverGhostifies||0).eq(0)) giveAchievement("The True Emperor")
+	// ng3pc15
+	if (tmp.hb.higgs>=100) giveAchievement("Where did the Gravitons go?")
 }
 
 function ALLACHIEVECHECK(){

@@ -175,10 +175,10 @@ function breakEternity() {
 
 function getEMGain() {
 	let log = player.timeShards.div((tmp.ngp3c&&!ghostified)?2e10:1e9).log10() * 0.25
-	if (log > 15) log = Math.sqrt(log * 15)
+	if (log > (tmp.qu.bigRip.active?15:2)) log = Math.sqrt(log * (tmp.qu.bigRip.active?15:2))
 	
 	let log2log = Math.log10(log) / Math.log10(2)
-	let start = 10 //Starts at e1024.
+	let start = tmp.qu.bigRip.active?10:7 //Starts at e1024 in Big Rip, and at 1e128 outside of Big Rip.
 	if (log2log > start) {
 		let capped = Math.min(Math.floor(Math.log10(Math.max(log2log + 2 - start, 1)) / Math.log10(2)), 20 - start)
 		log2log = (log2log - Math.pow(2, capped) - start + 2) / Math.pow(2, capped) + capped + start - 1

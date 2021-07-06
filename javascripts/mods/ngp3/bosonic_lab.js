@@ -50,6 +50,7 @@ function getBosonicWattGain() {
 	if (tmp.ngp3c) {
 		gain *= player.ghostify.bl.upgrades.length/5+1
 		if (hasBosonicUpg(14)) gain *= tmp.blu[14]||1;
+		if (player.achievements.includes("ng3pc16")) gain *= new Decimal(getAchBAMMult()).toNumber()
 		gain += tmp.bEn.totalLvlEffect;
 	}
 	return gain;
@@ -223,7 +224,10 @@ function getAchBAMMult(){
 
 function getBosonicAMGainExp() {
 	let exp = player.money.max(1).log10() / (tmp.ngp3c?1.2e15:15e15) - 3;
-	if (player.achievements.includes("ng3p98") && tmp.ngp3c) exp += tmp.hm.baseEff||0
+	if (player.achievements.includes("ng3p98") && tmp.ngp3c) {
+		if (player.ghostify.bl.usedEnchants.includes(35) && tmp.ngp3c) exp *= 1+Math.log10(1+(tmp.hm.baseEff||0))
+		exp += tmp.hm.baseEff||0
+	}
 	return exp;
 }
 
@@ -527,10 +531,10 @@ function updateBosonExtractorTab(){
 	let data = player.ghostify.bl
 	let speed = data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1)
 	let time = getExtractTime().div(speed)
-	if (data.extracting) document.getElementById("extract").textContent = "Extracting" + (time.lt(0.1)?"":" ("+(ag17?data.glyphs[data.typeToExtract-1].sub(data.glyphs[data.typeToExtract-1].floor()).times(100).toFixed(1):data.extractProgress.times(100).toFixed(1))+"%)")
+	if (data.extracting) document.getElementById("extract").textContent = "Extracting" + (time.lt(0.1)?"":" ("+(ag17?data.glyphs[data.typeToExtract-1].sub(Decimal.floor(data.glyphs[data.typeToExtract-1])).times(100).toFixed(1):data.extractProgress.times(100).toFixed(1))+"%)")
 	else document.getElementById("extract").textContent="Extract"
 	if (time.lt(0.1)) document.getElementById("extractTime").textContent="This would automatically take "+shorten(Decimal.div(1,time))+" runes per second."
-	else if (data.extracting) document.getElementById("extractTime").textContent=shorten(time.times(ag17?Decimal.sub(1, data.glyphs[data.typeToExtract-1].sub(data.glyphs[data.typeToExtract-1].floor())):Decimal.sub(1,data.extractProgress)))+" seconds left to extract."
+	else if (data.extracting) document.getElementById("extractTime").textContent=shorten(time.times(ag17?Decimal.sub(1, data.glyphs[data.typeToExtract-1].sub(Decimal.floor(data.glyphs[data.typeToExtract-1]))):Decimal.sub(1,data.extractProgress)))+" seconds left to extract."
 	else document.getElementById("extractTime").textContent="This will take "+shorten(time)+" seconds."
 	updateEnchantDescs()
 }
@@ -584,6 +588,7 @@ var bEn = {
 		34: [1,0],
 		15: [4e31, 10],
 		25: [3e35, 7.2e8],
+		35: [1e42, 2e16],
 	},
 	descs: {
 		12: "You automatically extract Bosonic Runes.",
@@ -594,6 +599,7 @@ var bEn = {
 		34: "Higgs Bosons produce more Bosonic Antimatter.",
 		15: "Bosonic Watts reduce the Higgs Boson requirement base.",
 		25: "Anti-Preons boost the effect of your Total Enchant Level.",
+		35: "The Higgs Boson boost to Bosonic AM gain exponent is stronger and more efficient.",
 	},
 	effects: {
 		12: function(l) {
@@ -608,6 +614,7 @@ var bEn = {
 		14: function(l) {
 			let eff = tmp.ngp3c?(Decimal.max(l, 1).log10()+(Decimal.gte(l, 1)?1:0)):Decimal.add(l, 9).log10()
 			if (eff > 15) eff = Math.sqrt(eff * 15)
+			if (eff > 22) eff = Math.pow(eff * 484, 1/3)
 			return {
 				bUpgs: Math.min(Math.floor(eff), bu.rows*5),
 				higgs: Decimal.add(l, 1).pow(tmp.ngp3c?0.1:0.4)
@@ -641,6 +648,9 @@ var bEn = {
 			if (z>=1) z = Math.log2(z+1)
 			return z+1
 		},
+		35: function(l) {
+			return Math.log(Decimal.add(l, 1).log10()+1)+1
+		},
 	},
 	effectDescs: {
 		12: function(x) {
@@ -655,6 +665,9 @@ var bEn = {
 		},
 		15: function(x) {
 			return "100.00 -> "+shorten(Decimal.root(100, x))
+		},
+		35: function(x) {
+			return getFullExpansion(Math.round((x-1)*1e4)/100)+"% stronger"
 		},
 	},
 	action: "upgrade",
@@ -843,7 +856,17 @@ var bu = {
 			am: 2e144,
 			g4: 1e29,
 			g5: 4e8
-		}
+		},
+		52: {
+			am: 2e162,
+			g2: 2e38,
+			g5: 8e11,
+		},
+		53: {
+			am: 2e193,
+			g1: 8e41,
+			g3: 2e40,
+		},
 	},
 	reqData: {},
 	descs: {
@@ -887,12 +910,12 @@ var bu = {
 		41: "Tachyon Particles boost Tree Upgrade Power.",
 		42: "Ultraviolet Light Threshold increases 4% slower, & Red Power gives extra Red, Green, & Blue Light.",
 		43: "Green Power makes Distant Replicated Galaxy scaling start later.",
-		44: "Higgs Bosons boost Overdrive, & Blue Power boosts Particle Mass gain base.",
+		44: "Higgs Bosons boost Overdrive, Blue Power boosts Particle Mass gain base.",
 		45: "Light Empowerments & Dark Matter weaken Distant Galaxies scaling and boost W & Z Boson speed.",
 		51: "Anti-Preons extend the Preon Anti-Energy limit & divide Preon Anti-Energy gain.",
 		52: "Unlock new Light Boosts at LE20 & LE25, and TS232 is no longer weakened outside of Big Rip.",
-		// bu53
-		// bu54
+		53: "Galaxies use a much stronger formula for their effect, and outside of Big Rip, Infinity Condensers are 20,000x stronger.",
+		54: "Higgs Bosons reduce the cost bases of Quantum Food & Worker Replicant limit.",
 		55: "Buying Bosonic Enchants does not spend Bosonic Runes.",
 	},
 	effects: {
@@ -1067,6 +1090,10 @@ var bu = {
 			if (!tmp.ngp3c) return new Decimal(1);
 			else return player.ghostify.wzb.dP.plus(1).pow(2.5)
 		},
+		54: function() {
+			if (!tmp.ngp3c) return 1;
+			else return Math.log10(tmp.hb.higgs+1)+1
+		},
 	},
 	effectDescs: {
 		11: function(x) {
@@ -1106,10 +1133,13 @@ var bu = {
 			return tmp.ngp3c?(getFullExpansion(x)+" later"):((x * 100).toFixed(2) + "%")
 		},
 		44: function(x) {
-			return (tmp.ngp3c?("^"+shorten(x.od)+" Overdrive Speed, "):"")+"+" + x.pm.toFixed(tmp.ngp3c?3:1) + (tmp.ngp3c?" to Particle Mass gain base":" OoMs")
+			return (tmp.ngp3c?("^"+shorten(x.od)+" Overdrive, "):"")+"+" + x.pm.toFixed(tmp.ngp3c?3:1) + (tmp.ngp3c?" to Particle Mass gain base":" OoMs")
 		},
 		45: function(x) {
 			return tmp.ngp3c?("/" + shorten(x.dg) + " to scaling, "+shorten(x.wzb)+"x to W & Z Boson speed"):("/" + shorten(x) + " to efficiency")
+		},
+		54: function(x) {
+			return "brought to the "+x.toFixed(3)+"th root"
 		}
 	}
 }

@@ -1267,7 +1267,34 @@
 								<td><button id="breakDilation4" class="breakdilationbtn" onclick="buyBDUpg(4)" style="font-size: 9.5px;">Cherenkov Radiation & Radioactive Decays reduce each other's negative effects.<br>Currently: <span id="breakDilationEff4"></span><br>Cost: <span id="breakDilationCost4"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation5" class="breakdilationbtn" onclick="buyBDUpg(5)">Cherenkov Radiation weakens OS_TP_1.<br>Currently: <span id="breakDilationEff5"></span>% weaker<br>Cost: <span id="breakDilationCost5"></span> Cherenkov Radiation</button></td>
 							</tr>
+							<tr>
+								<td><button id="breakDilation6" class="breakdilationbtn" onclick="buyBDUpg(6)">Negative Cosmic Orb effects are weaker based on your Cherenkov Radiation.<br>Currently: <span id="breakDilationEff6"></span>% weaker<br>Cost: <span id="breakDilationCost6"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation7" class="breakdilationbtn" onclick="buyBDUpg(7)">Outside of Big Rip, Cosmic Orbs make Dark Matter & Ghostly Galaxy scalings start later.<br>Currently: <span id="breakDilationEff7"></span> galaxies later<br>Cost: <span id="breakDilationCost7"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation8" class="breakdilationbtn" onclick="buyBDUpg(8)">The first two Positive Cosmic Orb effects are stronger based on your Bosonic Ticks.<br>Currently: <span id="breakDilationEff8"></span>% stronger<br>Cost: <span id="breakDilationCost8"></span> Cherenkov Radiation</button></td>
+							</tr>
 						</table>
+						<div id="cosmicOrbDiv" style="display: none;">
+							<br><br><br><button id="cosmicOrbs" class="cosmicOrb" onclick="cosmicOrbReset()" ach-tooltip='You can reset all Break Dilation Upgrades and force a "Fix Dilation" reset to gain a Cosmic Orb.'></button><br><br>
+							<div id="cosmicOrbEffectsDiv" style="display: none;">
+								Your Cosmic Orbs are...<br><br>
+								<table class="qtable_2col">
+									<tr>
+										<td class="green" style="color: #305244;">
+											<h1 class="green">+</h1><br><br>
+											strengthening Break Dilation Upgrades by <span id="cosmicOrbPlus1" style="font-size: 35px;"></span>,<br>
+											raising Cherenkov Radiation's base gain <span id="cosmicOrbPlus2" style="font-size: 35px;"></span>,<br>
+											and unlocking <span id="cosmicOrbPlus3" style="font-size: 35px;"></span> new Break Dilation Upgrades.
+										</td>
+										<td class="red" style="color: #52303b;">
+											<h1 class="red">-</h1><br><br>
+											scaling Break Dilation Upgrade costs by <span id="cosmicOrbMinus1" style="font-size: 35px;"></span>,<br>
+											raising Cherenkov Radiation's base effect <span id="cosmicOrbMinus2" style="font-size: 35px;"></span>,<br>
+											and dividing Cherenkov Radiation gain by <span id="cosmicOrbMinus3" style="font-size: 35px;"></span>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div><br><br>
 					</div>
 				</div>
 			</div>
@@ -2873,7 +2900,7 @@
 								<div id="Bosonic Infinity when?" class="achievement achievementlocked" style="background-image: url(images/184.png)"></div>
 							</td>
 							<td>
-								<div id="Tornado Valley" class="achievement achievementlocked" style="background-image: url(images/185.png)" ach-tooltip="Reach ??? EP while Big Ripped with at least two active QC Modifiers."></div>
+								<div id="Tornado Valley" class="achievement achievementlocked" style="background-image: url(images/185.png)"></div>
 							</td>
 							<td>
 								<div id="The True Emperor" class="achievement achievementlocked" style="background-image: url(images/186.png)" ach-tooltip="Get 1,315 Eighth Emperor Dimensions without gaining any TP while Dilation is Fixed. Reward: Each Eighth Emperor Dimension multiplies all Emperor Dimensions by 1.1."></div>
@@ -2882,13 +2909,13 @@
 								<div id="ng3pc15" class="achievement achievementlocked"></div>
 							</td>
 							<td>
-								<div id="ng3pc16" class="achievement achievementlocked"></div>
+								<div id="Where did the Gravitons go?" class="achievement achievementlocked" style="background-image: url(images/188.png)" ach-tooltip="Reach 100 Higgs Bosons. Reward: Achievement Power boosts Bosonic Watt gain at a reduced rate, and Light Empowerments reset nothing."></div>
 							</td>
 							<td>
 								<div id="ng3pc17" class="achievement achievementlocked"></div>
 							</td>
 							<td>
-								<div id="ng3pc18" class="achievement achievementlocked"></div>
+								<div id="This Should Be Literally Impossible" class="achievement achievementlocked" style="background-image: url(images/190.png)"></div>
 							</td>
 						</tr>
 				</table>
@@ -5469,6 +5496,13 @@
 							<b>Auto-W & Z Boson Ghost</b><br>
 							Power usage: 3<br>
 							Is active: <input id="isAutoGhostOn21" type="checkbox" onchange="toggleAutoGhost(21)"></input>
+						</div></td>
+					</tr>
+					<tr>
+						<td id="autoGhost22"><div class="autoBuyerDiv" style="display:block">
+							<b>Auto-Light Condenser Ghost</b><br>
+							Power usage: 2.5<br>
+							Is active: <input id="isAutoGhostOn22" type="checkbox" onchange="toggleAutoGhost(22)"></input>
 						</div></td>
 					</tr>
 				</table>

@@ -295,7 +295,7 @@ function getEffectiveTreeUpgLevel(upg){
 	if (upg == 5) if (lvl > 500 && !player.achievements.includes("ng3p87")) lvl = Math.sqrt(lvl / 500) * 500
 	if (upg == 7) if (lvl > 100) lvl -= Math.sqrt(lvl) - 10
 	if (upg == 8) if (lvl > 1111) lvl = 1111 + (lvl - 1111) / 2
-	if (upg == 11) if (lvl > 400) lvl = Math.sqrt(100*x+120e3)
+	if (upg == 11) if (lvl > 400) lvl = Math.sqrt(400*(lvl+(tmp.qu.bigRip.active?4e3:0)))
 	return lvl
 }
 
@@ -350,7 +350,7 @@ function getTreeUpgradeEffect(upg) {
 
 function getTreeUpgradeEffectDesc(upg) {
 	if (upg == 1) return getFullExpansion(getTreeUpgradeEffect(upg))
-	if (upg == 2) return getDilExp("TU3").toFixed(2) + " -> " + getDilExp().toFixed(2)
+	if (upg == 2) return getFullExpansion(Math.round(getDilExp("TU3")*100)/100) + " -> " + getFullExpansion(Math.round(getDilExp()*100)/100)
 	if (upg == 4) return "^" + getFullExpansion(Math.round(getElectronBoost("noTree"))) + " -> ^" + getFullExpansion(Math.round(tmp.mpte))
 	if (upg == 8) return getTreeUpgradeEffect(8).toFixed(2)
 	if (upg == 11) return (100*getTreeUpgradeEffect(11)).toFixed(7)

@@ -5,7 +5,7 @@ function updateLightEmpowermentReq() {
 function getLightEmpowermentBoost() {
 	let r = player.ghostify.ghostlyPhotons.enpowerments
 	if (hasBosonicUpg(13)) r *= tmp.blu[13]
-	if (isLEBoostUnlocked(11) && tmp.ngp3c) r *= tmp.leBonus[11]
+	if (isLEBoostUnlocked(11) && tmp.ngp3c) r *= tmp.leBonus[11]||1
 	return r
 }
 
@@ -74,7 +74,7 @@ var leBoosts = {
 		},
 		// Boost #11 (NG+3C exclusive)
 		function() {
-			return Math.sqrt(tmp.effL[7] / 40 + 1)
+			return Math.log10(tmp.effL[7] / 40 + 1)/3 + 1
 		},
 	]
 }
@@ -175,11 +175,11 @@ function updateLEmpowermentBoosts(){
 	if (boosts >= 3) document.getElementById("leBoost3").textContent = tmp.leBonus[3].toFixed(2)
 	if (boosts >= 5) document.getElementById("leBoost5").textContent = "(" + shorten(tmp.leBonus[5].mult) + "x+1)^" + tmp.leBonus[5].exp.toFixed(3)
 	if (boosts >= 6) document.getElementById("leBoost6").textContent = shorten(tmp.leBonus[6])
-	if (boosts >= 7) document.getElementById("leBoost7").textContent = (tmp.leBonus[7] * 100).toFixed(1)
+	if (boosts >= 7) document.getElementById("leBoost7").textContent = getFullExpansion(Math.round(tmp.leBonus[7] * 1e3)/10)
 	if (boosts >= 8) document.getElementById("leBoost8").textContent = (tmp.leBonus[8] * 100).toFixed(1)
 	if (boosts >= 9) document.getElementById("leBoost9").textContent = tmp.leBonus[9].toFixed(2)
-	if (boosts >= 10) document.getElementById("leBoost10").textContent = (tmp.leBonus[10] * 100).toFixed(1)
-	if (boosts >= 11) document.getElementById("leBoost11").textContent = (tmp.leBonus[11] * 100).toFixed(1)
+	if (boosts >= 10) document.getElementById("leBoost10").textContent = ((tmp.leBonus[10]-1) * 100).toFixed(1)
+	if (boosts >= 11) document.getElementById("leBoost11").textContent = ((tmp.leBonus[11]-1) * 100).toFixed(1)
 }
 
 function getGHRProduction() {
@@ -236,6 +236,7 @@ function lightEmpowerment() {
 	if (!player.aarexModifications.leNoConf && !confirm("You will become a ghost, but Ghostly Photons will be reset. You will gain 1 Light Empowerment from this. Are you sure you want to proceed?")) return
 	if (!player.ghostify.ghostlyPhotons.enpowerments) document.getElementById("leConfirmBtn").style.display = "inline-block"
 	player.ghostify.ghostlyPhotons.enpowerments++
+	if (player.achievements.includes("ng3pc16") && tmp.ngp3c) return;
 	ghostify(false, true)
 	if (player.achievements.includes("ng3p91")) return
 	player.ghostify.ghostlyPhotons.amount = new Decimal(0)
