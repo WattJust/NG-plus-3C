@@ -380,7 +380,7 @@ function getBosonicFinalCost(x) {
 }
 
 function updateBosonicLabTemp() {
-	tmp.bEn = {}
+	if (!tmp.bEn) tmp.bEn = {}
 	tmp.blu = {}
 	tmp.wzb = {}
 
