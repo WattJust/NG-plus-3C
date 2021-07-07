@@ -157,7 +157,7 @@ button, div.storebtn {
 	display: none
 }
 
-.IPAmount2, #sacrificedIP, #infPowAmount, #infPowEffectPower, #infDimMultAmount, #replicantiamount, #replicantimult, #replicantiAmount2, #InfAndReplMultAmount {
+.IPAmount2, #sacrificedIP, #infPowAmount, #infPowEffectPower, #infDimMultAmount, #replicantiamount, #replicantimult, #replCond, #replCond1, #replCond2, #replicantiAmount2, #InfAndReplMultAmount {
 	color: #e59900 !important;
 }
 
@@ -198,7 +198,7 @@ button, div.storebtn {
 
 #singularityPower, #darkMatterAmount, #darkMatterPerSecond, #nextUpgrade, #darkMatterDT, #nextDiscounts, #blackholePowAmount, #replicantAmount, #workerReplAmount, #hatchProgress, #babyReplAmount, #growupRate, #replicantAmountED, .dmAmount {
 	color: #0c0c0c !important;
-	text-shadow: 0px 0px 3px #0c0c0c, 0px 0px 4.5px #e5e5e5
+	text-shadow: 0px 0px 0.08em #0c0c0c, 0px 0px 0.12em #e5e5e5
 }
 
 .infchallengediv, .pc2completed {
@@ -354,7 +354,7 @@ button, div.storebtn {
 	background-color: #57e5e5 !important
 }
 
-#tachyonParticleAmount, #dilatedTimeAmount, #dilatedTimePerSecond, #galaxyThreshold, #DilMultAmount, #exDilationAmount, #exDilationBenefit, #dtGPH {
+#tachyonParticleAmount, #tachyonParticleAmount2, #dilatedTimeAmount, #dilatedTimePerSecond, #galaxyThreshold, #DilMultAmount, #exDilationAmount, #exDilationBenefit, #dtGPH {
 	color: #00e500 !important
 }
 
@@ -381,11 +381,11 @@ button, div.storebtn {
 	color: #009900 !important
 }
 
-.red, #rgRepl, #rgEDs {
+.red, .red2, #rgRepl, #rgEDs {
 	color: #e50000 !important
 }
 
-.green, #gbRepl, #quarkTranslation, #gbEDs, #quarkCharge, #quarkChargeRate {
+.green, .green2, #gbRepl, #quarkTranslation, #gbEDs, #quarkCharge, #quarkChargeRate {
 	color: #00e500 !important
 }
 
@@ -615,7 +615,7 @@ button, div.storebtn {
 	color: #e57200
 }
 
-.yellow, #hbUnspent, #bosonicFactorEffect {
+.yellow, #hbUnspent, #bosonicFactorEffect, #elecCond, #elecCondEff {
 	color: #e5e500
 }
 
@@ -726,6 +726,10 @@ button, div.storebtn {
 
 .gluonupgrade.hb:hover {
 	box-shadow: 0px 0px 12px #e5e500, inset 0px 0px 24px #e5e500, 1px 2px rgba(229,229,229,0.4)
+}
+
+.glowspan {
+    color: #888888;
 }
 
 @keyframes rg {

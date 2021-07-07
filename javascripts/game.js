@@ -402,7 +402,7 @@ function setupHiggsMechanism() {
 			col.id = "hm"+type+"div"
 			col.style.display = "none"
 			col.style.margin = "0 20px 0 20px"
-			col.innerHTML = "<br><h2 style='font-size: 25px;'>"+data.title+"<span id='hm"+type+"sel'></span></h2>Mass: <b id='hm"+type+"'>0</b> amu <span style='font-size: 15px;'>(+<span id='hm"+type+"gain'>0</span> amu/s)</span><br>Effect: <b id='hm"+type+"eff'>???</b><br><button id='hm"+type+"selectbtn' class='storebtn' onclick='toggleHiggsMech("+(x-1)+")'>Toggle</button>"
+			col.innerHTML = "<br><h2 style='font-size: 25px;' class='glowspan'>"+data.title+"<span id='hm"+type+"sel'></span></h2>Mass: <b id='hm"+type+"'>0</b> amu <span style='font-size: 15px;'>(+<span id='hm"+type+"gain'>0</span> amu/s)</span><br>Effect: <b id='hm"+type+"eff'>???</b><br><button id='hm"+type+"selectbtn' class='storebtn' onclick='toggleHiggsMech("+(x-1)+")'>Toggle</button>"
 
 		}
 	}
@@ -423,6 +423,7 @@ function setupHTMLAndData() {
 	setupBosonicRunes()
 	setupHiggsMechanism()
 	setupAutobuyerHTMLandData()
+	setupScalingsHTML()
 }
 
 function updateNewPlayer(reseted) {
@@ -5020,6 +5021,7 @@ setInterval(function() {
 	eternityBtnDisplayType()
 	updateQuarkDisplay()
 	primaryStatsDisplayResetLayers()
+	updateScalingsDisplay()
 	crunchAnimationBtn()
 	TPAnimationBtn()
 
@@ -5686,7 +5688,7 @@ function doEternityButtonDisplayUpdating(diff){
 	if (document.getElementById("eternitybtn").style.display == "inline-block") {
 		document.getElementById("eternitybtnFlavor").textContent = (((!player.dilation.active&&gainedEternityPoints().lt(1e6))||player.eternities<1||player.currentEternityChall!==""||(player.options.theme=="Aarex's Modifications"&&player.options.notation!="Morse code"))
 									    ? ((player.currentEternityChall!=="" ? "Other challenges await..." : player.eternities>0 ? "" : "Other times await...") + " I need to become Eternal.") : "")
-		if (player.dilation.active && player.dilation.totalTachyonParticles.gte(getDilGain())) document.getElementById("eternitybtnEPGain").innerHTML = player.aarexModifications.ngp3c?("Get more antimatter to gain more Tachyon Particles."):("Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon Particles.")
+		if ((player.dilation.active) && player.dilation.totalTachyonParticles.gte(getDilGain())) document.getElementById("eternitybtnEPGain").innerHTML = "Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon Particles."
 		else {
 			if ((EPminpeak.lt(Decimal.pow(10,9)) && EPminpeakType == "logarithm") || (EPminpeakType == 'normal' && EPminpeak.lt(Decimal.pow(10, 1e9)))) {
 				document.getElementById("eternitybtnEPGain").innerHTML = ((player.eternities > 0 && (player.currentEternityChall==""||player.options.theme=="Aarex's Modifications"))
@@ -6646,6 +6648,8 @@ function showStatsTab(tabName) {
 		}
 	}
 	player.aarexModifications.tabsSave.tabStats = tabName
+
+	if (tabName=="scalings" && tmp.ngp3c) updateScalingsDisplay()
 }
 
 function showDimTab(tabName) {

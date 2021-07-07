@@ -7,7 +7,7 @@ function getDTMultPostBRU11(){
 	gain = gain.times(tmp.qcRewards[1])
 	if (player.masterystudies.includes("t322")) gain = gain.times(getMTSMult(322))
 	if (player.masterystudies.includes("t341")) gain = gain.times(getMTSMult(341))
-	gain = gain.times(getTreeUpgradeEffect(7))
+	if (!(player.achievements.includes("ng3pc16") && tmp.ngp3c)) gain = gain.times(getTreeUpgradeEffect(7))
 	gain = gain.times(colorBoosts.b)
 	if (GUBought("br2")) gain = gain.times(Decimal.pow(2.2, Math.pow(tmp.sacPow.max(1).log10()/1e6, 0.25)))
 	if (player.achievements.includes("r137") && !tmp.ngp3l) gain = gain.times(Math.max((player.replicanti.amount.log10()-2e4)/8e3+1,1))
@@ -46,6 +46,7 @@ function getDilTimeGainPerSecond() {
 	if (player.aarexModifications.ngp3c) gain = softcap(gain, "ngp3cDT")
 	if (player.dilation.upgrades.includes("ngp3c1") && player.aarexModifications.ngp3c) gain = gain.times(50)
 	if (player.dilation.upgrades.includes("ngp3c2") && player.aarexModifications.ngp3c) gain = gain.times(100)
+	if (player.achievements.includes("ng3pc16") && tmp.ngp3c && (!tmp.qu.bigRip.active || tmp.qu.bigRip.upgrades.includes(11))) gain = gain.times(getTreeUpgradeEffect(7))
 
 	if (tmp.ngp3c && tmp.bd && tmp.bdt) if (tmp.bd.unl && tmp.bd.active) gain = gain.div(tmp.bdt.radEff||1);
 	return gain;
@@ -150,8 +151,15 @@ function getDilGain() {
 
 
 function getReqForTPGain() {
-	let tplog = player.dilation.totalTachyonParticles.log10()
-	if (tplog > 100 && !tmp.be && player.quantum.bigRip.active) tplog = Math.pow(tplog, 2) / 100
+	if (inQCModifier("ad")) return new Decimal(1/0)
+
+	let amt = player.dilation.totalTachyonParticles
+	if (player.dilation.upgrades.includes("ngp3c6") && player.aarexModifications.ngp3c) amt = amt.div(getDil83Mult())
+	if (player.dilation.upgrades.includes("ngp3c3") && player.aarexModifications.ngp3c) amt = amt.div(10)
+	amt = reverse_softcap(amt, "ngp3cTP")
+	
+	let tplog = amt.max(1).log10()
+	if (tmp.ngp3) if (tplog > 100 && !tmp.be && player.quantum.bigRip.active) tplog = Math.pow(tplog, 2) / 100
 	return Decimal.pow(10, Decimal.pow(10, tplog).div(getDilPower()).pow(1 / getDilExp()).toNumber() * 400)
 }
 

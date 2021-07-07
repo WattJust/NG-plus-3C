@@ -253,7 +253,7 @@ function updateIntergalacticTemp() {
 		tmp.igs = 3
 	}
 
-	if (!tmp.ngp3l && igLog > 1e20) { //Dark Matter or Ghostly or Ethereal
+	if (!tmp.ngp3l && igLog > 1e20) { //Dark Matter or Ghostly or Ethereal (Cosmic in NG+3C)
 		igLog = softcap(igLog, "ig_log_high")
 		tmp.igs = Math.min(Math.floor(Math.log10(igLog) - 16), 8)
 		if (igLog > 1e24) igLog = Math.pow(Math.pow(Math.log10(igLog), 2) + 424, 8)
@@ -713,6 +713,7 @@ function updateWZBosonsTemp(){
 	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm && tmp.hm.wb && player.ghostify.hb.masses.wb) data.wbt = data.wbt.times(tmp.hm.wb.eff).sqrt().max(data.wbt)
 	
 	data.wbo = Decimal.pow(10, Math.max(bosonsExp, 0)) //W Bosons boost to Z Neutrino oscillation requirement
+	if (player.achievements.includes("ng3pc15") && tmp.ngp3c) data.wbo = data.wbo.pow(2);
 	
 	let wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(tmp.ngp3c?((player.ghostify.bl.upgrades.length>1)?.01:.1):100).max(1)
 	if (tmp.ngp3c) wbp = Decimal.pow(2, Math.pow(wbp.log2(), .95));
@@ -775,13 +776,23 @@ function updateNanoRewardEffects() {
 	}
 }
 
+function updateNanoRewardScalings() {
+	if (!tmp.nf.scalings) tmp.nf.scalings = {}
+	tmp.nf.scalings.active = getActiveNanoScalings()
+	tmp.nf.scalings.start = getNanoScalingsStart()
+	tmp.nf.scalings.bases = getNanoScalingsBases()
+	tmp.nf.lastScale = getLastNFScale()
+	if (!tmp.nf.scaleSpeed) tmp.nf.scaleSpeed = 1
+}
+
 function updateNanoRewardTemp() {
-	tmp.nf = {}
+	if (!tmp.nf) tmp.nf = {}
 
 	if (!tmp.ngp3) return
 	if (!player.masterystudies.includes("d11")) return
 
 	updateNanoEffectUsages()
+	if (!tmp.nf.scalings) updateNanoRewardScalings()
 	//The rest is calculated by updateTemp().
 }
 

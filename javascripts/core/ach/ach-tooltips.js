@@ -482,7 +482,7 @@ function setR22Tooltip(){
 	//ACHIEVEMENT ROW 22
 	ghostierthanbefore.setAttribute("ach-tooltip", "Unlock Bosonic Lab." + (tmp.ngp3l ? "" : " Reward: The meta-antimatter effect uses your best meta-antimatter in your current Ghostify instead of your best in the current Quantum, and unlock all achievements prior to Ghostly Photons."))
 	ee.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" eternities." + (tmp.ngp3l ? "" : " Reward: Boost quark gain by 10 per Light Empowerment squared."))
-	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e4:3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the second nanofield reward scaling."))
+	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e4:3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the Further Nanofield reward scaling."))
 	paan.setAttribute('ach-tooltip', tmp.ngp3c?("Awaken Anti-Preontius. Reward: Gain 666x more GhP."):("Get 165 Paired Challenges ranking. Reward: Paired Challenges ranking multiplies GHP gain."))
 	btco.setAttribute('ach-tooltip', "Complete Paired Challenge 1 after getting "+shortenCosts(Decimal.pow(10, tmp.ngp3c?1.05e8:1.65e9)) + " antimatter in Quantum Challenges 6 and 8." + (tmp.ngp3l ? "" : " Reward: Ghostifies only makes you lose 25% of your radiocative decays."))
 	tdc.setAttribute('ach-tooltip', "Complete Eternity Challenge 11 with "+shortenCosts(Decimal.pow(10, 15500)) + " IP in a Paired Challenge with the Quantum Challenges 6 and 8 combination and the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the quadratic cost scaling and the level softcap of fifth Tree of Decay upgrade and make it based on best meta-antimatter over Ghostifies, instead of over quantums."))
@@ -518,13 +518,14 @@ function setR24Tooltip() {
 	let bInf = document.getElementById("Bosonic Infinity when?")
 	let tornado = document.getElementById("Tornado Valley")
 	//ng3pc14/////
-	//ng3pc15/////
+	let quit = document.getElementById("Quitting the Alphabet")
 	//ng3pc16/////
 	let litImp = document.getElementById("This Should Be Literally Impossible")
 	//ng3pc18/////
 
-	bInf.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Bosonic Antimatter. Reward: Ghostly Galaxies scaling is 50% weaker.")
+	bInf.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Bosonic Antimatter. Reward: Ghostly Galaxies scaling is 50% weaker, and you can have 1 more Bosonic Enchant active at a time.")
 	tornado.setAttribute('ach-tooltip', "Reach "+shortenCosts(Decimal.pow(10, 1e7))+" EP while Big Ripped with at least two active QC Modifiers. Reward: You can gain Eternal Matter outside of Big Rip at a reduced rate.")
+	quit.setAttribute('ach-tooltip', "Reach "+shorten(1e96)+" Bosonic Antimatter without any W Bosons or Z Bosons. Reward: W Bosons' boost to Oscillate Progression gain is squared.")
 	litImp.setAttribute('ach-tooltip', "Reach ??? Antimatter in QC6+8 without buying any Normal Tickspeed Upgrades or Normal, Infinity, Time, or Meta Dimensions or Condensers.")
 }
 

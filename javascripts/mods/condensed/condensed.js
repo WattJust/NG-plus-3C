@@ -636,6 +636,12 @@ const OBSCUREMENTS = {
 		osID: "QK",
 		res() { return getQuarkGain() },
 	},
+	fbpe: {
+		title: "First Blue Power Effect",
+		scID: "FBPE",
+		osID: "FBPE",
+		res() { return colorBoosts.b },
+	},
 	ghp: {
 		title: "Ghost Particle Gain",
 		scID: "GHP",
@@ -1139,4 +1145,312 @@ function getBENTotalLevelEffectMult() {
 	let mult = 1
 	if (player.ghostify.bl.usedEnchants.includes(25)) mult = mult *= (tmp.bEn[25] || 1);
 	return mult;
+}
+
+var display_scalings_data = [
+	{
+		id: "dimBoost",
+		name: "Dimension Boosts",
+		amt() { return player.resets },
+		scalings: [
+			{
+				id: "ss",
+				name: "Dimension Supersonic Scaling",
+				active() { return true },
+				start() { return getSupersonicStart() },
+				power(s) { return getSupersonicMultIncrease() },
+				disp(p) { return "Increases Dimension Boost cost multiplier by "+getFullExpansion(Math.round(p))+" per "+getFullExpansion(Math.round(getSupersonicInterval()))+" Dimension Boosts" },
+			},
+		],
+	},
+	{
+		id: "galaxies",
+		name: "Galaxies",
+		amt() { return player.galaxies },
+		scalings: [
+			{
+				id: "distant",
+				name: "Distant Galaxies",
+				active() { return true },
+				start() { return getDistantScalingStart() },
+				power(s) { return getDistantAdd((tmp.grd.galaxies||0)-s+1)*getDistantSpeed(tmp.grd.speed||1) },
+				disp(p) { return "Increases the Galaxy requirement by "+getFullExpansion(Math.round(p))+" Eighth Dimensions" },
+			},
+			{
+				id: "further",
+				name: "Further Galaxies",
+				active() { return player.galacticSacrifice != undefined },
+				start() { return getDistantScalingStart()*2.5 },
+				power(s) { return getDistantAdd((tmp.grd.galaxies||0)-s+1)*getDistantSpeed(tmp.grd.speed||1)*4 },
+				disp(p) { return "Increases the Galaxy requirement by "+getFullExpansion(Math.round(p))+" Eighth Dimensions" },
+			},
+			{
+				id: "remote",
+				name: "Remote Galaxies",
+				active() { return !tmp.be && !(hasNU(6) && !tmp.ngp3c) },
+				start() { return getRemoteScalingStart() },
+				power(s) { return Math.pow(1 + (GUBought("rg1") ? 1 : 2) / (player.aarexModifications.ngmX > 3 ? 10 : 1e3), ((tmp.grd.galaxies||0) - s + 1) * getRemoteSpeed(tmp.grd.speed||1)) },
+				disp(p) { return "Multiplies the Galaxy requirement by "+getFullExpansion(Math.round(p*100)/100) },
+			},
+			{
+				id: "darkMatter",
+				name: "Dark Matter Galaxies",
+				active() { return true },
+				start() { return tmp.grd.darkStart||(1/0) },
+				power(s) { return getDarkMatterGalaxyPush(tmp.grd.speed||1) },
+				disp(p) { return "Makes Distant Galaxy scaling start "+getFullExpansion(Math.ceil(((tmp.grd.galaxies||0) - tmp.grd.darkStart + 1) / p))+" sooner" },
+			},
+			{
+				id: "ghostly",
+				name: "Ghostly Galaxies",
+				active() { return true },
+				start() { return getGhostlyGalaxyScalingStart() / (tmp.be ? 55 : 1) },
+				power(s) { return tmp.grd.speed },
+				disp(p) { return "Speeds up all previous Galaxy scalings by "+shorten(p)+"x" },
+			},
+			{
+				id: "cosmic",
+				name: "Cosmic Galaxies",
+				active() { return true },
+				start() { return (getGhostlyGalaxyScalingStart() / (tmp.be ? 55 : 1))*3 },
+				power(s) { 
+					let over = (tmp.grd.galaxies||0) / (s / (tmp.be ? 55 : 1))
+					return Math.pow(over, 6) / 729 
+				},
+				disp(p) { return "Speeds up Ghostly Galaxy scaling by "+shorten(p)+"x" },
+			},
+		],
+	},
+	{
+		id: "replGal",
+		name: "Replicated Galaxies",
+		amt() { return player.replicanti.gal },
+		scalings: [
+			{
+				id: "distant",
+				name: "Distant Replicated Galaxies",
+				active() { return true },
+				start() { return getDistantRGStart() },
+				power(s) { return (1 - Math.max((s-2) - player.replicanti.gal, 0)) * (15e6/s * (1 - Math.max((s-2) - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, s-2) * 2) - 29935e3) },
+				disp(p) { return "Multiplies Replicated Galaxy cost by "+shorten(Decimal.pow(10, p))+" per RG" },
+			},
+			{
+				id: "further",
+				name: "Further Replicated Galaxies",
+				active() { return true },
+				start() { return 58200 },
+				power(s) { return (1 - Math.max((s-1) - player.replicanti.gal, 0)) * (1e6 * (1 - Math.max((s-1) - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, (s-1)) * 2) - (s-1)*1e6) },
+				disp(p) { return "Multiplies Replicated Galaxy cost by "+shorten(Decimal.pow(10, p))+" per RG" },
+			},
+		],
+	},
+	{
+		id: "intergalactic",
+		name: "Intergalactic Boost",
+		amt() { return tmp.ig },
+		decimal: true,
+		scalings: [
+			{
+				id: "distant",
+				name: "Distant Intergalactic Boost",
+				active() { return player.quantum.bigRip.active },
+				start() { return Decimal.pow(10, 1e9) },
+				power(s) { return .75 },
+				disp(p) { return "Raises Intergalactic Boost's exponent ^"+shorten(p) },
+			},
+			{
+				id: "further",
+				name: "Further Intergalactic Boost",
+				active() { return true },
+				start() { return Decimal.pow(10, tmp.qu.bigRip.active?1e11:4e18) },
+				power(s) { return tmp.qu.bigRip.active?11:8.92195 },
+				disp(p) { return "Logs Intergalactic Boost but "+(tmp.qu.bigRip.active?"":"multiplies its exponent by 6 and ")+"raises its exponent ^"+shorten(p) },
+			},
+			{
+				id: "remote",
+				name: "Remote Intergalactic Boost",
+				active() { return player.aarexModifications.ngudpV },
+				start() { return Decimal.pow(10, 7e18) },
+				power(s) { return 9.36436 },
+				disp(p) { return "Logs Intergalactic Boost but raises its exponent ^"+shorten(p) },
+			},
+			{
+				id: "darkMatter",
+				name: "Dark Matter Intergalactic Boost",
+				active() { return true },
+				start() { return Decimal.pow(10, 1e20) },
+				power(s) { return softcap_data["ig_log_high"][1].pow },
+				disp(p) { return "Logs Intergalactic Boost but multiplies its exponent by "+shorten(softcap_data["ig_log_high"][1].mul)+" and raises its exponent ^"+shorten(p) },
+			},
+			{
+				id: "ghostly",
+				name: "Ghostly Intergalactic Boost",
+				active() { return true },
+				start() { return Decimal.pow(10, 1e21) },
+				power(s) { return softcap_data["ig_log_high"][2].pow },
+				disp(p) { return "Raises Intergalactic Boost's exponent ^"+shorten(p) },
+			},
+			{
+				id: "cosmic",
+				name: "Cosmic Intergalactic Boost",
+				active() { return true },
+				start() { return Decimal.pow(10, 1e22) },
+				power(s) { return softcap_data["ig_log_high"][3].pow },
+				disp(p) {  return "Logs Intergalactic Boost but multiplies its exponent by "+shorten(softcap_data["ig_log_high"][3].mul)+" and raises its exponent ^"+shorten(p) },
+			},
+			{
+				id: "ethereal",
+				name: "Ethereal Intergalactic Boost",
+				active() { return true },
+				start() { return Decimal.pow(10, 1e23) },
+				power(s) { return softcap_data["ig_log_high"][4].pow },
+				disp(p) { return "Raises Intergalactic Boost's exponent ^"+shorten(p) },
+			},
+			{
+				id: "annihilated",
+				name: "Annihilated Intergalactic Boost",
+				active() { return true },
+				start() { return Decimal.pow(10, 1e24) },
+				power(s) { return 10 },
+				disp(p) { return "Logs Intergalactic Boost but raises its exponent ^"+shorten(p) },
+			},
+		],
+	},
+	{
+		id: "nanoreward",
+		name: "Nanofield Rewards",
+		amt() { return tmp.qu.nanofield.rewards||0 },
+		decimal: true,
+		scalings: [
+			{
+				id: "distant",
+				name: "Distant Nanofield Rewards",
+				active() { return tmp.nf.scalings.active[1] },
+				start() {
+					let sub = tmp.nf.scalings.active[4]?(Math.pow(Math.max(tmp.qu.nanofield.rewards - tmp.nf.scalings.start[4], 0) * tmp.nf.scaleSpeed + 1, 2) * 5):0
+					return tmp.nf.scalings.start[1] - sub 
+				},
+				power(s) { return tmp.nf.scalings.bases[1] },
+				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^2" },
+			},
+			{
+				id: "further",
+				name: "Further Nanofield Rewards",
+				active() { return tmp.nf.scalings.active[2] },
+				start() { return tmp.nf.scalings.start[2] },
+				power(s) { return tmp.nf.scalings.bases[2] },
+				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^2" },
+			},
+			{
+				id: "remote",
+				name: "Remote Nanofield Rewards",
+				active() { return tmp.nf.scalings.active[3] },
+				start() { return tmp.nf.scalings.start[3] },
+				power(s) { return tmp.nf.scalings.bases[3] },
+				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^3" },
+			},
+			{
+				id: "darkMatter",
+				name: "Dark Matter Nanofield Rewards",
+				active() { return tmp.nf.scalings.active[4] },
+				start() { return tmp.nf.scalings.start[4] },
+				power(s) { return tmp.nf.scalings.bases[4] },
+				disp(p) { return "Makes Distant Nanofield Reward scaling start "+shorten(p)+" later per Preon Power^2" },
+			},
+			{
+				id: "ghostly",
+				name: "Ghostly Nanofield Rewards",
+				active() { return tmp.nf.scalings.active[5] },
+				start() { return tmp.nf.scalings.start[5] },
+				power(s) { return tmp.nf.scaleSpeed },
+				disp(p) { return "Speeds up all previous Nanofield Reward scalings by "+shorten(p)+"x" },
+			},
+			{
+				id: "cosmic",
+				name: "Cosmic Nanofield Rewards",
+				active() { return tmp.nf.scalings.active[6] },
+				start() { return tmp.nf.scalings.start[6] },
+				power(s) { return tmp.nf.scalings.bases[6] },
+				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^4" },
+			},
+		],
+	},
+	{
+		id: "le",
+		name: "Light Empowerments",
+		amt() { return player.ghostify.ghostlyPhotons.enpowerments },
+		scalings: [
+			{
+				id: "distant",
+				name: "Distant Light Empowerments",
+				active() { return true },
+				start() { return tmp.leReqScaleStarts[1]||20 },
+				power(s) { return Math.pow(player.ghostify.ghostlyPhotons.enpowerments - s + 1, 2) / 3 },
+				disp(p) { return "Increases Light Empowerment requirement by "+getFullExpansion(Math.round(p)) },
+			},
+			{
+				id: "further",
+				name: "Further Light Empowerments",
+				active() { return true },
+				start() { return tmp.leReqScaleStarts[2]||50 },
+				power(s) { return Math.pow(1.2, player.ghostify.ghostlyPhotons.enpowerments - s + 1) - 1 },
+				disp(p) { return "Increases Light Empowerment requirement by "+getFullExpansion(Math.round(p)) },
+			},
+		]
+	},
+	{
+		id: "hb",
+		name: "Higgs Bosons",
+		amt() { return tmp.hb?tmp.hb.higgs:0 },
+		scalings: [
+			{
+				id: "distant",
+				name: "Distant Higgs Bosons",
+				active() { return true },
+				start() { return getHiggsScalingData(1).start },
+				power(s) { return getHiggsScalingData(1).exp },
+				disp(p) { return "Increases the Higgs Boson requirement exponent by "+getFullExpansion(Math.round((p-1)*100)/100) },
+			},
+		]
+	},
+]
+
+function updateScalingsDisplay() {
+	document.getElementById("scalingStats").style.display = (tmp.ngp3c && (ghostified || quantumed || player.dilation.studies.includes(6))) ? "" : "none"
+	if (document.getElementById("scalings").style.display=="none") return;
+	for (let i=0;i<display_scalings_data.length;i++) {
+		let data = display_scalings_data[i];
+		let amt = data.amt();
+		let shown = false
+		for (let j=0;j<data.scalings.length;j++) {
+			let data2 = data.scalings[j];
+			let useDecimal = !(!data.decimal)
+			if (data2.active()) {
+				let start = data2.start();
+				let power = data2.power(start);
+				let shown2 = useDecimal?(Decimal.gte(amt, start) && Decimal.gt(power, 0)):(amt>=start && power>0);
+				if (shown2) {
+					document.getElementById(data.id+data2.id+"Start").textContent = useDecimal?shorten(start):getFullExpansion(Math.round(start));
+					document.getElementById(data.id+data2.id+"Effect").textContent = data2.disp(power);
+					shown = true;
+				}
+				document.getElementById(data.id+data2.id+"Scaling").style.display = shown2?"":"none"
+			} else document.getElementById(data.id+data2.id+"Scaling").style.display = "none"
+		}
+		document.getElementById(data.id+"Scalings").style.display = shown?"":"none"
+	}
+}
+
+function setupScalingsHTML() {
+	let html = "<br>"
+	for (let i=0;i<display_scalings_data.length;i++) {
+		let data = display_scalings_data[i];
+		html += "<div id='"+data.id+"Scalings'><h1 class='glowspan'>"+data.name+"</h1>"
+		for (let j=0;j<data.scalings.length;j++) {
+			let data2 = data.scalings[j];
+			html += "<div id='"+data.id+data2.id+"Scaling'><h3 class='glowspan'>"+data2.name+"</h3>Start: <span id='"+data.id+data2.id+"Start'></span><br>Effect: <span id='"+data.id+data2.id+"Effect'></span><br><br><br></div>"
+		}
+		html += "</div><br><br>"
+	}
+	document.getElementById("scalings").innerHTML = html
 }

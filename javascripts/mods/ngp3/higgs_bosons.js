@@ -161,11 +161,13 @@ function getHiggsScalingName(h) {
 }
 
 function getHiggsScalingData(index) {
-	let data = higgs_scaling[index];
+	let data = JSON.parse(JSON.stringify(higgs_scaling[index]));
+	if (hasBosonicUpg(55) && index==1) data.start += 5;
 	return data;
 }
 
 function implementHiggsReqScaling(x, invert=false) {
+	if (!tmp.ngp3c) return x;
 	for (let i=1;i<=Object.keys(higgs_scaling).length;i++) {
 		if (invert) i = Object.keys(higgs_scaling).length-i+1
 		let data = getHiggsScalingData(i);

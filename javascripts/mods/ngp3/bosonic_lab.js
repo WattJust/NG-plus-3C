@@ -279,6 +279,7 @@ function updateBosonicLimits() {
 
 	//Bosonic Enchants
 	bEn.limit = bEn.maxLimit
+	if (!(player.achievements.includes("ng3pc12") && tmp.ngp3c)) bEn.limit = 7
 	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) bEn.limit = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) bEn.limit = 2
 	if (tmp.ngp3c && !player.ghostify.wzb.WZBUNL) bEn.limit = 1
@@ -589,6 +590,7 @@ var bEn = {
 		15: [4e31, 10],
 		25: [3e35, 7.2e8],
 		35: [1e42, 2e16],
+		45: [2e46, 4e25],
 	},
 	descs: {
 		12: "You automatically extract Bosonic Runes.",
@@ -600,6 +602,7 @@ var bEn = {
 		15: "Bosonic Watts reduce the Higgs Boson requirement base.",
 		25: "Anti-Preons boost the effect of your Total Enchant Level.",
 		35: "The Higgs Boson boost to Bosonic AM gain exponent is stronger and more efficient.",
+		45: "Bosonic Battery strengthens the third row of Bosonic Enchants.",
 	},
 	effects: {
 		12: function(l) {
@@ -615,10 +618,13 @@ var bEn = {
 			let eff = tmp.ngp3c?(Decimal.max(l, 1).log10()+(Decimal.gte(l, 1)?1:0)):Decimal.add(l, 9).log10()
 			if (eff > 15) eff = Math.sqrt(eff * 15)
 			if (eff > 22) eff = Math.pow(eff * 484, 1/3)
-			return {
+			let r = {
 				bUpgs: Math.min(Math.floor(eff), bu.rows*5),
 				higgs: Decimal.add(l, 1).pow(tmp.ngp3c?0.1:0.4)
 			}
+			if (r.higgs.gte(1e5)) r.higgs = Decimal.pow(1e5, Math.sqrt(r.higgs.log(1e5)))
+			if (player.ghostify.bl.usedEnchants.includes(45) && tmp.ngp3c) r.higgs = r.higgs.pow(tmp.bEn[45] || 1);
+			return r;
 		},
 		23: function(l) {
 			let exp = Math.max(l.log10() + 1, 0) / 3
@@ -629,10 +635,13 @@ var bEn = {
 		24: function(l) {
 			let eff = Decimal.pow(Decimal.add(l, 100).log10(), tmp.ngp3c?2.5:4).div(tmp.ngp3c?Math.pow(2, 2.5):16);
 			if (tmp.ngp3c) eff = Decimal.pow(2, Math.pow(eff.log2(), .25))
+			if (player.ghostify.bl.usedEnchants.includes(45) && tmp.ngp3c) eff = eff.pow(tmp.bEn[45] || 1);
 			return eff;
 		},
 		34: function(l) {
-			return Decimal.pow(Math.pow(player.ghostify.hb.higgs, tmp.ngp3c?0.5:1) / (tmp.ngp3c?Math.sqrt(20):20) + 1, l.add(1).log10() / 5)
+			let eff = Decimal.pow(Math.pow(player.ghostify.hb.higgs, tmp.ngp3c?0.5:1) / (tmp.ngp3c?Math.sqrt(20):20) + 1, l.add(1).log10() / 5)
+			if (player.ghostify.bl.usedEnchants.includes(45) && tmp.ngp3c) eff = eff.pow(tmp.bEn[45] || 1);
+			return eff;
 		},
 		15: function(l) {
 			let x = Math.log2(tmp.bl.watt+1);
@@ -650,6 +659,11 @@ var bEn = {
 		},
 		35: function(l) {
 			return Math.log(Decimal.add(l, 1).log10()+1)+1
+		},
+		45: function(l) {
+			let x = tmp.bl.battery.plus(1).log10()/2
+			let y = Math.sqrt(Decimal.add(l, 1).log10())
+			return Decimal.mul(x, y).plus(1).log10()+1
 		},
 	},
 	effectDescs: {
@@ -669,10 +683,13 @@ var bEn = {
 		35: function(x) {
 			return getFullExpansion(Math.round((x-1)*1e4)/100)+"% stronger"
 		},
+		45: function(x) {
+			return "^"+shorten(x)
+		},
 	},
 	action: "upgrade",
 	actions: ["upgrade", "max", "use"],
-	maxLimit: 7,
+	maxLimit: 8,
 	autoScalings:{
 		1: 1.5,
 		2: 3,
@@ -867,6 +884,16 @@ var bu = {
 			g1: 8e41,
 			g3: 2e40,
 		},
+		54: {
+			am: 2e289,
+			g3: 4e50,
+			g5: 8e24,
+		},
+		55: {
+			am: new Decimal("1e321"),
+			g1: 1e55,
+			g2: 2e54,
+		},
 	},
 	reqData: {},
 	descs: {
@@ -916,7 +943,7 @@ var bu = {
 		52: "Unlock new Light Boosts at LE20 & LE25, and TS232 is no longer weakened outside of Big Rip.",
 		53: "Galaxies use a much stronger formula for their effect, and outside of Big Rip, Infinity Condensers are 20,000x stronger.",
 		54: "Higgs Bosons reduce the cost bases of Quantum Food & Worker Replicant limit.",
-		55: "Buying Bosonic Enchants does not spend Bosonic Runes.",
+		55: "Bosonic Enchants do not spend Bosonic Runes, Big Rip Upgrade 1 is re-enabled, and Distant Light Empowerment & Distant Higgs Boson scalings start 5 later.",
 	},
 	effects: {
 		11: function() {
@@ -1139,7 +1166,7 @@ var bu = {
 			return tmp.ngp3c?("/" + shorten(x.dg) + " to scaling, "+shorten(x.wzb)+"x to W & Z Boson speed"):("/" + shorten(x) + " to efficiency")
 		},
 		54: function(x) {
-			return "brought to the "+x.toFixed(3)+"th root"
+			return x.toFixed(3)+"th root"
 		}
 	}
 }

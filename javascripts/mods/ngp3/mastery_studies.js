@@ -441,7 +441,7 @@ var masteryStudies = {
 		},
 		413: "Preon Charge boosts the base of TS403.",
 		421: "Tickspeed boosts preon energy production.",
-		422: "Electrons & Nanorewards make the first scaling of Preon Power start later.",
+		422: "Electrons & Nanorewards make Distant Reward scaling start later.",
 		431: function() { return (tmp.ngp3c?"Emperor Dimensions, Nanofield,":"DT production")+" and branches are faster based on your free galaxies." },
 		432: "Gain 3x more Quark Spins, color powers don't cancel, and you gain 5% of Quark Spins when not decaying unstable quarks.",
 	},

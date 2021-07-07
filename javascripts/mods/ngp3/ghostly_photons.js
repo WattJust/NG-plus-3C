@@ -246,18 +246,34 @@ function lightEmpowerment() {
 	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 }
 
+var LE_scale_start = {
+	1() { 
+		let start = 20;
+		if (hasBosonicUpg(55) && tmp.ngp3c) start += 5;
+		return start; 
+	},
+	2() { return 50 },
+}
+
+function loadLEReqScaleStarts() {
+	let obj = {}
+	for (let i=1;i<=Object.keys(LE_scale_start).length;i++) obj[i] = LE_scale_start[i]()
+	return obj;
+}
+
 function getLightEmpowermentReq(le) {
 	if (le === undefined) le = player.ghostify.ghostlyPhotons.enpowerments
 	let mult = tmp.ngp3c ? 3.6 : 2.4;
 	let x = le * mult + (tmp.ngp3c?3:1)
 	let scale = 0
+	tmp.leReqScaleStarts = loadLEReqScaleStarts();
 	if (!tmp.ngp3l) {
-		if (le > 19) {
-			x += Math.pow(le - 19, 2) / 3
+		if (le >= tmp.leReqScaleStarts[1]) {
+			x += Math.pow(le - tmp.leReqScaleStarts[1] + 1, 2) / 3
 			scale = 1
 		}
-		if (le > 49) {
-			x += Math.pow(1.2, le - 49) - 1
+		if (le >= tmp.leReqScaleStarts[2]) {
+			x += Math.pow(1.2, le - tmp.leReqScaleStarts[2] + 1) - 1
 			scale = 2
 		}
 	}

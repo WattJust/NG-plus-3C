@@ -303,7 +303,7 @@ function ngP3CAchieveCheck() {
 	if (tmp.bl && tmp.bl.am.gte(Number.MAX_VALUE)) giveAchievement("Bosonic Infinity when?")
 	if (player.eternityPoints.e>=1e7 && tmp.qu.bigRip.active && tmp.qu.qcsMods.current.length>=2) giveAchievement("Tornado Valley")
 	if (tmp.eds[8].perm>=1315 && !tmp.bd.active && player.dilation.tachyonParticles.max(player.dilation.bestTPOverGhostifies||0).eq(0)) giveAchievement("The True Emperor")
-	// ng3pc15
+	if (tmp.bl && tmp.bl.am.gte(1e96) && player.ghostify.wzb.wpb.eq(0) && player.ghostify.wzb.wnb.eq(0) && player.ghostify.wzb.zb.eq(0)) giveAchievement("Quitting the Alphabet")
 	if (tmp.hb.higgs>=100) giveAchievement("Where did the Gravitons go?")
 }
 

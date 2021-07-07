@@ -22,7 +22,9 @@ function galaxyReqDisplay(){
 }
 
 var galaxyScalings = ["", "Distant ", "Further ", "Remote ", "Dark Matter ", "Ghostly ", "Ethereal ", "Ethereal+ ", "Ethereal++ ", "Ethereal IV ", "Ethereal V "]
+var condGalaxyScalings = ["", "Distant ", "Further ", "Remote ", "Dark Matter ", "Ghostly ", "Cosmic ", "Ethereal ", "Annihilated ", "Spectral ", "Radiant "]
 function getGalaxyScaleName(x) {
+	if (tmp.ngp3c) return condGalaxyScalings[x]
 	return galaxyScalings[x]
 }
 
@@ -636,10 +638,10 @@ function eternityUpgradesDisplay(){
 
 function uponDilationDisplay(){
 	let gain = getDilGain()
-	let msg = "Disable dilation"
+	let msg = player.dilation.active?"Disable dilation":""
 	if (player.infinityPoints.lt(Number.MAX_VALUE)||inQCModifier("ad")) {}
-	else if (player.dilation.totalTachyonParticles.gt(gain)) msg += ".<br>"+player.aarexModifications.ngp3c?("<br>Get more antimatter to gain more Tachyon Particles"):("Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon particles")
-	else msg += " for " + shortenMoney(gain.sub(player.dilation.totalTachyonParticles)) + " Tachyon particles"
+	else if (player.dilation.totalTachyonParticles.gt(gain)) msg += (player.dilation.active?".<br>":"")+"Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon particles"
+	else msg += (player.dilation.active?" for ":"Gain ") + shortenMoney(gain.sub(player.dilation.totalTachyonParticles)) + " Tachyon particles"
 	document.getElementById("enabledilation").innerHTML = msg + "."
 }
 
@@ -656,7 +658,7 @@ function exdilationDisplay(){
 }
 
 function mainDilationDisplay(){
-	if (player.dilation.active) uponDilationDisplay()
+	if (player.dilation.active || ((tmp.bd&&tmp.ngp3c)?tmp.bd.active:false)) uponDilationDisplay()
 	else document.getElementById("enabledilation").textContent = "Dilate time."+((player.eternityBuyer.isOn&&player.eternityBuyer.dilationMode&&!player.eternityBuyer.slowStopped&&player.eternityBuyer.dilMode=="amount"?!isNaN(player.eternityBuyer.statBeforeDilation):false) ? " " + (player.eternityBuyer.dilationPerAmount - player.eternityBuyer.statBeforeDilation) + " left before dilation." : "")
 	if (player.exdilation==undefined||player.aarexModifications.ngudpV?false:player.blackhole.unl) {
 		exdilationDisplay()

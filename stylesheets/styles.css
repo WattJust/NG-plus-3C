@@ -889,7 +889,7 @@ button {
 }
 
 .achievementtext {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     font-family: Typewriter;
     color: white;
@@ -2497,7 +2497,7 @@ br {
 	cursor: pointer
 }
 
-td.red {
+td.red, td.red2 {
 	background: rgba(191, 0, 0, 0.25)
 }
 
@@ -2517,7 +2517,7 @@ td.yellow {
 	background: rgba(191, 191, 0, 0.25)
 }
 
-td.green {
+td.green, td.green2 {
 	background: rgba(0, 191, 0, 0.25)
 }
 
@@ -2547,6 +2547,14 @@ td.violet {
 
 td.uv {
 	background: rgba(143, 0, 191, 0.25)
+}
+
+.red2 {
+    color: #52303b;
+}
+
+.green2 {
+    color: #305244;
 }
 
 .lEp {
@@ -2810,6 +2818,10 @@ td.subFactorH {
 
 #apgInfo .warning {
 	color: #bf0000
+}
+
+.elecCond, .elecCondEff {
+    color: black;
 }
 
 .nfCond {

@@ -193,7 +193,7 @@ const allAchievements = {
   ng3pc12 : "Bosonic Infinity when?",
   ng3pc13 : "Tornado Valley",
   ng3pc14 : "The True Emperor",
-  ng3pc15 : "ng3pc15",
+  ng3pc15 : "Quitting the Alphabet",
   ng3pc16 : "Where did the Gravitons go?",
   ng3pc17 : "ng3pc17",
   ng3pc18 : "This Should Be Literally Impossible",
@@ -401,6 +401,7 @@ function giveAchievement(name, noUpdate) {
         updateBosonicLimits();
         updateBosonicStuffCosts();
     }
+    if (name == "Bosonic Infinity when?") updateBosonicLimits();
     if (!noUpdate) {
 	    if (name == "A sound financial decision") localStorage.setItem(btoa("dsAM_asfd"),"")
 		else $.notify(name, "success");

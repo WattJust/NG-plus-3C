@@ -28,6 +28,7 @@ function breakDilationDisplay() {
     if (!unl) document.getElementById("breakDilationReq").textContent = "Reach "+breakDilationReq[0]+" Higgs Bosons and "+shortenCosts(new Decimal(breakDilationReq[1]))+" Tachyon Particles to unlock Break Dilation."
     else {
         document.getElementById("breakDilationBtn").textContent = tmp.bd.active?"FIX DILATION":"BREAK DILATION";
+        document.getElementById("tachyonParticleAmount2").textContent = shortenMoney(player.dilation.tachyonParticles)
         if (tmp.bd.active) {
             document.getElementById("cherenkovRads").textContent = shorten(tmp.bd.rads);
             document.getElementById("cherenkovRadGain").textContent = shorten(tmp.bdt.radGain);
@@ -66,6 +67,7 @@ function updateBreakDilationUnlocks() {
     let unl = tmp.ngp3c && (tmp.bd?tmp.bd.unl:false);
     document.getElementById("breakDilationReq").style.display = unl ? "none" : ""
     document.getElementById("breakDilationDiv").style.display = unl ? "" : "none"
+    document.getElementById("annihilationtabbtn").style.display = unl ? "" : "none"
     if (unl) {
         document.getElementById("bdConfirmBtn").style.display = "inline-block"
         updateCosmicOrbUnlocks()
@@ -147,7 +149,7 @@ function BDUpgCostAdj(x) {
 }
 
 var BDUpgs = {
-    amt: 8,
+    amt: 9,
     defaultAmt: 5,
     1: {
         cost: new Decimal(150),
@@ -201,6 +203,11 @@ var BDUpgs = {
         eff(p) { return Math.sqrt(Math.log2(tmp.bl.ticks.plus(1).log10()*p+1)+1)-1 },
         disp(e) { return (e*100).toFixed(2) },
     },
+    9: {
+        cost: new Decimal(5e17),
+        eff(p) { return Math.sqrt(tmp.bd.cp*p) },
+        disp(e) { return getFullExpansion(Math.round(e*1e3)/10) },
+    },
 }
 
 function updateBDUpg(x) {
@@ -228,8 +235,10 @@ function buyBDUpg(x) {
 
 function getCosmicOrbReq() { 
     if (!(tmp.ngp3c&&tmp.bd)) return new Decimal(1/0)
-    let req = new Decimal(tmp.bd.cp>=1?"1e10050":"1e8200")
-    return Decimal.pow("1e450", Math.pow(tmp.bd.cp, 1.5)).times(req)
+    let req = new Decimal(tmp.bd.cp>=1?"1e10100":"1e8200")
+    let cp = tmp.bd.cp
+    if (cp>=1) cp = Math.pow(cp-1, 1.48)+1
+    return Decimal.pow("1e400", Math.pow(cp, 1.5)).times(req)
 }
 function canGainCosmicOrb() { return (tmp.ngp3c&&tmp.bd)?(player.dilation.tachyonParticles.gte(getCosmicOrbReq()) && tmp.bd.upgrades.length>=(BDUpgs.defaultAmt+tmp.co.plus3)):false }
 

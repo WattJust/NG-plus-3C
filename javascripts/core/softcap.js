@@ -893,6 +893,13 @@ var softcap_data = {
 			derv: false,
 		},
 	},
+	ngp3cFBPE: {
+		1: {
+			func: "expPow",
+			start: new Decimal("1e125000"),
+			pow: 0.4,
+		},
+	},
 	ngp3cGHP: {
 		1: {
 			func: "pow",
@@ -911,81 +918,113 @@ var softcap_vars = {
 }
 
 var softcap_funcs = {
-	pow: function(x, start, pow, derv = false) {
+	pow: function(x, start, pow, derv = false, rev=false) {
 		if (typeof start == "function") start = start()
 		if (typeof pow == "function") pow = pow()
 		if (typeof derv == "function") derv = derv()
 		if (x > start) {
-			x = Math.pow(x / start, pow)
-			if (derv) x = (x - 1) / pow + 1
-			x *= start
-			return x
+			if (rev) {
+				x /= start
+				if (derv) x = (x - 1) * pow + 1
+				x = Math.pow(x, 1/pow) * start
+				return x
+			} else {
+				x = Math.pow(x / start, pow)
+				if (derv) x = (x - 1) / pow + 1
+				x *= start
+				return x
+			}
 		} 
 		return x
 	},
-	pow_decimal: function(x, start, pow, derv = false) {
+	pow_decimal: function(x, start, pow, derv = false, rev=false) {
 		if (typeof start == "function") start = start()
 		if (typeof pow == "function") pow = pow()
 		if (typeof derv == "function") derv = derv()
 		if (Decimal.gt(x, start)) {
-			x = Decimal.div(x, start).pow(pow)
-			if (derv) x = x.sub(1).div(pow).add(1)
-			x = x.times(start)
-			return x
+			if (rev) {
+				x = Decimal.div(x, start)
+				if (derv) x = x.sub(1).times(pow).add(1)
+				x = x.root(pow).times(start)
+				return x
+			} else {
+				x = Decimal.div(x, start).pow(pow)
+				if (derv) x = x.sub(1).div(pow).add(1)
+				x = x.times(start)
+				return x
+			}
 		}
 		return x
 	},
-	expPow: function(x, start, pow) {
+	expPow: function(x, start, pow, y, rev=false) {
 		if (typeof start == "function") start = start()
 		if (typeof pow == "function") pow = pow()
 		if (x > start) {
-			x = Math.pow(10, Math.pow(Math.log10(x / start), pow))
-			x *= start
-			return x
+			if (rev) {
+				x /= start
+				x = Math.pow(10, Math.pow(Math.log10(Math.max(x, 1)), 1/pow)) * start
+				return x
+			} else {
+				x = Math.pow(10, Math.pow(Math.log10(x / start), pow))
+				x *= start
+				return x
+			}
 		} 
 		return x
 	},
-	expPow_decimal: function(x, start, pow) {
+	expPow_decimal: function(x, start, pow, y, rev=false) {
 		if (typeof start == "function") start = start()
 		if (typeof pow == "function") pow = pow()
 		if (Decimal.gt(x, start)) {
-			x = Decimal.pow(10, Decimal.pow(Decimal.div(x, start).log10(), pow))
-			x = x.times(start)
-			return x
+			if (rev) {
+				x = Decimal.div(x, start)
+				x = Decimal.pow(10, Decimal.pow(Decimal.log10(Decimal.max(x, 1)), 1/pow)).times(start)
+				return x
+			} else {
+				x = Decimal.pow(10, Decimal.pow(Decimal.div(x, start).log10(), pow))
+				x = x.times(start)
+				return x
+			}
 		}
 		return x
 	},
-	log: function(x, pow = 1, mul = 1, add = 0) {
+	log: function(x, pow = 1, mul = 1, add = 0, rev=false) {
 		if (typeof pow == "function") pow = pow()
 		if (typeof mul == "function") mul = mul()
 		if (typeof add == "function") add = add()
-		var x2 = Math.pow(Math.log10(x) * mul + add, pow)
-		return Math.min(x, x2)
+		var x2;
+		if (rev) x2 = Math.pow(10, (Math.pow(x, 1/pow) - add) / mul)
+		else x2 = Math.pow(Math.log10(x) * mul + add, pow)
+		return rev ? Math.max(x, x2) : Math.min(x, x2)
 	},
-	log_decimal: function(x, pow = 1, mul = 1, add = 0) {
+	log_decimal: function(x, pow = 1, mul = 1, add = 0, rev=false) {
 		if (typeof pow == "function") pow = pow()
 		if (typeof mul == "function") mul = mul()
 		if (typeof add == "function") add = add()
-		var x2 = Math.pow(Decimal.log10(x) * mul + add, pow)
-		return Decimal.min(x, x2)
+		var x2;
+		if (rev) x2 = Decimal.pow(10, (Decimal.pow(x, 1/pow) - add) / mul)
+		else x2 = Math.pow(Decimal.log10(x) * mul + add, pow)
+		return rev ? Decimal.max(x, x2) : Decimal.min(x, x2)
 	},
-	logshift: function (x, shift, pow, add = 0){
+	logshift: function (x, shift, pow, add = 0, rev=false){
 		if (typeof pow == "function") pow = pow()
 		if (typeof shift == "function") shift = shift()
 		if (typeof add == "function") add = add()
-		var x2 = Math.pow(Math.log10(x * shift), pow) + add
-		return Math.min(x, x2)
+		var x2;
+		if (rev) x2 = Math.pow(10, Math.pow(x - add, 1/pow)) / shift
+		else x2 = Math.pow(Math.log10(x * shift), pow) + add
+		return rev ? Math.max(x, x2) : Math.min(x, x2)
 	}
 }
 
-function do_softcap(x, data, num) {
+function do_softcap(x, data, num, rev=false) {
 	var data = data[num]
 	if (data === undefined) return
 	var func = data.func
 	if (func == "log" && data["start"]) if (new Decimal(x).lt(data["start"])) return x
 	var vars = softcap_vars[func]
 	if (x + 0 != x || x instanceof Decimal) func += "_decimal"
-	return softcap_funcs[func](x, data[vars[0]], data[vars[1]], data[vars[2]])
+	return softcap_funcs[func](x, data[vars[0]], data[vars[1]], data[vars[2]], rev)
 }
 
 function softcap(x, id, max = 1/0) {
@@ -1003,6 +1042,27 @@ function softcap(x, id, max = 1/0) {
 			x = y
 			if (x instanceof Decimal || x+0!=x) x = new Decimal(x)
 			sc++
+		} else stopped = true
+	}
+	return x
+}
+
+
+function reverse_softcap(x, id, max=1/0) {
+	var data = softcap_data[id]
+	if (tmp.ngp3 && tmp.qu.bigRip.active) {
+		var big_rip_data = softcap_data[id + "_big_rip"]
+		if (big_rip_data !== undefined) data = big_rip_data
+	}
+
+	var sc = Math.min(max, Object.keys(data).length)
+	var stopped = false
+	while (!stopped && sc > 0) {
+		var y = do_softcap(x, data, sc, true)
+		if (y !== undefined) {
+			x = y
+			if (x instanceof Decimal || x+0!=x) x = new Decimal(x)
+			sc--
 		} else stopped = true
 	}
 	return x

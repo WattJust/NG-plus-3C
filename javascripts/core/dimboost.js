@@ -175,9 +175,10 @@ function getShiftRequirement(bulk) {
 		amount += Math.pow(resetNum, 3) + resetNum
 	} else if (resetNum >= costStart) {
 		var multInc = getSupersonicMultIncrease()
-		var increased = Math.ceil((resetNum - costStart + 1) / 4e4)
-		var offset = (resetNum - costStart) % 4e4 + 1
-		amount += (increased * (increased * 2e4 - 2e4 + offset)) * multInc
+		var interval = getSupersonicInterval()
+		var increased = Math.ceil((resetNum - costStart + 1) / interval)
+		var offset = (resetNum - costStart) % interval + 1
+		amount += (increased * (increased * (interval/2) - (interval/2) + offset)) * multInc
 		mult += multInc * increased
 	}
 
@@ -229,6 +230,12 @@ function getSupersonicMultIncrease() {
 	if (player.timestudy.studies.includes(194) && player.aarexModifications.ngp3c) r = 2
 	if (player.masterystudies) if (player.masterystudies.includes("t331")) r = 1
 	return r
+}
+
+function getSupersonicInterval() {
+	let interval = 4e4
+	if (hasBDUpg(9)) interval *= tmp.bdt.upgs[9]+1
+	return interval
 }
 
 document.getElementById("softReset").onclick = function () {

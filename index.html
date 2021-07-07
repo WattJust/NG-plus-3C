@@ -1254,6 +1254,7 @@
 			<div class="eternitytab" id="breakDilation" style="font-size: 11px">
 				<div id="breakDilationReq"></div>
 				<div id="breakDilationDiv" style="display: none;">
+					<p>You have <span id="tachyonParticleAmount2" style="font-size:25px; color: black">0</span> tachyon particles.</p>
 					<br><br>
 					<button id="breakDilationBtn" class="breakdilationbtn" onclick="breakDilation()" ach-tooltip="When Dilation is broken, you can generate Tachyon Particles without Dilating Time. However, this causes Cherenkov Radiation to accumulate, which divides Dilated Time gain. Fixing Dilation resets Cherenkov Radiation, but also resets Tachyon Particles and forces a Ghostify reset.">BREAK DILATION</button><br><br>
 					<div id="dilationBroken" style="display: none;">
@@ -1271,6 +1272,7 @@
 								<td><button id="breakDilation6" class="breakdilationbtn" onclick="buyBDUpg(6)">Negative Cosmic Orb effects are weaker based on your Cherenkov Radiation.<br>Currently: <span id="breakDilationEff6"></span>% weaker<br>Cost: <span id="breakDilationCost6"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation7" class="breakdilationbtn" onclick="buyBDUpg(7)">Outside of Big Rip, Cosmic Orbs make Dark Matter & Ghostly Galaxy scalings start later.<br>Currently: <span id="breakDilationEff7"></span> galaxies later<br>Cost: <span id="breakDilationCost7"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation8" class="breakdilationbtn" onclick="buyBDUpg(8)">The first two Positive Cosmic Orb effects are stronger based on your Bosonic Ticks.<br>Currently: <span id="breakDilationEff8"></span>% stronger<br>Cost: <span id="breakDilationCost8"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation9" class="breakdilationbtn" onclick="buyBDUpg(9)">Cosmic Orbs increase Dimension Boosts between intervals of Dimension Supersonic scaling.<br>Currently: +<span id="breakDilationEff9"></span>%<br>Cost: <span id="breakDilationCost9"></span> Cherenkov Radiation</button></td>
 							</tr>
 						</table>
 						<div id="cosmicOrbDiv" style="display: none;">
@@ -1279,13 +1281,13 @@
 								Your Cosmic Orbs are...<br><br>
 								<table class="qtable_2col">
 									<tr>
-										<td class="green" style="color: #305244;">
+										<td class="green2">
 											<h1 class="green">+</h1><br><br>
 											strengthening Break Dilation Upgrades by <span id="cosmicOrbPlus1" style="font-size: 35px;"></span>,<br>
 											raising Cherenkov Radiation's base gain <span id="cosmicOrbPlus2" style="font-size: 35px;"></span>,<br>
 											and unlocking <span id="cosmicOrbPlus3" style="font-size: 35px;"></span> new Break Dilation Upgrades.
 										</td>
-										<td class="red" style="color: #52303b;">
+										<td class="red2">
 											<h1 class="red">-</h1><br><br>
 											scaling Break Dilation Upgrade costs by <span id="cosmicOrbMinus1" style="font-size: 35px;"></span>,<br>
 											raising Cherenkov Radiation's base effect <span id="cosmicOrbMinus2" style="font-size: 35px;"></span>,<br>
@@ -2030,6 +2032,7 @@
 			<div id='statstabs'>
 				<br>
 				<td><button class="secondarytabbtn" onclick="showStatsTab('stats')">Statistics</button><td>
+				<td><button class="secondarytabbtn" onclick="showStatsTab('scalings')" id="scalingStats" style="display: none">Active Scalings</button></td>
 				<td><button class="secondarytabbtn" onclick="showStatsTab('challengetimes')" id="challengetimesbtn" style="display:none" >Challenge records</button><td>
 				<td><button class="secondarytabbtn" onclick="showStatsTab('infchallengetimes')" id="infchallengesbtn" style="display:none"><span style='font-size:10px'>Infinity Challenge records</span></button><td>
 				<td><button class="secondarytabbtn" onclick="showStatsTab('eterchallengetimes')" id="eterchallengesbtn" style="display:none"><span style='font-size:10px'>Eternity Challenge records</span></button><td>
@@ -2102,6 +2105,7 @@
 				<div id="totalTime">You have played for </div>
 				<div id="infoScale"></div>
 			</div>
+			<div id="scalings" class="statstab"></div>
 			<div id="challengetimes" class="statstab" >
 				<br>
 				<div id="challengetime2"></div>
@@ -2906,10 +2910,10 @@
 								<div id="The True Emperor" class="achievement achievementlocked" style="background-image: url(images/186.png)" ach-tooltip="Get 1,315 Eighth Emperor Dimensions without gaining any TP while Dilation is Fixed. Reward: Each Eighth Emperor Dimension multiplies all Emperor Dimensions by 1.1."></div>
 							</td>
 							<td>
-								<div id="ng3pc15" class="achievement achievementlocked"></div>
+								<div id="Quitting the Alphabet" class="achievement achievementlocked" style="background-image: url(images/187.png)"></div>
 							</td>
 							<td>
-								<div id="Where did the Gravitons go?" class="achievement achievementlocked" style="background-image: url(images/188.png)" ach-tooltip="Reach 100 Higgs Bosons. Reward: Achievement Power boosts Bosonic Watt gain at a reduced rate, and Light Empowerments reset nothing."></div>
+								<div id="Where did the Gravitons go?" class="achievement achievementlocked" style="background-image: url(images/188.png)" ach-tooltip="Reach 100 Higgs Bosons. Reward: Achievement Power boosts Bosonic Watt gain at a reduced rate, Light Empowerments reset nothing, Tree Upgrade 5's effect is raised to the power of your best Radioactive Decays, and Tree Upgrade 7 is unaffected by Obscurements."></div>
 							</td>
 							<td>
 								<div id="ng3pc17" class="achievement achievementlocked"></div>
@@ -5144,7 +5148,7 @@
 					<td><button class='gluonupgrade storebtn' id='electronupg4' onclick='buyElectronUpg(4)'></button></td>
 				</tr></table><br>
 				<div id="elecNGP3C" style="display: none;">
-					<br><br><span style="font-size: 15px;">You have <span id="elecCond"  style="font-size:23px; color: black"></span> Electron Condensers, which are making Electrons multiply their effect by <span id="elecCondEff"  style="font-size:23px; color: black"></span>.</span><br><br>
+					<br><br><span style="font-size: 15px;">You have <span id="elecCond"  style="font-size:23px;"></span> Electron Condensers, which are making Electrons multiply their effect by <span id="elecCondEff"  style="font-size:23px;"></span>.</span><br><br>
 					<button id="elecCondense" class="storebtn" onclick="elecCondense()"  style="width: 200px; height: 70px; font-size: 12px">Create an Electron Condenser<br>Cost: <span id="elecCondenseReq"></span> Electrons</button><br><br>
 				</div><br><br>
 			</div>
@@ -5202,7 +5206,7 @@
 						You have <span id="quarkAntienergy" style="font-size:35px"></span> preon anti-energy. At <span id="quarkChargeProductionCap" style="font-size:35px"></span>, your preon charge will stop producing energy and anti-energy.<br>
 						You are getting <span id="quarkAntienergyRate"></span> preon anti-energy per second.
 					</td></tr></table>
-					You have <span id="rewards" style="font-size:35px"></span> rewards.
+					You have <span id="rewards" style="font-size:35px"></span> <span id="nanofieldRewardType"></span>rewards.
 					<table class="table" align=center style="margin: auto" id="nfRewards"></table>
 					<br><br>
 				</div>
@@ -5284,6 +5288,7 @@
 					<td><button class="secondarytabbtn" onclick="showGhostifyTab('bravemilestones')">Brave Milestones</button></td>
 					<td id="gphtabbtn"><button class="secondarytabbtn" onclick="showGhostifyTab('gphtab')">Ghostly Photons</button></td>
 					<td id="bltabbtn"><button class="secondarytabbtn" onclick="showGhostifyTab('bltab')">Bosonic Lab</button></td>
+					<td id="annihilationtabbtn"><button class="secondarytabbtn" onclick="showGhostifyTab('annihilationtab')">Annihilation</button></td>
 				</tr>
 			</table>
 			<div id="neutrinos" class="ghostifytab">
@@ -5785,6 +5790,9 @@
 					</tr>
 				</table>
 			</div>
+		</div>
+		<div id="annihilationtab" class="ghostifytab">
+			Reach ??? Antimatter to unlock Annihilation. <b>(NOT IMPLEMENTED)</b>
 		</div>
 	</div>
 	<div class="popup" id="challfail">
