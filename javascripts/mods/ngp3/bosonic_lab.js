@@ -50,10 +50,18 @@ function getBosonicWattGain() {
 	if (tmp.ngp3c) {
 		gain *= player.ghostify.bl.upgrades.length/5+1
 		if (hasBosonicUpg(14)) gain *= tmp.blu[14]||1;
-		if (player.achievements.includes("ng3pc16")) gain *= new Decimal(getAchBAMMult()).toNumber()
 		gain += tmp.bEn.totalLvlEffect;
+
+		gain *= getBosonicWattGainMultPostTotalLvl();		
 	}
 	return gain;
+}
+
+function getBosonicWattGainMultPostTotalLvl() {
+	let mult = 1;
+	if (hasAch("ng3pc16")) mult *= new Decimal(getAchBAMMult()).toNumber()
+	if (hasBDUpg(10)) mult *= tmp.bdt.upgs[10]
+	return mult;
 }
 
 function getBatteryGainPerSecond(toSub){
@@ -257,7 +265,7 @@ function updateBosonicLimits() {
 
 	//Bosonic Runes / Extractor / Enchants
 	br.limit = br.maxLimit
-	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) br.limit = 4
+	if (!hasAch("ng3pc11")) br.limit = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) br.limit = 3
 	if (tmp.ngp3c && !player.ghostify.wzb.WZBUNL) br.limit = 2
 	var width = 100 / br.limit
@@ -273,14 +281,14 @@ function updateBosonicLimits() {
 
 	//Bosonic Upgrades
 	bu.rows = bu.maxRows
-	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) bu.rows = 4
+	if (!hasAch("ng3pc11")) bu.rows = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) bu.rows = 2
 	for (var r = 3; r <= bu.maxRows; r++) document.getElementById("bUpgRow" + r).style.display = bu.rows >= r ? "" : "none"
 
 	//Bosonic Enchants
 	bEn.limit = bEn.maxLimit
-	if (!(player.achievements.includes("ng3pc12") && tmp.ngp3c)) bEn.limit = 7
-	if ((!tmp.ngp3c) || !player.achievements.includes("ng3pc11")) bEn.limit = 4
+	if (!hasAch("ng3pc12")) bEn.limit = 7
+	if (!hasAch("ng3pc11")) bEn.limit = 4
 	if (tmp.ngp3l || player.ghostify.hb.higgs == 0) bEn.limit = 2
 	if (tmp.ngp3c && !player.ghostify.wzb.WZBUNL) bEn.limit = 1
 }
@@ -381,7 +389,7 @@ function getBosonicFinalCost(x) {
 
 function updateBosonicLabTemp() {
 	if (!tmp.bEn) tmp.bEn = {}
-	tmp.blu = {}
+	if (!tmp.blu) tmp.blu = {}
 	tmp.wzb = {}
 
 	if (!tmp.ngp3) return 
@@ -474,17 +482,16 @@ function takeEnchantAction(id) {
 		else data.enchants[id] = data.enchants[id].add(1).round()
 	} else if (bEn.action == "max") buyMaxEnchant(id)
 	else if (bEn.action == "use") {
-		if (canUseEnchant(id)) {
-			if (bEn.limit == 1) data.usedEnchants = [id]
-			else {
-				if (data.usedEnchants.includes(id)) {
-					var newData = []
-					for (var u = 0; u < data.usedEnchants.length; u++) if (data.usedEnchants[u] != id) newData.push(data.usedEnchants[u])
-					data.usedEnchants = newData
+		let use = canUseEnchant(id)
+		if (bEn.limit == 1 && use) data.usedEnchants = [id]
+		else {
+			if (data.usedEnchants.includes(id) && (use||hasBDUpg(10))) {
+				var newData = []
+				for (var u = 0; u < data.usedEnchants.length; u++) if (data.usedEnchants[u] != id) newData.push(data.usedEnchants[u])
+				data.usedEnchants = newData
 
-					if (id==25) updateBosonicWatts(false)
-				} else data.usedEnchants.push(id)
-			}
+				if (id==25) updateBosonicWatts(false)
+			} else if (use) data.usedEnchants.push(id)
 		}
 	}
 }
@@ -542,11 +549,13 @@ function updateBosonExtractorTab(){
 
 function updateEnchantDescs() {
 	let data = player.ghostify.bl
+	let reduced14 = (hasBosonicUpg(62) && tmp.ngp3c)
 	for (var g2 = 2; g2 <= br.limit; g2++) for (var g1 = 1; g1 < g2; g1++) {
 		var id = g1 * 10 + g2
 		if (bEn.action == "upgrade" || bEn.action == "max") document.getElementById("bEn" + id).className = "gluonupgrade "  +(canBuyEnchant(id) ? "bl" : "unavailablebtn")
-		else if (bEn.action == "use") document.getElementById("bEn" + id).className = "gluonupgrade " + (canUseEnchant(id) ? "storebtn" : "unavailablebtn")
-		if (id == 14) document.getElementById("bEn14").style = "font-size: 8px"
+		else if (bEn.action == "use") document.getElementById("bEn" + id).className = "gluonupgrade " + ((canUseEnchant(id)||(hasBDUpg(10)&&player.ghostify.bl.usedEnchants.includes(id))) ? "storebtn" : "unavailablebtn")
+		if (id == 14 && reduced14) document.getElementById("bEnDesc14").textContent = "Divide the requirement of Higgs."
+		if (id == 14) document.getElementById("bEn14").style = "font-size: "+(reduced14?"9px":"8px")
 		if (shiftDown) document.getElementById("bEnLvl" + id).textContent = "Enchant id: " + id
 		else document.getElementById("bEnLvl" + id).textContent = "Level: " + shortenDimensions(tmp.bEn.lvl[id])
 		if (bEn.action == "max") document.getElementById("bEnOn"+id).textContent = "+" + shortenDimensions(getMaxEnchantLevelGain(id)) + " levels"
@@ -617,9 +626,9 @@ var bEn = {
 		14: function(l) {
 			let eff = tmp.ngp3c?(Decimal.max(l, 1).log10()+(Decimal.gte(l, 1)?1:0)):Decimal.add(l, 9).log10()
 			if (eff > 15) eff = Math.sqrt(eff * 15)
-			if (eff > 22) eff = Math.pow(eff * 484, 1/3)
+			if (eff > 22) eff = Math.sqrt(eff * 22)
 			let r = {
-				bUpgs: Math.min(Math.floor(eff), bu.rows*5),
+				bUpgs: Math.min(Math.floor(eff), Math.min(tmp.bl.upgrades.length, bu.rows*5)),
 				higgs: Decimal.add(l, 1).pow(tmp.ngp3c?0.1:0.4)
 			}
 			if (r.higgs.gte(1e5)) r.higgs = Decimal.pow(1e5, Math.sqrt(r.higgs.log(1e5)))
@@ -655,7 +664,9 @@ var bEn = {
 			let y = Decimal.add(l, 1).log10();
 			let z = Decimal.mul(x, y).plus(1).log2()/25
 			if (z>=1) z = Math.log2(z+1)
-			return z+1
+			let eff = z+1
+			if (hasBosonicUpg(61) && tmp.ngp3c) eff = Math.pow(eff, tmp.blu[61])
+			return eff;
 		},
 		35: function(l) {
 			return Math.log(Decimal.add(l, 1).log10()+1)+1
@@ -675,7 +686,7 @@ var bEn = {
 			return shorten(x) + "/second"
 		},
 		14: function(x) {
-			return "/" + shorten(x.higgs) + " to Higgs requirement, " + getFullExpansion(x.bUpgs) + " starting upgrades"
+			return "/" + shorten(x.higgs)+((hasBosonicUpg(62) && tmp.ngp3c)?"":(" to Higgs requirement, " + getFullExpansion(x.bUpgs) + " starting upgrades"))
 		},
 		15: function(x) {
 			return "100.00 -> "+shorten(Decimal.root(100, x))
@@ -767,7 +778,7 @@ function updateBosonicUpgradeDescs() {
 }
 
 var bu = {
-	maxRows: 5,
+	maxRows: 6,
 	costs: {
 		11: {
 			am: 200,
@@ -894,6 +905,21 @@ var bu = {
 			g1: 1e55,
 			g2: 2e54,
 		},
+		61: {
+			am: new Decimal("5e375"),
+			g3: 1e61,
+			g4: 1e56,
+		},
+		62: {
+			am: new Decimal("4e392"),
+			g1: 2e64,
+			g5: 2e37,
+		},
+		63: {
+			am: new Decimal("3e400"),
+			g2: 1e65,
+			g4: 2e59,
+		},
 	},
 	reqData: {},
 	descs: {
@@ -944,13 +970,19 @@ var bu = {
 		53: "Galaxies use a much stronger formula for their effect, and outside of Big Rip, Infinity Condensers are 20,000x stronger.",
 		54: "Higgs Bosons reduce the cost bases of Quantum Food & Worker Replicant limit.",
 		55: "Bosonic Enchants do not spend Bosonic Runes, Big Rip Upgrade 1 is re-enabled, and Distant Light Empowerment & Distant Higgs Boson scalings start 5 later.",
+		61: "Raise Base Quark Energy gain, the start of OS_TP_3, and Bosonic Enchant 8 to an exponent based on Electron Condensers.",
+		62: "Keep all Bosonic Upgrades on Higgs resets, and Higgs Bosons are cheaper based on Quark Energy.",
+		63: "The GhP gain multi upgrade is unaffected by Obscurements, and OS_TS_1 & OS_TS_2 are weaker based on your Higgs Bosons.",
+		64: "Tickspeed cheapens Light Empowerments.",
+		65: "Light Empowerments strengthen all previous Bosonic Upgrades.",
 	},
 	effects: {
 		11: function() {
 			let x = player.ghostify.bl.am.add(1).log(tmp.ngp3c?1.01:10)
 			let y = 1
 			if (hasBosonicUpg(25) && tmp.ngp3c) y = tmp.blu[25];
-			if (hasBosonicUpg(42) && !tmp.ngp3c) y *= tmp.blu[42]
+			if (hasBosonicUpg(42) && !tmp.ngp3c) y *= tmp.blu[42];
+			if (hasBosonicUpg(65) && tmp.ngp3c) y *= tmp.blu[65];
 			if (player.achievements.includes("ng3p96") && tmp.ngp3c) y *= 1.15
 			
 			let exp = 0.5 - 0.25 * x / (x + 3) / y
@@ -964,11 +996,13 @@ var bu = {
 		12: function() {
 			let power = 1;
 			if (hasBosonicUpg(25) && tmp.ngp3c) power = tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) power *= tmp.blu[65];
 			return tmp.ngp3c ? player.ghostify.ghostlyPhotons.ghostlyRays.plus(1).pow(30*power) : ((colorBoosts.g + tmp.pe - 1) * 7e-4 * power)
 		},
 		13: function() {
 			var decays = getRadioactiveDecays('r') + getRadioactiveDecays('g') + getRadioactiveDecays('b')
 			if (hasBosonicUpg(25) && tmp.ngp3c) decays *= tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) decays *= tmp.blu[65];
 			var div = 3
 			if (tmp.newNGP3E){
 				decays += Math.sqrt(decays) + decays / 3
@@ -980,6 +1014,7 @@ var bu = {
 		14: function() {
 			let power = 1;
 			if (hasBosonicUpg(25) && tmp.ngp3c) power = tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) power *= tmp.blu[65];
 			if (tmp.ngp3c) {
 				let x = Math.log10(Math.max(player.dilation.freeGalaxies * power / 20 - 1800, 1)) / 3
 				return x+1;
@@ -995,6 +1030,7 @@ var bu = {
 		15: function() {
 			let power = 1;
 			if (hasBosonicUpg(25) && tmp.ngp3c) power = tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) power *= tmp.blu[65];
 
 			let gLog = Decimal.max(player.ghostify.times, 1).log(tmp.ngp3c?1.4:10) * power
 			if (tmp.newNGP3E) gLog += 2 * Math.sqrt(gLog)
@@ -1011,6 +1047,7 @@ var bu = {
 		23: function() {
 			let power = 1;
 			if (hasBosonicUpg(25) && tmp.ngp3c) power = tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) power *= tmp.blu[65];
 
 			if (tmp.ngp3c) return player.ghostify.ghostlyPhotons.amount.plus(1).pow(4 * power);
 			else return player.meta.antimatter.add(1).pow(0.06 * power)
@@ -1018,6 +1055,7 @@ var bu = {
 		25: function() {
 			if (tmp.ngp3c) {
 				let x = player.ghostify.bl.am.div(100).plus(1).log10();
+				if (hasBosonicUpg(65)) x *= tmp.blu[65];
 				return 1.5 - 0.5 / (Math.log2(x+1)/2.5+1)
 			} else {
 				var div = 8e3
@@ -1031,8 +1069,11 @@ var bu = {
 			}
 		},
 		31: function() {
-			if (tmp.ngp3c) return Decimal.pow(1.5, player.ghostify.hb.higgs);
-			else {
+			if (tmp.ngp3c) {
+				let h = player.ghostify.hb.higgs+1;
+				if (hasBosonicUpg(65)) h *= tmp.blu[65];
+				return Decimal.pow(1.5, h-1);
+			} else {
 				var ret = Math.pow(Math.log10(player.ghostify.bl.am.add(1).log10() / 5 + 1) / 2 + 1, 2)
 				for (var i = 4; i < 10; i++){
 					if (ret > i / 2) ret = i / 2 + Math.log10(ret - i/2 + 1)
@@ -1043,11 +1084,13 @@ var bu = {
 		},
 		33: function() {
 			var div = tmp.newNGP3E ? 4 : 6
+			if (hasBosonicUpg(65) && tmp.ngp3c) div /= tmp.blu[65];
 			return (Math.sqrt((tmp.ngp3c?Math.max(player.ghostify.bl.am.plus(1).log10()/18, (player.ghostify.bl.am.plus(1).log10()-16)/2):player.ghostify.hb.higgs) + 1) - 1) / div + 1
 		},
 		34: function() {
 			if (tmp.ngp3c) {
 				let mult = tmp.qu.bigRip.active?2:250
+				if (hasBosonicUpg(65)) mult *= tmp.blu[65];
 				let x = tmp.qu.nanofield.charge.plus(1).log10()
 				if (x >= 2000) x = Math.sqrt(x * 2000);
 				return Decimal.pow(10, x * mult);
@@ -1063,25 +1106,33 @@ var bu = {
 			}
 		},
 		35: function() {
-			if (tmp.ngp3c) return Math.pow(player.ghostify.ghostlyPhotons.enpowerments, .75)
-			else return {
+			if (tmp.ngp3c) {
+				let e = player.ghostify.ghostlyPhotons.enpowerments
+				if (hasBosonicUpg(65)) e *= tmp.blu[65];
+				return Math.pow(e, .75)
+			} else return {
 				rep: Math.pow(tmp.qu.replicants.quarks.add(1).log10(), 1/3) * 2,
 				eds: Decimal.pow(tmp.newNGP3E ? 10 : 20, Math.pow(player.replicanti.amount.log10(), 2/3) / 15e3)
 			}
 		},
 		41: function() {
-			if (tmp.ngp3c) return Math.sqrt(Math.log10(player.dilation.tachyonParticles.plus(1).log10()+1))/20
-			else return {
+			if (tmp.ngp3c) {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				return Math.sqrt(Math.log10(player.dilation.tachyonParticles.plus(1).log10()*power+1))/20
+			} else return {
 				ig: Decimal.pow(tmp.qu.bigRip.active ? 1e5 : 1.05, Math.pow(Decimal.max(tmp.it, 1).log10(), 2)),
 				it: Decimal.pow(tmp.qu.bigRip.active ? 1.01 : 5, Math.sqrt(Decimal.max(tmp.ig, 1).log10()))
 			}
 		},
 		42: function() {
 			if (tmp.ngp3c) {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
 				return {
-					r: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) * 2),
-					g: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) / 2),
-					b: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3)),
+					r: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) * power * 2),
+					g: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) * power / 2),
+					b: Math.floor(Math.pow(tmp.qu.colorPowers.r.add(1).log10(), .3) * power),
 				}
 			} else {
 				var exp = tmp.newNGP3E ? 1/3 : 1/4
@@ -1089,14 +1140,19 @@ var bu = {
 			}
 		},
 		43: function() {
-			if (tmp.ngp3c) return Math.floor(Math.sqrt(tmp.qu.colorPowers.g.add(1).log10())*100)
-			else return Math.sqrt(colorBoosts.g + tmp.pe) / (tmp.qu.bigRip.active ? 100 : 40) + 1
+			if (tmp.ngp3c) {
+				let mul = 100
+				if (hasBosonicUpg(65)) mul *= tmp.blu[65];
+				return Math.floor(Math.sqrt(tmp.qu.colorPowers.g.add(1).log10())*mul)
+			} else return Math.sqrt(colorBoosts.g + tmp.pe) / (tmp.qu.bigRip.active ? 100 : 40) + 1
 		},
 		44: function() {
 			if (tmp.ngp3c) {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
 				return {
-					od: tmp.hb.higgs/10+1,
-					pm: Math.log2(tmp.qu.colorPowers.g.add(1).log10()+1)/50,
+					od: power*tmp.hb.higgs/10+1,
+					pm: Math.log2(tmp.qu.colorPowers.g.add(1).log10()*power+1)/50,
 				}
 			} else {
 				var exp = tmp.newNGP3E ? .55 : .5
@@ -1104,9 +1160,10 @@ var bu = {
 			}
 		},
 		45: function() {
-			var eff;
 			if (tmp.ngp3c) {
-				let eff = Decimal.pow(player.ghostify.ghostlyPhotons.darkMatter.add(1).log10()+1, player.ghostify.ghostlyPhotons.enpowerments/15+1);
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				let eff = Decimal.pow(player.ghostify.ghostlyPhotons.darkMatter.add(1).log10()*power+1, player.ghostify.ghostlyPhotons.enpowerments*power/15+1);
 				return {
 					dg: softcap(eff, "bu45").toNumber(),
 					wzb: eff.div(5).pow(2),
@@ -1115,11 +1172,56 @@ var bu = {
 		},
 		51: function() {
 			if (!tmp.ngp3c) return new Decimal(1);
-			else return player.ghostify.wzb.dP.plus(1).pow(2.5)
+			else {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				return player.ghostify.wzb.dP.plus(1).pow(2.5*power)
+			}
 		},
 		54: function() {
 			if (!tmp.ngp3c) return 1;
-			else return Math.log10(tmp.hb.higgs+1)+1
+			else {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				return Math.log10(tmp.hb.higgs*power+1)+1
+			}
+		},
+		61: function() {
+			if (!tmp.ngp3c) return 1;
+			else {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				return Math.sqrt(Math.log2((player.condensed.elec||0)*power*17+1)*power*13.5+1)
+			}
+		},
+		62: function() {
+			if (!tmp.ngp3c) return 1;
+			else {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				return Decimal.pow(tmp.qu.quarkEnergy.plus(1).log10()*power+1, 4)
+			}
+		},
+		63: function() {
+			if (!tmp.ngp3c) return 1;
+			else {
+				let power = 1
+				if (hasBosonicUpg(65)) power = tmp.blu[65];
+				return 1-1/(Math.log2(tmp.hb.higgs*power/100+1)+1)
+			}
+		},
+		64: function() {
+			let power = tmp.ngp3c?1:0
+			if (hasBosonicUpg(65)) power *= tmp.blu[65];
+			let x = Math.log10(4 - getTickspeed().log10())
+			return {
+				div: Math.max((1.5+power)-1.5/(Math.log10(x+1)+1), 1),
+				sub: x*power,
+			}
+		},
+		65: function() {
+			if (!tmp.ngp3c) return 1
+			else return 1.5-0.5/(Math.log2(player.ghostify.ghostlyPhotons.enpowerments/100+1)+1)
 		},
 	},
 	effectDescs: {
@@ -1167,7 +1269,22 @@ var bu = {
 		},
 		54: function(x) {
 			return x.toFixed(3)+"th root"
-		}
+		},
+		61: function(x) {
+			return "^"+x.toFixed(3)
+		},
+		62: function(x) {
+			return "/"+shorten(x)
+		},
+		63: function(x) {
+			return (x*100).toFixed(1)+"% weaker"
+		},
+		64: function(x) {
+			return "-"+getFullExpansion(Math.round(x.sub*10)/10)+", /"+x.div.toFixed(2)
+		},
+		65: function(x) {
+			return ((x-1)*100).toFixed(3)+"% stronger"
+		},
 	}
 }
 

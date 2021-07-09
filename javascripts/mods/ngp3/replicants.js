@@ -181,8 +181,8 @@ function getEmperorDimensionGlobalMultiplier() {
 	if (tmp.ngp3c && player.masterystudies.includes("t431")) ret = ret.times(getMTSMult(431))
 	if (player.masterystudies.includes("d13")) ret = ret.times(getTreeUpgradeEffect(6))
 	if (hasBosonicUpg(35) && !tmp.ngp3c) ret = ret.times(tmp.blu[35].eds)
-	if (player.achievements.includes("ng3pc11")) ret = ret.times(player.achPow);
-	if (player.achievements.includes("ng3pc14")) ret = ret.times(Decimal.pow(1.1, player.quantum.emperorDimensions[8].perm))
+	if (hasAch("ng3pc11")) ret = ret.times(player.achPow);
+	if (hasAch("ng3pc14")) ret = ret.times(Decimal.pow(1.1, player.quantum.emperorDimensions[8].perm))
 	return ret
 }
 

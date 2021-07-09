@@ -527,7 +527,8 @@ var softcap_data = {
 			func: "pow",
 			start: Number.MAX_VALUE,
 			pow() { 
-				let pow = QCIntensity(7)?1/2:(player.challenges.includes("postcngc_2")?2/5:1/3) 
+				let pow = QCIntensity(7)?1/2:(player.challenges.includes("postcngc_2")?2/5:1/3)
+				if (hasBosonicUpg(63)) pow = Math.pow(pow, 1-tmp.blu[63]);
 				if (inQCModifier("sp")) pow /= 5
 				return pow
 			},
@@ -538,6 +539,7 @@ var softcap_data = {
 			start: new Decimal("1e1000"),
 			pow() { 
 				let pow = QCIntensity(7)?0.43:(player.challenges.includes("postcngc_2")?13/40:1/4)
+				if (hasBosonicUpg(63)) pow = Math.pow(pow, 1-tmp.blu[63]);
 				if (inQCModifier("sp")) pow /= 5
 				return pow 
 			},
@@ -830,7 +832,8 @@ var softcap_data = {
 			func: "pow",
 			start() { 
 				let exp = 1;
-				if (player.achievements.includes("ng3pc11") && !tmp.qu.bigRip.active) exp = 15;
+				if (hasAch("ng3pc11") && !tmp.qu.bigRip.active) exp = 15;
+				if (hasBosonicUpg(61) && tmp.ngp3c) exp *= tmp.blu[61]
 				return Decimal.pow(Number.MAX_VALUE, exp);
 			},
 			pow: 1/5,

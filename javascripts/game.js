@@ -342,7 +342,7 @@ function setupBosonicExtraction(){
 			var col = row.insertCell(g1 - 1)
 			var id = (g1 * 10 + g2)
 			let desc = bEn.descs[id]
-			col.innerHTML = "<button id='bEn" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='takeEnchantAction("+id+")'>"+(desc||"???")+"<br>"+
+			col.innerHTML = "<button id='bEn" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='takeEnchantAction("+id+")'><span id='bEnDesc"+id+"'>"+(desc||"???")+"</span><br>"+
 			"Currently: <span id='bEnEffect" + id + "'>???</span><br>"+
 			"<span id='bEnLvl" + id + "'></span><br>" +
 			"<span id='bEnOn" + id + "'></span><br>" +
@@ -5312,8 +5312,9 @@ function WZBosonsUpdating(diff) {
 
 function updateBosonicWatts(keepSpd=true) {
 	var data = player.ghostify.bl
+	let wattSub = tmp.bEn.totalLvlEffect * getBosonicWattGainMultPostTotalLvl()
 	if (!keepSpd) tmp.bEn.totalLvlEffect = tmp.ngp3c?getBENTotalLevelEffect():new Decimal(1);
-	var wattGained = Math.max(getBosonicWattGain(), keepSpd?data.watt:(data.watt-tmp.bEn.totalLvlEffect))
+	var wattGained = Math.max(getBosonicWattGain(), keepSpd?data.watt:(data.watt-wattSub))
 	var wattMult = getBosonicSpeedMult();
 	var effectiveWattGain = wattGained * wattMult
 	data.speed = Math.max(Math.min(effectiveWattGain + (effectiveWattGain - data.speed) * 2, effectiveWattGain), keepSpd?data.speed:0)
@@ -6138,7 +6139,7 @@ function passiveQuantumLevelStuff(diff){
 		}
 		if (player.ghostify.milestones>15) tmp.qu.quarks=tmp.qu.quarks.add(quarkGain().times(diff / 100))
 	}
-	if ((tmp.be && player.ghostify.milestones>14)||(tmp.qu.breakEternity.break && player.achievements.includes("ng3pc13") && tmp.ngp3c)) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
+	if ((tmp.be && player.ghostify.milestones>14)||(tmp.qu.breakEternity.break && hasAch("ng3pc13"))) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
 	updateQuarkDisplay()
 	updateQuantumWorth("quick")
 }

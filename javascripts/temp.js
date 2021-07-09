@@ -713,7 +713,7 @@ function updateWZBosonsTemp(){
 	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm && tmp.hm.wb && player.ghostify.hb.masses.wb) data.wbt = data.wbt.times(tmp.hm.wb.eff).sqrt().max(data.wbt)
 	
 	data.wbo = Decimal.pow(10, Math.max(bosonsExp, 0)) //W Bosons boost to Z Neutrino oscillation requirement
-	if (player.achievements.includes("ng3pc15") && tmp.ngp3c) data.wbo = data.wbo.pow(2);
+	if (hasAch("ng3pc15")) data.wbo = data.wbo.pow(2);
 	
 	let wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(tmp.ngp3c?((player.ghostify.bl.upgrades.length>1)?.01:.1):100).max(1)
 	if (tmp.ngp3c) wbp = Decimal.pow(2, Math.pow(wbp.log2(), .95));
@@ -875,12 +875,12 @@ function updateTempCosmicOrbs() {
 	if (!tmp.co) tmp.co = {};
 	tmp.co.amt = tmp.bd?(tmp.bd.cp||0):0
 
-	tmp.co.posAmt = tmp.co.amt * posCosmicOrbPower();
+	tmp.co.posAmt = posCosmicOrbPower(tmp.co.amt);
 	tmp.co.plus1 = cosmicOrbEffects.plus1(tmp.co.posAmt)
 	tmp.co.plus2 = cosmicOrbEffects.plus2(tmp.co.posAmt)
 	tmp.co.plus3 = cosmicOrbEffects.plus3(tmp.co.amt) // not affected by Positive Cosmic Orb Power
 
-	tmp.co.negAmt = tmp.co.amt * negaCosmicOrbPower();
+	tmp.co.negAmt = negaCosmicOrbPower(tmp.co.amt);
 	tmp.co.minus1 = cosmicOrbEffects.minus1(tmp.co.negAmt)
 	tmp.co.minus2 = cosmicOrbEffects.minus2(tmp.co.negAmt)
 	tmp.co.minus3 = cosmicOrbEffects.minus3(tmp.co.negAmt)

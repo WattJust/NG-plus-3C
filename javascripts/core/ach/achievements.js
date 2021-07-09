@@ -195,7 +195,7 @@ const allAchievements = {
   ng3pc14 : "The True Emperor",
   ng3pc15 : "Quitting the Alphabet",
   ng3pc16 : "Where did the Gravitons go?",
-  ng3pc17 : "ng3pc17",
+  ng3pc17 : "The Theory of Infinite Onion Layers",
   ng3pc18 : "This Should Be Literally Impossible",
   s11 : "The first one's always free",
   s12 : "Just in case",
@@ -534,6 +534,11 @@ function updateAchievements() {
 	document.getElementById("nothingnessSecret").style.display = rowsShown ? "none" : ""
 }
 
+function hasAch(x) {
+    if (x.includes("ng3pc")) return player.achievements.includes(x) && tmp.ngp3c
+    else return player.achievements.includes(x)
+}
+
 function getNormalAchAmount(){
     return player.achievements.length - getSecretAchAmount()
 }
@@ -582,7 +587,7 @@ function achMultLabelUpdate() {
         var label = "Normal"
         if (player.achievements.includes("r75")) label += "/Infinity"
         if (player.eternityUpgrades.includes(4)) label += "/Time"
-        if (player.achievements.includes("ng3pc11")) label += "/Emperor"
+        if (hasAch("ng3pc11")) label += "/Emperor"
         return label
 }
 
@@ -612,6 +617,6 @@ function bosonicAMAchMultLabelUpdate() {
 
 function bosonicAchMultLabelTypes() {
     let types = "Bosonic Antimatter"
-    if (player.achievements.includes("ng3pc16") && tmp.ngp3c) types += "/Watt"
+    if (hasAch("ng3pc16")) types += "/Watt"
     return types;
 }

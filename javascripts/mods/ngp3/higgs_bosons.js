@@ -55,6 +55,7 @@ function bosonicLabReset() {
 	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 	tmp.updateLights = true
 	var startingEnchants = getEnchantEffect(14, true).bUpgs||0
+	var keepAllUpgs = hasBosonicUpg(62) && tmp.ngp3c
 	player.ghostify.bl = {
 		watt: new Decimal(0),
 		ticks: player.ghostify.bl.ticks,
@@ -66,19 +67,21 @@ function bosonicLabReset() {
 		autoExtract: new Decimal(0),
 		glyphs: [],
 		enchants: {},
-		usedEnchants: [],
-		upgrades: [],
+		usedEnchants: hasBDUpg(10)?player.ghostify.bl.usedEnchants:[],
+		upgrades: keepAllUpgs?player.ghostify.bl.upgrades:[],
 		battery: new Decimal(0),
 		odSpeed: player.ghostify.bl.odSpeed,
 		UPGSUNL: tmp.ngp3c?true:undefined,
 	}
-	var order = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55]
-	//tmp.bl.upgrades needs to be updated (also 12 needs to be added)
-	for (let i = 0; i < startingEnchants; i++){
-		if (i == 20 && !tmp.ngp3c) break
-		player.ghostify.bl.upgrades.push(order[i])
+	if (!keepAllUpgs) {
+		var order = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55, 61, 62, 63, 64, 65]
+		//tmp.bl.upgrades needs to be updated (also 12 needs to be added)
+		for (let i = 0; i < startingEnchants; i++){
+			if (i == 20 && !tmp.ngp3c) break
+			player.ghostify.bl.upgrades.push(order[i])
+		}
+		if (!player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)
 	}
-	if (!player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)
 	for (var g = 1; g <= br.maxLimit; g++) player.ghostify.bl.glyphs.push(new Decimal(0))
 	player.ghostify.wzb = {
 		unl: true,
@@ -133,6 +136,7 @@ function restartHiggs(force=false) {
 function getHiggsRequirementBase() {
 	var div = new Decimal(1)
 	if (player.ghostify.bl.usedEnchants.includes(14)) div = div.times(tmp.bEn[14].higgs || 1)
+	if (hasBosonicUpg(62) && tmp.ngp3c) div = div.times(tmp.blu[62] || 1)
 	return new Decimal(1e20).divide(div)
 }
 

@@ -487,11 +487,12 @@ function getGHPGain() {
 	let gain = Decimal.pow(10, log).times(getGHPMult())
 	
 	if (tmp.ngp3c) gain = softcap(gain, "ngp3cGHP")
+	if (hasBosonicUpg(63) && tmp.ngp3c) gain = gain.times(Decimal.pow(getGHPMultUpgInc(), player.ghostify.multPower - 1))
 	return gain.floor()
 }
 
 function getGHPMult() {
-	let x = Decimal.pow(2, player.ghostify.multPower - 1)
+	let x = (hasBosonicUpg(63)&&tmp.ngp3c)?new Decimal(1):Decimal.pow(getGHPMultUpgInc(), player.ghostify.multPower - 1)
 	if (player.achievements.includes("ng3p93") && !tmp.ngp3c) x = x.times(500)
 	if (player.achievements.includes("ng3p83")) x = x.times(tmp.ngp3c?666:(ranking + 1))
 	if (player.achievements.includes("ng3p97")) x = x.times(Decimal.pow(player.ghostify.times + 1, 1/3))
@@ -655,6 +656,7 @@ function updateGhostifyTabs() {
 	if (document.getElementById("automaticghosts").style.display == "block") if (player.ghostify.milestones > 7) updateQuantumWorth("display")
 	if (document.getElementById("gphtab").style.display == "block" && player.ghostify.ghostlyPhotons.unl) updatePhotonsTab()
 	if (document.getElementById("bltab").style.display == "block" && player.ghostify.wzb.unl) updateBosonicLabTab()
+	if (document.getElementById("annihilationtab").style.display == "block" && tmp.ngp3c) annihilationDisplay()
 }
 
 function buyGHPMult() {
@@ -665,7 +667,7 @@ function buyGHPMult() {
 	player.ghostify.multPower++
 	player.ghostify.automatorGhosts[15].a = player.ghostify.automatorGhosts[15].a.times(5)
 	document.getElementById("autoGhost15a").value = formatValue("Scientific", player.ghostify.automatorGhosts[15].a, 2, 1)
-	document.getElementById("ghpMult").textContent = shortenDimensions(Decimal.pow(2,player.ghostify.multPower-1))
+	document.getElementById("ghpMult").textContent = shortenDimensions(Decimal.pow(getGHPMultUpgInc(),player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent = shortenDimensions(getGHPMultCost())
 }
 
@@ -701,7 +703,7 @@ function maxGHPMult() {
 			player.ghostify.multPower+=toBuy
 		}
 	}
-	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(2,player.ghostify.multPower-1))
+	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(getGHPMultUpgInc(),player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent=shortenDimensions(getGHPMultCost())
 }
 

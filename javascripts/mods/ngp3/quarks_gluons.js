@@ -338,6 +338,7 @@ function getQuarkEnergyGain(ma) {
 	else x = Math.pow(x, 1.5)
 	if (x >= 1.5 && tmp.ngp3c && !player.masterystudies.includes("t302")) x = Math.sqrt(x*1.5);
 	if (x >= 12 && tmp.ngp3c) x = Math.pow(x*144, 1/3)
+	if (hasBosonicUpg(61) && tmp.ngp3c) x *= tmp.blu[61]
 	return Decimal.pow(10, x)
 }
 

@@ -202,6 +202,7 @@ function updateExtraReplGalaxies() {
 	if (player.timestudy.studies.includes(225)) {
 		ts225Eff = Math.floor(player.replicanti.amount.e / 1e3)
 		if (ts225Eff > 99) ts225Eff = Math.floor(Math.sqrt(0.25 + (ts225Eff - 99) * speed) + 98.5)
+		if (ts225Eff > 2.5e5) ts225Eff = Math.log10(ts225Eff)*46314
 	}
 	if (player.timestudy.studies.includes(226)) {
 		ts226Eff = Math.floor(player.replicanti.gal / 15)

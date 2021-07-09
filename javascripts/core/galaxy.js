@@ -224,7 +224,7 @@ function getGhostlyGalaxyScalingStart() {
 function getGhostlyGalaxyDiv(over) {
 	let div = 1e4
 	if (over >= 3) div /= Math.pow(over, 6) / 729
-	if (tmp.ngp3c && player.achievements.includes("ng3pc12")) div *= 2;
+	if (hasAch("ng3pc12")) div *= 2;
 	if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2];
 	return div;
 }

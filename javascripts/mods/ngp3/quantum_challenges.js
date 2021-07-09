@@ -214,7 +214,7 @@ function updatePCCompletions() {
 				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', tmp.ngp3c?(qcm.condReqDescs[id]+" to unlock this modifier."):('Get ' + qcm.reqs[id] + ' Paired Challenges ranking to unlock this modifier. Ranking: ' + ranking.toFixed(1)))
 			}
 		}
-	} else document.getElementById("modifiersdiv").style.display = "none"
+	} else document.getElementById("modifiersdiv").style.display = (tmp.ngp3c && QCModifierUnl("ad", r))?"":"none"
 	
 	ranking = r // its global
 }

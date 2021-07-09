@@ -90,6 +90,16 @@ function updateNeutrinosTab(){
 	else document.getElementById("neutrinoMultUpg").className = "gluonupgrade unavailablebtn"
 	if (sum.gte(getGHPMultCost())) document.getElementById("ghpMultUpg").className = "gluonupgrade neutrinoupg"
 	else document.getElementById("ghpMultUpg").className = "gluonupgrade unavailablebtn"
+	
+	let inc = getGHPMultUpgInc()
+	document.getElementById("ghpMultInc").textContent = shorten(inc)
+	if (hasBDUpg(10)) document.getElementById("ghpMult").textContent = shortenDimensions(Decimal.pow(inc,player.ghostify.multPower-1))
+}
+
+function getGHPMultUpgInc() {
+	let inc = 2;
+	if (hasBDUpg(10)) inc *= tmp.bdt.upgs[10];
+	return inc;
 }
 
 function onNotationChangeNeutrinos() {
@@ -97,7 +107,7 @@ function onNotationChangeNeutrinos() {
 	document.getElementById("neutrinoUnlockCost").textContent=shortenDimensions(new Decimal(tmp.nbc[player.ghostify.neutrinos.boosts]))
 	document.getElementById("neutrinoMult").textContent=shortenDimensions(Decimal.pow(5, player.ghostify.neutrinos.multPower - 1))
 	document.getElementById("neutrinoMultUpgCost").textContent=shortenDimensions(Decimal.pow(4, scaleNeutrinoMulti(player.ghostify.neutrinos.multPower)-1).times(2))
-	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(2, player.ghostify.multPower-1))
+	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(getGHPMultUpgInc(), player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent=shortenDimensions(getGHPMultCost())
 	for (var u = 1; u <= 18; u++) document.getElementById("neutrinoUpg" + u + "Cost").textContent=shortenDimensions(new Decimal(tmp.nuc[u]))
 }
@@ -108,6 +118,7 @@ function getNeutrinoGain() {
 	if (hasNU(7) && tmp.ngp3c) ret = ret.times(tmp.nu[3])
 	if (hasNU(14) && !tmp.ngp3c) ret = ret.times(tmp.nu[5])
 	if (isNanoEffectUsed("neutrinos")) ret = ret.times(tmp.nf.effects.neutrinos)
+	if (hasAch("ng3pc17")) ret = ret.times(nA(player.timestudy.theorem, 1));
 	return ret
 }
 

@@ -149,7 +149,7 @@ function BDUpgCostAdj(x) {
 }
 
 var BDUpgs = {
-    amt: 9,
+    amt: 10,
     defaultAmt: 5,
     1: {
         cost: new Decimal(150),
@@ -208,6 +208,10 @@ var BDUpgs = {
         eff(p) { return Math.sqrt(tmp.bd.cp*p) },
         disp(e) { return getFullExpansion(Math.round(e*1e3)/10) },
     },
+    10: {
+        cost: new Decimal(1e21),
+        eff(p) { return Math.sqrt(tmp.bd.rads.plus(1).log10()*p/10+1) },
+    },
 }
 
 function updateBDUpg(x) {
@@ -264,14 +268,16 @@ var cosmicOrbEffects = {
     },
 }
 
-function negaCosmicOrbPower() {
-    let power = 1;
-    if (hasBDUpg(6)) power -= tmp.bdt.upgs[6]
-    return power;
+function negaCosmicOrbPower(power) {
+    if (power>=4) power = (power-3)*1.5+2.5
+
+    let mult = 1
+    if (hasBDUpg(6)) mult -= tmp.bdt.upgs[6]
+    return mult * power;
 }
 
-function posCosmicOrbPower() {
-    let power = 1;
-    if (hasBDUpg(8)) power += tmp.bdt.upgs[8]
-    return power;
+function posCosmicOrbPower(power) {
+    let mult = 1
+    if (hasBDUpg(8)) mult += tmp.bdt.upgs[8]
+    return mult * power;
 }

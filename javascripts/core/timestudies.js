@@ -514,7 +514,7 @@ function respecTimeStudies(force, presetLoad) {
 			if (player.masterystudies) if (player.timestudy.studies.length>1) player.quantum.wasted = false
 			player.timestudy.studies = bru7activated ? [tsToKeep] : []
 			var ECCosts = [null, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1]
-			player.timestudy.theorem = nA(player.timestudy.theorem, ECCosts[player.eternityChallUnlocked])
+			player.timestudy.theorem = nA(player.timestudy.theorem, ECCosts[player.eternityChallUnlocked]||0)
 			
 		}
 	}
@@ -765,7 +765,7 @@ function load_preset(id, reset) {
 		if (player.masterystudies !== undefined) if (player.quantum.bigRip.active) id7unlocked = true
 		if (player.infinityPoints.lt(player.eternityChallGoal) || !id7unlocked) return
 		player.respec = true
-		player.respecMastery = true
+		player.respecMastery = player.dilation.studies.includes(6)
 		eternity(false, false, true)
 	}
 	importStudyTree(presets[id].preset)

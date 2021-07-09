@@ -323,7 +323,7 @@ function getTreeUpgradeEffect(upg) {
 		let MA = player.meta.bestOverQuantums
 		if (player.achievements.includes("ng3p87")) MA = MA.plus(player.meta.bestOverGhostifies)
 		let eff = Math.pow(Math.log10(MA.add(1).log10() + 1) / (tmp.ngp3c?4.5:5) + 1, Math.sqrt(lvl))
-		if (player.achievements.includes("ng3pc16") && tmp.ngp3c) eff = Decimal.pow(eff, Math.max(getMaximumUnstableQuarks().decays, 1))
+		if (hasAch("ng3pc16")) eff = Decimal.pow(eff, Math.max(getMaximumUnstableQuarks().decays, 1))
 		return eff;
 	}
 	if (upg == 6) {

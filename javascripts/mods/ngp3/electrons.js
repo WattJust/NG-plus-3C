@@ -82,6 +82,7 @@ function getElectronUpgCost(u) {
 	var amount = tmp.qu.electrons.rebuyables[u-1]
 	if (player.aarexModifications.ngp3c && u==3) amount *= 2
 	if (hasBosonicUpg(33)) amount -= tmp.blu[33]
+	if (hasAch("ng3pc17")) amount -= 3
 	var base = amount * Math.max(amount - 1, 1) + 1
 	var exp = getElectronUpgCostScalingExp(u)
 	if (exp != 1) {

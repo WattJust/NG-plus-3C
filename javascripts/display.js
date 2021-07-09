@@ -40,6 +40,7 @@ function intergalacticDisplay(){
 			getFullExpansion(Math.floor(tmp.igg - player.galaxies)) : "") + "): " + 
 			shorten(dilates(tmp.ig).pow(player.dilation.active ? nanopart : 1)) + 
 			'x to Eighth Dimensions'
+			+ ((tmp.ngp3c && hasBosonicUpg(11)) ? " & First Infinity Dimensions" : "")
 	} else document.getElementById("intergalacticLabel").parentElement.style.display = "none"
 }
 

@@ -95,6 +95,7 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 
 function updateCondensedUnlocks() {
 	updateBreakDilationUnlocks();
+	updateAnnihilationUnlocks();
 }
 
 function doCondensedUnlocks() {

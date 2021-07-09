@@ -1273,6 +1273,7 @@
 								<td><button id="breakDilation7" class="breakdilationbtn" onclick="buyBDUpg(7)">Outside of Big Rip, Cosmic Orbs make Dark Matter & Ghostly Galaxy scalings start later.<br>Currently: <span id="breakDilationEff7"></span> galaxies later<br>Cost: <span id="breakDilationCost7"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation8" class="breakdilationbtn" onclick="buyBDUpg(8)">The first two Positive Cosmic Orb effects are stronger based on your Bosonic Ticks.<br>Currently: <span id="breakDilationEff8"></span>% stronger<br>Cost: <span id="breakDilationCost8"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation9" class="breakdilationbtn" onclick="buyBDUpg(9)">Cosmic Orbs increase Dimension Boosts between intervals of Dimension Supersonic scaling.<br>Currently: +<span id="breakDilationEff9"></span>%<br>Cost: <span id="breakDilationCost9"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation10" class="breakdilationbtn" onclick="buyBDUpg(10)" style="font-size: 9.5px;">Cherenkov Radiation boosts Bosonic Watt gain & the GhP multi base, and Bosonic Enchant selection is kept over Higgs resets.<br>Currently: <span id="breakDilationEff10"></span>x<br>Cost: <span id="breakDilationCost10"></span> Cherenkov Radiation</button></td>
 							</tr>
 						</table>
 						<div id="cosmicOrbDiv" style="display: none;">
@@ -2916,7 +2917,7 @@
 								<div id="Where did the Gravitons go?" class="achievement achievementlocked" style="background-image: url(images/188.png)" ach-tooltip="Reach 100 Higgs Bosons. Reward: Achievement Power boosts Bosonic Watt gain at a reduced rate, Light Empowerments reset nothing, Tree Upgrade 5's effect is raised to the power of your best Radioactive Decays, and Tree Upgrade 7 is unaffected by Obscurements."></div>
 							</td>
 							<td>
-								<div id="ng3pc17" class="achievement achievementlocked"></div>
+								<div id="The Theory of Infinite Onion Layers" class="achievement achievementlocked" style="background-image: url(images/189.png)"></div>
 							</td>
 							<td>
 								<div id="This Should Be Literally Impossible" class="achievement achievementlocked" style="background-image: url(images/190.png)"></div>
@@ -5323,7 +5324,7 @@
 					<tr>
 						<td><button id="neutrinoUnlock" class="gluonupgrade unavailablebtn" onclick="unlockNeutrinoBoost()">Unlock a new boost based on your neutrinos.<br>Cost: <span id="neutrinoUnlockCost">2</span> GhP</button></td>
 						<td><button id="neutrinoMultUpg" class="gluonupgrade unavailablebtn" onclick="buyNeutrinoMult()">You gain 5x more neutrinos.<br>Currently: <span id="neutrinoMult">1</span>x<br>Cost: <span id="neutrinoMultUpgCost">3</span> GhP</button><br><button class="storebtn" onclick='maxNeutrinoMult()' style='width:190px'>Max Neutrino mult</button></td>
-						<td><button id="ghpMultUpg" class="gluonupgrade unavailablebtn" onclick="buyGHPMult()">You gain 2x more GhP.<br>Currently: <span id="ghpMult"></span>x<br>Cost: <span id="ghpMultUpgCost"></span> of any neutrinos</button><br><button class="storebtn" onclick='maxGHPMult()' style='width:190px'>Max GhP mult</button></td>
+						<td><button id="ghpMultUpg" class="gluonupgrade unavailablebtn" onclick="buyGHPMult()">You gain <span id="ghpMultInc"></span>x more GhP.<br>Currently: <span id="ghpMult"></span>x<br>Cost: <span id="ghpMultUpgCost"></span> of any neutrinos</button><br><button class="storebtn" onclick='maxGHPMult()' style='width:190px'>Max GhP mult</button></td>
 					</tr>
 					<tr>
 						<td><button class="gluonupgrade unavailablebtn" id="neutrinoUpg1" onclick="buyNeutrinoUpg(1)" style="font-size: 10px">Meta-Dimension Boosts cost cheaper.<br>Currently: -<span id="neutrinoUpg1Pow"></span><br>Cost: <span id="neutrinoUpg1Cost"></span> of any neutrinos</button></td>
@@ -5779,7 +5780,7 @@
 				</div>
 			</div>
 			<div id="annihilationtab" class="ghostifytab">
-				<div>Reach ??? Antimatter to unlock Annihilation. <b>(NOT IMPLEMENTED)</b></div>
+				<div id="annihilationUnl"></div>
 			</div>
 			<div id="footercontainer">
 				<table id="footer">
@@ -6030,6 +6031,7 @@
 <script type="text/javascript" src="javascripts/mods/ngp3/tod.js"></script>
 <script type="text/javascript" src="javascripts/mods/condensed/condensed.js"></script>
 <script type="text/javascript" src="javascripts/mods/condensed/break_dilation.js"></script>
+<script type="text/javascript" src="javascripts/mods/condensed/annihilation.js"></script>
 <script type="text/javascript" src="javascripts/mods/ers.js"></script>
 <script type="text/javascript" src="javascripts/mods/meta.js"></script>
 <script type="text/javascript" src="javascripts/mods/quantum.js"></script>

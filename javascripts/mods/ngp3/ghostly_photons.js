@@ -236,7 +236,7 @@ function lightEmpowerment() {
 	if (!player.aarexModifications.leNoConf && !confirm("You will become a ghost, but Ghostly Photons will be reset. You will gain 1 Light Empowerment from this. Are you sure you want to proceed?")) return
 	if (!player.ghostify.ghostlyPhotons.enpowerments) document.getElementById("leConfirmBtn").style.display = "inline-block"
 	player.ghostify.ghostlyPhotons.enpowerments++
-	if (player.achievements.includes("ng3pc16") && tmp.ngp3c) return;
+	if (hasAch("ng3pc16")) return;
 	ghostify(false, true)
 	if (player.achievements.includes("ng3p91")) return
 	player.ghostify.ghostlyPhotons.amount = new Decimal(0)
@@ -278,6 +278,10 @@ function getLightEmpowermentReq(le) {
 		}
 	}
 	if (player.achievements.includes("ng3p95")) x--
+	if (hasBosonicUpg(64) && tmp.ngp3c) {
+		x -= tmp.blu[64].sub
+		x /= tmp.blu[64].div
+	}
 	tmp.leReqScale = scale
 	return Math.floor(x)
 }

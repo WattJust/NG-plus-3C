@@ -52,7 +52,7 @@ function calcNGM2atleastTDPreVPostDilMultiplier(tier){
 	if (player.currentEternityChall == "eterc9") ret2 = ret2.times(tmp.infPow)
 	if (ECTimesCompleted("eterc1") !== 0) ret2 = ret2.times(getECReward(1))
 	if (player.eternityUpgrades.includes(4)) ret2 = ret2.times(player.achPow)
-	if (player.eternityUpgrades.includes(5)) ret2 = ret2.times(Math.max(new Decimal(player.timestudy.theorem), 1))
+	if (player.eternityUpgrades.includes(5)) ret2 = ret2.times(new Decimal(player.timestudy.theorem).max(1))
 	if (player.eternityUpgrades.includes(6)) ret2 = ret2.times((player.totalTimePlayed + ngPlus) / 10 / 60 / 60 / 24)
 	if (tmp.ngex) ret2 = ret2.div(10 / tier)
 	return ret2

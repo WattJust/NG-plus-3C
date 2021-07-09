@@ -144,12 +144,14 @@ var nanoRewards = {
 		supersonic_start: function(x) {
 			let y = Math.max(x - 3.5, 0);
 			if (hasBosonicUpg(25) && tmp.ngp3c) y *= tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) y *= tmp.blu[65];
 			if (player.achievements.includes("ng3p96") && tmp.ngp3c) y *= 1.5
 			if (tmp.ngp3c) y = Math.sqrt(y) / 3
 			return Math.floor(y * 75e5)
 		},
 		neutrinos: function(x) {
 			if (hasBosonicUpg(25) && tmp.ngp3c) x *= tmp.blu[25];
+			if (hasBosonicUpg(65) && tmp.ngp3c) x *= tmp.blu[65];
 			return Decimal.pow(10, x * 10)
 		},
 		light_threshold_speed: function(x) {
