@@ -526,8 +526,8 @@ function setR24Tooltip() {
 	bInf.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Bosonic Antimatter. Reward: Ghostly Galaxies scaling is 50% weaker, and you can have 1 more Bosonic Enchant active at a time.")
 	tornado.setAttribute('ach-tooltip', "Reach "+shortenCosts(Decimal.pow(10, 1e7))+" EP while Big Ripped with at least two active QC Modifiers. Reward: You can gain Eternal Matter outside of Big Rip at a reduced rate.")
 	quit.setAttribute('ach-tooltip', "Reach "+shorten(1e96)+" Bosonic Antimatter without any W Bosons or Z Bosons. Reward: W Bosons' boost to Oscillate Progression gain is squared.")
-	onion.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Time Theorems. Reward: Electron Upgrades are 3 levels cheaper, and Time Theorems multiply Neutrino production.")
-	litImp.setAttribute('ach-tooltip', "Reach "+shorten(Decimal.pow(10, 5e11))+" Antimatter in QC6+8 without buying any Normal Tickspeed Upgrades or Normal, Infinity, Time, or Meta Dimensions or Condensers.")
+	onion.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Time Theorems. Reward: Electron Upgrades are 3 levels cheaper, Time Theorems multiply Neutrino production, and gaining Higgs Bosons resets nothing.")
+	litImp.setAttribute('ach-tooltip', "Reach "+shorten(Decimal.pow(10, 5e11))+" Antimatter in QC6+8 without buying any Normal Tickspeed Upgrades or Normal, Infinity, Time, or Meta Dimensions or Condensers. Reward: The third Nanofield reward also makes Light thresholds increase slower.")
 }
 
 function setPreNGP3AchievementTooltip() {

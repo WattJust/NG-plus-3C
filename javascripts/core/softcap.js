@@ -882,6 +882,11 @@ var softcap_data = {
 			start: new Decimal(5e92),
 			pow: .4,
 		},
+		2: {
+			func: "expPow",
+			start: new Decimal(1e102),
+			pow: .7,
+		},
 	},
 	ngp3cQK: {
 		1: {
@@ -899,8 +904,8 @@ var softcap_data = {
 	ngp3cFBPE: {
 		1: {
 			func: "expPow",
-			start: new Decimal("1e125000"),
-			pow: 0.4,
+			start: new Decimal("1e200000"),
+			pow: 0.75,
 		},
 	},
 	ngp3cGHP: {

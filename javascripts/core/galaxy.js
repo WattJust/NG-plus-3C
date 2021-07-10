@@ -226,5 +226,6 @@ function getGhostlyGalaxyDiv(over) {
 	if (over >= 3) div /= Math.pow(over, 6) / 729
 	if (hasAch("ng3pc12")) div *= 2;
 	if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2];
+	if (hasBDUpg(11)) div *= tmp.bdt.upgs[11]
 	return div;
 }

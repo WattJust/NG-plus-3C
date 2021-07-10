@@ -176,7 +176,7 @@ function getDilationTotalTTReq() {
 function buyDilationStudy(name, cost) {
 	if (player.timestudy.theorem >= cost && !player.dilation.studies.includes(name) && (player.dilation.studies.includes(name - 1) || name < 2)) {
 		if (name < 2) {
-			if (ECTimesCompleted("eterc11") + ECTimesCompleted("eterc12") < 10 || getTotalTT(player) < getDilationTotalTTReq()) return
+			if (ECTimesCompleted("eterc11") + ECTimesCompleted("eterc12") < 10 || nL(getTotalTT(player), getDilationTotalTTReq())) return
 			showEternityTab("dilation")
 			if (player.eternityUpgrades.length < 1) giveAchievement("Work harder.")
 			if (player.blackhole != undefined) updateEternityUpgrades()
@@ -365,7 +365,7 @@ function updateTimeStudyButtons(changed, forceupdate = false) {
 	if (!forceupdate && (changed ? player.dilation.upgrades.includes(10) : performedTS && !player.dilation.upgrades.includes(10))) return
 	performedTS = true
 	if (player.boughtDims) {
-		var locked = getTotalTT(player) < 60
+		var locked = nL(getTotalTT(player), 60)
 		document.getElementById("nextstudy").textContent = locked ? "Next time study set unlock at 60 total Time Theorems." : ""
 		document.getElementById("tsrow3").style.display = locked ? "none" : ""
 		for (var id = 1; id < (locked ? 5 : 7); id++) {
@@ -571,12 +571,12 @@ function getTotalTT(tree) {
 	tree = tree.timestudy
 	var result = tree.theorem
 	if (tree.boughtDims) {
-		for (var id = 1; id < 7; id++) result += tree.ers_studies[id] * (tree.ers_studies[id] + 1) / 2
+		for (var id = 1; id < 7; id++) result = nA(result, tree.ers_studies[id] * (tree.ers_studies[id] + 1) / 2)
 		return result
 	} else {
 		var ecCosts = [null, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1]
-		for (var id = 0; id < all.length; id++) if (tree.studies.includes(all[id])) result += studyCosts[id]
-		return result + ecCosts[player.eternityChallUnlocked]
+		for (var id = 0; id < all.length; id++) if (tree.studies.includes(all[id])) result = nA(result, studyCosts[id])
+		return nA(result, ecCosts[player.eternityChallUnlocked])
 	}
 }
 

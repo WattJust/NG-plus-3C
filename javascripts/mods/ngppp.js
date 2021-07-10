@@ -125,14 +125,24 @@ function updateBankedEter(updateHtml = true) {
 
 //v1.99871
 function fillAll() {
+	let notifyHere = false;
 	var oldLength = player.timestudy.studies.length
+	var oldLength2 = player.masterystudies.length
 	for (var t = 0; t < all.length; t++) buyTimeStudy(all[t], 0, true)
+	for (var t = 0; t < Object.keys(masteryStudies.timeStudyDescs).length; t++) buyMasteryStudy("t", Number(Object.keys(masteryStudies.timeStudyDescs)[t]), true);
 	if (player.timestudy.studies.length > oldLength) {
 		updateTheoremButtons()
 		updateTimeStudyButtons()
 		drawStudyTree()
-		if (player.timestudy.studies.length > 56) $.notify("All studies in time study tab are now filled.")
+		notifyHere = true;
 	}
+	if (player.masterystudies.length > oldLength2) {
+		updateMasteryStudyCosts()
+		updateMasteryStudyButtons()
+		drawMasteryTree()
+		notifyHere = true;
+	}
+	if (notifyHere) $.notify("All time/mastery studies are now filled.")
 }
 
 //v1.99872
@@ -175,7 +185,7 @@ function maxAllDilUpgs() {
 //v1.99874
 function maybeShowFillAll() {
 	var display = "none"
-	if (player.masterystudies) if (player.masterystudies.includes("t302")) display = "block"
+	if (player.masterystudies) if (player.masterystudies.includes("t302")||(tmp.ngp3c&&ghostified)) display = "block"
 	document.getElementById("fillAll").style.display = display
 	document.getElementById("fillAll2").style.display = display
 }
@@ -720,9 +730,9 @@ function setupAutomaticGhostsData() {
 	return data
 }
 
-var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40,36]
+var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40,36,37]
 var powerConsumed
-var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,4,3,6,3,2.5]
+var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,4,3,4,3,6,3,2.5,1]
 function getAutoGhostReq(x) {
 	if (tmp.ngp3c) {
 		if (x==13||x==14) return autoGhostRequirements[x]+(x==14?1:3);

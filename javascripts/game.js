@@ -284,7 +284,9 @@ function setupToDHTMLandData(){
 function setupNanofieldHTMLandData(){
 	var nfRewards = document.getElementById("nfRewards")
 	var row = 0
+	nfRewards.insertRow(0).innerHTML = "<td></td><td id='maxNanoCondenseAll' style='display: none; text-align: center; height: 20px;' colspan='2' onclick='maxNanoCondenseAll()' class='storebtn'>Max All Condensers</td><td></td>"
 	for (var r = 1; r <= 8; r += 4) {
+		row++
 		nfRewards.insertRow(row).innerHTML = 
 			"<td id='nfRewardHeader" + r + "' class='milestoneText'></td>" +
 			"<td id='nfRewardHeader" + (r + 1) + "' class='milestoneText'></td>" +
@@ -308,7 +310,6 @@ function setupNanofieldHTMLandData(){
 			"<td><button class='nfCondlocked' id='nfCond" + (r + 1) +"' style='display: none' onclick='condenseNanoReward(" + (r + 1) + ")'></button></td>" +
 			"<td><button class='nfCondlocked' id='nfCond" + (r + 2) +"' style='display: none' onclick='condenseNanoReward(" + (r + 2) + ")'></button></td>" +
 			"<td><button class='nfCondlocked' id='nfCond" + (r + 3) +"' style='display: none' onclick='condenseNanoReward(" + (r + 3) + ")'></button></td>"
-		row++
 	}
 	document.getElementById("nfReward7").style["font-size"] = "10px"
 	document.getElementById("nfReward8").style["font-size"] = "10px"
@@ -2383,7 +2384,7 @@ function changeSaveDesc(saveId, placement) {
 			for (ec=1;ec<13;ec++) totalChallengeCompletions+=(temp.eternityChalls['eterc'+ec]?temp.eternityChalls['eterc'+ec]:0)
 			if (totalChallengeCompletions>0) {
 				msg+="Time Theorems: "+getFullExpansion(getTotalTT(temp))+", Challenge completions: "+totalChallengeCompletions
-			} else if (temp.eternities>(temp.aarexModifications.newGameMinusVersion?-20:0)) msg+="Eternity points: "+shortenDimensions(new Decimal(temp.eternityPoints))+", Eternities: "+temp.eternities.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+", Time Theorems: "+getTotalTT(temp)
+			} else if (temp.eternities>(temp.aarexModifications.newGameMinusVersion?-20:0)) msg+="Eternity points: "+shortenDimensions(new Decimal(temp.eternityPoints))+", Eternities: "+temp.eternities.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+", Time Theorems: "+getFullExpansion(getTotalTT(temp))
 			else if (temp.achievements.includes("r51")) {
 				msg+="Antimatter: "+shortenMoney(new Decimal(temp.money))+", Infinity points: "+shortenDimensions(new Decimal(temp.infinityPoints))
 				if (temp.postChallUnlocked>0&&!temp.replicanti.unlocked) {
@@ -4974,6 +4975,7 @@ function doPerSecondNGP3Stuff(){
 
 	if (tmp.ngp3c) {
 		if (isAutoGhostActive(22)) for (let i=1;i<=8;i++) maxCondenseLight(i);
+		if (isAutoGhostActive(23)) maxNanoCondenseAll();
 	}
 }
 
@@ -5368,10 +5370,12 @@ function nanofieldUpdating(diff){
 function doAPGW() {
 	if (!tmp.qu.nanofield.apgWoke && (tmp.qu.nanofield.rewards+(tmp.nf?tmp.nf.extra:0)) >= tmp.apgw) {
 		tmp.qu.nanofield.apgWoke = tmp.apgw
-		$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
-		showTab("quantumtab")
-		showQuantumTab("nanofield")
-		showNFTab("antipreon")
+		if (!(tmp.ngp3c && (tmp.hb.higgs>=2||tmp.bd.unl))) {
+			$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
+			showTab("quantumtab")
+			showQuantumTab("nanofield")
+			showNFTab("antipreon")
+		}
 	}
 }
 

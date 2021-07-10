@@ -134,7 +134,7 @@
 					<td><button class="storebtn" onclick="importStudyTree()" style="width:150px; height: 40px; font-size: 10px; margin: auto">Import tree</button><td>
 				</tr>
 				<button class="storebtn" onclick="respecMasteryToggle()" id="respecMastery" style="width:150px; height: 40px; font-size: 10px; margin: auto">Respec mastery studies on next Eternity</button>
-				<button class="storebtn" onclick="fillAll()" id="fillAll" style="width:150px; height: 40px; font-size: 10px; margin: auto">Buy all time studies</button>
+				<button class="storebtn" onclick="fillAll()" id="fillAll" style="width:150px; height: 40px; font-size: 10px; margin: auto">Buy all time/mastery studies</button>
 				<table class="table" id="studytable">
 					<tr>
 						<td><button class="timestudylocked" id="13" onclick="buyTimeStudy(13)">Infinity Condensers are stronger based on your Normal Galaxies<span id="13eff">Currently: 1x</span>Cost: 5 Time Theorems</button></td>
@@ -448,7 +448,7 @@
 					<td><button class="storebtn" onclick="importStudyTree()" style="width:150px; height: 40px; font-size: 10px; margin: auto">Import tree</button><td>
 				</tr>
 				<button class="storebtn" onclick="respecMasteryToggle()" id="respecMastery2" style="width:150px; height: 40px; font-size: 10px; margin: auto">Respec mastery studies on next Eternity</button>
-				<button class="storebtn" onclick="fillAll()" id="fillAll2" style="width:150px; height: 40px; font-size: 10px; margin: auto">Buy all time studies</button>
+				<button class="storebtn" onclick="fillAll()" id="fillAll2" style="width:150px; height: 40px; font-size: 10px; margin: auto">Buy all time/mastery studies</button>
 				<table class="table" id="studytable">
 					<tr>
 						<td><button class="dilationupg" id="back" onclick="exitMasteryPortal()">Return to time studies.</button></td>
@@ -1259,21 +1259,23 @@
 					<button id="breakDilationBtn" class="breakdilationbtn" onclick="breakDilation()" ach-tooltip="When Dilation is broken, you can generate Tachyon Particles without Dilating Time. However, this causes Cherenkov Radiation to accumulate, which divides Dilated Time gain. Fixing Dilation resets Cherenkov Radiation, but also resets Tachyon Particles and forces a Ghostify reset.">BREAK DILATION</button><br><br>
 					<div id="dilationBroken" style="display: none;">
 						You have <span id="cherenkovRads" style="font-size: 35px;"></span> Cherenkov Radiation <span style="font-size: 20px;">(+<span id="cherenkovRadGain"></span>/s)</span><br>
-						which divides your Dilated Time gain by <span id="cherenkovRadEff" style="font-size: 35px;"></span> (unaffected by obscurements)<br><br>
+						which <span id="cherenkovRadEffDesc"></span> your Dilated Time gain by <span id="cherenkovRadEff" style="font-size: 35px;"></span> (unaffected by obscurements)<br><br>
 						<table>
 							<tr>
 								<td><button id="breakDilation1" class="breakdilationbtn" onclick="buyBDUpg(1)">Cherenkov Radiation boosts the TP gain exponent.<br>Currently: +<span id="breakDilationEff1"></span><br>Cost: <span id="breakDilationCost1"></span> Cherenkov Radiation</button></td>
-								<td><button id="breakDilation2" class="breakdilationbtn" onclick="buyBDUpg(2)">Higgs Bosons multiply Cherenkov Radiation gain & divide its effect.<br>Currently: <span id="breakDilationEff2"></span><br>Cost: <span id="breakDilationCost2"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation2" class="breakdilationbtn" onclick="buyBDUpg(2)">Higgs Bosons multiply Cherenkov Radiation gain & <span id="bd2effflip"></span>its effect.<br>Currently: <span id="breakDilationEff2"></span><br>Cost: <span id="breakDilationCost2"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation3" class="breakdilationbtn" onclick="buyBDUpg(3)">Bosonic AM & Cherenkov Radiation boost each other's production.<br>Currently: <span id="breakDilationEff3"></span><br>Cost: <span id="breakDilationCost3"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation4" class="breakdilationbtn" onclick="buyBDUpg(4)" style="font-size: 9.5px;">Cherenkov Radiation & Radioactive Decays reduce each other's negative effects.<br>Currently: <span id="breakDilationEff4"></span><br>Cost: <span id="breakDilationCost4"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation5" class="breakdilationbtn" onclick="buyBDUpg(5)">Cherenkov Radiation weakens OS_TP_1.<br>Currently: <span id="breakDilationEff5"></span>% weaker<br>Cost: <span id="breakDilationCost5"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation11" class="breakdilationbtn" onclick="buyBDUpg(11)">Ghostly Galaxy & Remote Nanofield reward scalings are slower based on your GhP.<br>Currently: <span id="breakDilationEff11"></span>x slower<br>Cost: <span id="breakDilationCost11"></span> Cherenkov Radiation</button></td>
 							</tr>
 							<tr>
 								<td><button id="breakDilation6" class="breakdilationbtn" onclick="buyBDUpg(6)">Negative Cosmic Orb effects are weaker based on your Cherenkov Radiation.<br>Currently: <span id="breakDilationEff6"></span>% weaker<br>Cost: <span id="breakDilationCost6"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation7" class="breakdilationbtn" onclick="buyBDUpg(7)">Outside of Big Rip, Cosmic Orbs make Dark Matter & Ghostly Galaxy scalings start later.<br>Currently: <span id="breakDilationEff7"></span> galaxies later<br>Cost: <span id="breakDilationCost7"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation8" class="breakdilationbtn" onclick="buyBDUpg(8)">The first two Positive Cosmic Orb effects are stronger based on your Bosonic Ticks.<br>Currently: <span id="breakDilationEff8"></span>% stronger<br>Cost: <span id="breakDilationCost8"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation9" class="breakdilationbtn" onclick="buyBDUpg(9)">Cosmic Orbs increase Dimension Boosts between intervals of Dimension Supersonic scaling.<br>Currently: +<span id="breakDilationEff9"></span>%<br>Cost: <span id="breakDilationCost9"></span> Cherenkov Radiation</button></td>
-								<td><button id="breakDilation10" class="breakdilationbtn" onclick="buyBDUpg(10)" style="font-size: 9.5px;">Cherenkov Radiation boosts Bosonic Watt gain & the GhP multi base, and Bosonic Enchant selection is kept over Higgs resets.<br>Currently: <span id="breakDilationEff10"></span>x<br>Cost: <span id="breakDilationCost10"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation10" class="breakdilationbtn" onclick="buyBDUpg(10)">Cherenkov Radiation boosts Bosonic Watt gain & the GhP multi base.<br>Currently: <span id="breakDilationEff10"></span>x<br>Cost: <span id="breakDilationCost10"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation12" class="breakdilationbtn" onclick="buyBDUpg(12)" style="font-size: 9.5px;">Cherenkov Radiation's effect can go below 1, and the first Negative Cosmic Orb effect increases slower based on # of Bosonic Upgrades & BD Upgrades bought.<br>Currently: <span id="breakDilationEff12"></span>x slower<br>Cost: <span id="breakDilationCost12"></span> Cherenkov Radiation</button></td>
 							</tr>
 						</table>
 						<div id="cosmicOrbDiv" style="display: none;">
@@ -1291,7 +1293,7 @@
 										<td class="red2">
 											<h1 class="red">-</h1><br><br>
 											scaling Break Dilation Upgrade costs by <span id="cosmicOrbMinus1" style="font-size: 35px;"></span>,<br>
-											raising Cherenkov Radiation's base effect <span id="cosmicOrbMinus2" style="font-size: 35px;"></span>,<br>
+											<span id="cosmicOrbMinus2Desc"></span> Cherenkov Radiation's base effect <span id="cosmicOrbMinus2" style="font-size: 35px;"></span>,<br>
 											and dividing Cherenkov Radiation gain by <span id="cosmicOrbMinus3" style="font-size: 35px;"></span>
 										</td>
 									</tr>
@@ -2917,7 +2919,7 @@
 								<div id="Where did the Gravitons go?" class="achievement achievementlocked" style="background-image: url(images/188.png)" ach-tooltip="Reach 100 Higgs Bosons. Reward: Achievement Power boosts Bosonic Watt gain at a reduced rate, Light Empowerments reset nothing, Tree Upgrade 5's effect is raised to the power of your best Radioactive Decays, and Tree Upgrade 7 is unaffected by Obscurements."></div>
 							</td>
 							<td>
-								<div id="The Theory of Infinite Onion Layers" class="achievement achievementlocked" style="background-image: url(images/189.png)"></div>
+								<div id="The Theory of Infinite Onion Layers" class="achievement achievementlocked" style="background-image: url(images/189.gif)"></div>
 							</td>
 							<td>
 								<div id="This Should Be Literally Impossible" class="achievement achievementlocked" style="background-image: url(images/190.png)"></div>
@@ -3821,6 +3823,7 @@
 				<div id='electronsAmount2'></div>
 				<div id="modifiersdiv">
 					<b style="font-size: 35px">Modifiers</b><br>
+					<div id="modifierWarning"></div><br>
 					<div id="modifiers"></div>
 				</div>
 				<table class="table" style="margin: 0 auto">
@@ -5472,7 +5475,7 @@
 					<tr>
 						<td id="autoGhost16"><div class="autoBuyerDiv" style="display:block">
 							<b>Auto-Neutrino Multi Ghost</b><br>
-							Power usage: 6<br>
+							Power usage: 4<br>
 							Is active: <input id="isAutoGhostOn16" type="checkbox" onchange="toggleAutoGhost(16)"></input>
 						</div></td>
 						<td id="autoGhost17"><div class="autoBuyerDiv" style="display:block">
@@ -5509,6 +5512,11 @@
 							<b>Auto-Light Condenser Ghost</b><br>
 							Power usage: 2.5<br>
 							Is active: <input id="isAutoGhostOn22" type="checkbox" onchange="toggleAutoGhost(22)"></input>
+						</div></td>
+						<td id="autoGhost23"><div class="autoBuyerDiv" style="display:block">
+							<b>Auto-Nano Condenser Ghost</b><br>
+							Power usage: 1<br>
+							Is active: <input id="isAutoGhostOn23" type="checkbox" onchange="toggleAutoGhost(23)"></input>
 						</div></td>
 					</tr>
 				</table>

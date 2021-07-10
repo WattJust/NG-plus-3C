@@ -32,7 +32,9 @@ function breakDilationDisplay() {
         if (tmp.bd.active) {
             document.getElementById("cherenkovRads").textContent = shorten(tmp.bd.rads);
             document.getElementById("cherenkovRadGain").textContent = shorten(tmp.bdt.radGain);
-            document.getElementById("cherenkovRadEff").textContent = shorten(tmp.bdt.radEff);
+            document.getElementById("cherenkovRadEffDesc").textContent = tmp.bdt.radEffFlipped ? "multiplies" : "divides"
+            document.getElementById("cherenkovRadEff").textContent = shorten(tmp.bdt.radEffFlipped?Decimal.div(1, tmp.bdt.radEff):tmp.bdt.radEff);
+            document.getElementById("bd2effflip").textContent = tmp.bdt.radEffFlipped ? "" : "divide "
             for (let i=1;i<=BDUpgs.amt;i++) updateBDUpg(i);
             
             let cpTabShown = (tmp.bd.cp>0||tmp.bd.upgrades.length>=(BDUpgs.defaultAmt+tmp.co.plus3))
@@ -45,7 +47,8 @@ function breakDilationDisplay() {
                     document.getElementById("cosmicOrbPlus2").textContent = "^"+getFullExpansion(Math.round(tmp.co.plus2*100)/100)
                     document.getElementById("cosmicOrbPlus3").textContent = getFullExpansion(tmp.co.plus3)
                     document.getElementById("cosmicOrbMinus1").textContent = getFullExpansion(Math.round((tmp.co.minus1-1)*1e4)/100)+"%"
-                    document.getElementById("cosmicOrbMinus2").textContent = "^"+getFullExpansion(Math.round(tmp.co.minus2*100)/100)
+                    document.getElementById("cosmicOrbMinus2Desc").textContent = tmp.bdt.radEffFlipped ? "bringing" : "raising"
+                    document.getElementById("cosmicOrbMinus2").textContent = (tmp.bdt.radEffFlipped?"to the ":"^")+getFullExpansion(Math.round(tmp.co.minus2*100)/100)+(tmp.bdt.radEffFlipped?"th root":"")
                     document.getElementById("cosmicOrbMinus3").textContent = shorten(tmp.co.minus3)
                 }
             }
@@ -136,7 +139,7 @@ function getCherenkovRadEff() {
     let eff = tmp.bd.rads.plus(1).pow(exp);
 
     if (hasBDUpg(2)) eff = eff.div(Decimal.pow(tmp.bdt.upgs[2], 25))
-    return eff.plus(1);
+    return eff.max(hasBDUpg(12)?0:1);
 }
 
 function getBDUpgPower() {
@@ -149,7 +152,7 @@ function BDUpgCostAdj(x) {
 }
 
 var BDUpgs = {
-    amt: 10,
+    amt: 12,
     defaultAmt: 5,
     1: {
         cost: new Decimal(150),
@@ -162,7 +165,7 @@ var BDUpgs = {
     2: {
         cost: new Decimal(400),
         eff(p) { return Decimal.pow(1.1, Math.max(tmp.hb.higgs-30, 0)*p) },
-        disp(e) { return shorten(e)+"x gain, /"+shorten(Decimal.pow(e, 25))+" effect" },
+        disp(e) { return shorten(e)+"x gain, "+(tmp.bdt.radEffFlipped?(shorten(Decimal.pow(e, 25))+"x effect"):("/"+shorten(Decimal.pow(e, 25))+" effect")) },
     },
     3: {
         cost: new Decimal(2e4),
@@ -212,6 +215,15 @@ var BDUpgs = {
         cost: new Decimal(1e21),
         eff(p) { return Math.sqrt(tmp.bd.rads.plus(1).log10()*p/10+1) },
     },
+    11: {
+        cost: new Decimal(1e27),
+        eff(p) { return Math.pow(Math.log2(player.ghostify.ghostParticles.plus(1).log10()*p/400+1)*7+1, 1/3) },
+        disp(e) { return getFullExpansion(Math.round(e*100)/100) }
+    }, 
+    12: {
+        cost: new Decimal(225),
+        eff(p) { return Math.log10(tmp.bl.upgrades.length+tmp.bd.upgrades.length*6+1)/4+1 },
+    },
 }
 
 function updateBDUpg(x) {
@@ -242,6 +254,7 @@ function getCosmicOrbReq() {
     let req = new Decimal(tmp.bd.cp>=1?"1e10100":"1e8200")
     let cp = tmp.bd.cp
     if (cp>=1) cp = Math.pow(cp-1, 1.48)+1
+    if (cp>=5) cp = Math.pow(cp-4, 0.84)+4
     return Decimal.pow("1e400", Math.pow(cp, 1.5)).times(req)
 }
 function canGainCosmicOrb() { return (tmp.ngp3c&&tmp.bd)?(player.dilation.tachyonParticles.gte(getCosmicOrbReq()) && tmp.bd.upgrades.length>=(BDUpgs.defaultAmt+tmp.co.plus3)):false }
@@ -260,7 +273,10 @@ var cosmicOrbEffects = {
     plus1: function(cp) { return Math.sqrt(cp)/4+1 },
     plus2: function(cp) { return Math.sqrt(cp)/2+1 },
     plus3: function(cp) { return Math.min(cp, BDUpgs.amt-5) },
-    minus1: function(cp) { return cp/3+1 },
+    minus1: function(cp) { 
+        if (hasBDUpg(12)) cp /= tmp.bdt.upgs[12]
+        return cp/3+1 
+    },
     minus2: function(cp) { return cp+1 },
     minus3: function(cp) { 
         if (cp>=2) cp = cp/2+1

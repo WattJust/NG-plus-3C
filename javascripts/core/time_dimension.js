@@ -178,7 +178,7 @@ function updateTimeDimensions() {
 		for (let tier = 1; tier <= 8; ++tier) {
 			if (isTDUnlocked(tier)) {
 				document.getElementById("timeRow" + tier).style.display = "table-row"
-				document.getElementById("timeD" + tier).textContent = DISPLAY_NAMES[tier] + " Time Dimension x" + shortenMoney(getTimeDimensionPower(tier));
+				document.getElementById("timeD" + tier).textContent = DISPLAY_NAMES[tier] + " Time Dimension x" + shortenMoney(inQC("8c")?dilates(getTimeDimensionPower(tier)):getTimeDimensionPower(tier));
 				document.getElementById("timeAmount" + tier).textContent = getTimeDimensionDescription(tier);
 				document.getElementById("timeMax" + tier).textContent = (quantumed ? '':"Cost: ") + shortenDimensions(player["timeDimension" + tier].cost) + (player.aarexModifications.ngmX > 3 ? "" : " EP")
 				if (player.aarexModifications.ngp3c) updateTimeCondenser(tier);

@@ -732,6 +732,17 @@ button, div.storebtn {
     color: #888888;
 }
 
+#annihilationtabbtn button {
+    border-color: rgb(173, 0, 52);
+    animation: annihilationRev 0.4s linear 1 forwards;
+}
+
+#annihilationtabbtn button:hover {
+    color: black;
+    text-shadow: 0px 0px 2px black;
+    animation: annihilation 0.4s linear 1 forwards;
+}
+
 @keyframes rg {
 	0% {color: #e50000}
 	25% {color: #e5e500}
@@ -826,6 +837,45 @@ button, div.storebtn {
 	50% {background-color: #e50000}
 	75% {background-color: #e500e5}
 	100% {background-color: #0000e5}
+}
+
+@keyframes annihilation {
+    0% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(25, 25, 25) 100%)}
+    6% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(44, 22, 28) 97%)}
+    12% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(62, 19, 32) 93%)}
+    19% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(76, 15, 35) 90%)}
+    25% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(99, 12, 39) 87%)}
+    31% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(115, 9, 42) 84%)}
+    37% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(136, 6, 45) 81%)}
+    44% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(151, 3, 48) 78%)}
+    50% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(173, 0, 52) 75%)}
+    56% {background: radial-gradient(circle, rgb(44, 22, 28) 0%, rgb(173, 0, 52) 71%)}
+    62% {background: radial-gradient(circle, rgb(62, 6, 32) 0%, rgb(173, 0, 52) 68%)}
+    71% {background: radial-gradient(circle, rgb(76, 15, 35) 0%, rgb(173, 0, 52) 65%)}
+    75% {background: radial-gradient(circle, rgb(99, 12, 39) 0%, rgb(173, 0, 52) 62%)}
+    81% {background: radial-gradient(circle, rgb(115, 9, 42) 0%, rgb(173, 0, 52) 58%)}
+    87% {background: radial-gradient(circle, rgb(136, 12, 45) 0%, rgb(173, 0, 52) 55%)}
+    94% {background: radial-gradient(circle, rgb(151, 3, 48) 0%, rgb(173, 0, 52) 52%)}
+    100% {background: radial-gradient(circle, rgb(173, 0, 52) 0%, rgb(173, 0, 52) 50%)}
+}
+@keyframes annihilationRev {
+    100% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(25, 25, 25) 100%)}
+    93% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(44, 22, 28) 97%)}
+    87% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(62, 19, 32) 93%)}
+    81% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(76, 15, 35) 90%)}
+    75% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(99, 12, 39) 87%)}
+    71% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(115, 9, 42) 84%)}
+    64% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(136, 6, 45) 81%)}
+    56% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(151, 3, 48) 78%)}
+    50% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(173, 0, 52) 75%)}
+    44% {background: radial-gradient(circle, rgb(44, 22, 28) 0%, rgb(173, 0, 52) 71%)}
+    37% {background: radial-gradient(circle, rgb(62, 6, 32) 0%, rgb(173, 0, 52) 68%)}
+    31% {background: radial-gradient(circle, rgb(76, 15, 35) 0%, rgb(173, 0, 52) 65%)}
+    25% {background: radial-gradient(circle, rgb(99, 12, 39) 0%, rgb(173, 0, 52) 62%)}
+    19% {background: radial-gradient(circle, rgb(115, 9, 42) 0%, rgb(173, 0, 52) 58%)}
+    12% {background: radial-gradient(circle, rgb(136, 12, 45) 0%, rgb(173, 0, 52) 55%)}
+    6% {background: radial-gradient(circle, rgb(151, 3, 48) 0%, rgb(173, 0, 52) 52%)}
+    0% {background: radial-gradient(circle, rgb(173, 0, 52) 0%, rgb(173, 0, 52) 50%)}
 }
 
 [ach-tooltip] {

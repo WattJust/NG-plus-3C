@@ -230,5 +230,3 @@ dev.giveAllEmpowerments = function(){
 
 
 
-
-

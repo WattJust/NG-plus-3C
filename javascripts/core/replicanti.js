@@ -108,7 +108,7 @@ function getRGCost(offset = 0, costChange) {
 				if (player.exdilation != undefined) for (var g = Math.max(player.replicanti.gal, scaleStart-1); g < player.replicanti.gal + offset; g++) increase += Math.pow(g - scaleStart-11, 2)
 				if (player.meta != undefined || player.aarexModifications.ngp3c) {
 					var isReduced = false
-					if (player.masterystudies != undefined) if (player.masterystudies.includes("t266")) isReduced = true
+					if (player.masterystudies != undefined) if (player.masterystudies.includes("t266") && player.currentEternityChall != "eterc6") isReduced = true
 					if (isReduced) {
 						increase += (offset - Math.max(scaleStart-1 - player.replicanti.gal, 0)) * (1500 * (offset - Math.max(scaleStart-1 - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, scaleStart-1) * 2) - 1183500)
 

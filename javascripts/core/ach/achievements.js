@@ -402,6 +402,7 @@ function giveAchievement(name, noUpdate) {
         updateBosonicStuffCosts();
     }
     if (name == "Bosonic Infinity when?") updateBosonicLimits();
+    if (name == "This Should Be Literally Impossible") updateNanoEffectUsages();
     if (!noUpdate) {
 	    if (name == "A sound financial decision") localStorage.setItem(btoa("dsAM_asfd"),"")
 		else $.notify(name, "success");

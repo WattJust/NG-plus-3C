@@ -311,6 +311,8 @@ function updateReplicantiTemp() {
 	}
 
 	data.est = Decimal.div((data.freq ? data.freq.times(Math.log10(2) / Math.log10(Math.E) * 1e3) : Decimal.add(data.chance, 1).log(Math.E) * 1e3), data.interval)
+	
+	
 	data.estLog = data.est.times(Math.log10(Math.E))
 }
 
@@ -736,6 +738,11 @@ function updateNanoEffectUsages() {
 	var data2 = [hasBosonicUpg(21) ? "supersonic_start" : "hatch_speed"]
 	nanoRewards.effectsUsed[1] = data2
 
+	//Third reward
+	var data2 = ["dil_gal_gain"]
+	if (hasAch("ng3pc18")) data2.push("light_threshold_speed")
+	nanoRewards.effectsUsed[3] = data2
+
 	//Fifth reward
 	var data2 = [tmp.ngp3c ? "infdim_eff_exp" : "dil_effect_exp"]
 	if (!tmp.ngp3l && !tmp.ngp3c) data2.push("light_threshold_speed")
@@ -869,6 +876,7 @@ function updateTempBreakDilation() {
 
 	tmp.bdt.radGain = getCherenkovRadGain();
 	tmp.bdt.radEff = getCherenkovRadEff(); 
+	tmp.bdt.radEffFlipped = tmp.bdt.radEff.lt(1)
 }
 
 function updateTempCosmicOrbs() {

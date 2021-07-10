@@ -63,7 +63,9 @@ var leBoosts = {
 		},
 		//Boost #9
 		function() {
-			return Math.pow(tmp.effL[1] / 10 + 1, 1/3) - 1
+			let l1 = tmp.effL[1]
+			if (l1>=1e5) l1 = Math.pow(1e5, Math.sqrt(Math.log(l1)/Math.log(1e5)))
+			return Math.pow(l1 / 10 + 1, 1/3) - 1
 		},
 		//Boost #10 (NG+3C exclusive)
 		function() {
@@ -273,7 +275,9 @@ function getLightEmpowermentReq(le) {
 			scale = 1
 		}
 		if (le >= tmp.leReqScaleStarts[2]) {
-			x += Math.pow(1.2, le - tmp.leReqScaleStarts[2] + 1) - 1
+			// In NG+3C, it's the same as Distant but 5x stronger
+			if (tmp.ngp3c) x += Math.pow(le - tmp.leReqScaleStarts[2] + 1, 2) * 5/3
+			else x += Math.pow(1.2, le - tmp.leReqScaleStarts[2] + 1) - 1
 			scale = 2
 		}
 	}

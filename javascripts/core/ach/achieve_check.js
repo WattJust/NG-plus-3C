@@ -323,6 +323,7 @@ function ngP3CAchieveCheck() {
 	if (tmp.eds[8].perm>=1315 && !tmp.bd.active && player.dilation.tachyonParticles.max(player.dilation.bestTPOverGhostifies||0).eq(0)) giveAchievement("The True Emperor")
 	if (tmp.bl && tmp.bl.am.gte(1e96) && player.ghostify.wzb.wpb.eq(0) && player.ghostify.wzb.wnb.eq(0) && player.ghostify.wzb.zb.eq(0)) giveAchievement("Quitting the Alphabet")
 	if (tmp.hb.higgs>=100) giveAchievement("Where did the Gravitons go?")
+	if (nG(player.timestudy.theorem, Number.MAX_VALUE)) giveAchievement("The Theory of Infinite Onion Layers")
 	if (!player.achievements.includes("ng3pc18")) if (player.money.l>=5e11 && inQC(6) && inQC("8c") && litImpCheck()) giveAchievement("This Should Be Literally Impossible")
 }
 

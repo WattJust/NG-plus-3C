@@ -31,6 +31,7 @@ function updateNanoverseTab(){
 	}
 	if (!tmp.ngp3c) document.getElementById("nfReward5").textContent = (!tmp.ngp3l && tmp.nf.powers[5] > 15 ? nanoRewards.effectDisplays.light_threshold_speed(tmp.nf.effects.light_threshold_speed) : nanoRewards.effectDisplays.dil_effect_exp(tmp.nf.effects.dil_effect_exp)) + "."
 	document.getElementById("ns").textContent = getNanospeedText()
+	document.getElementById("maxNanoCondenseAll").style.display = (tmp.ngp3c && ghostified)?"":"none"
 }
 
 function updateNanofieldAntipreon(){
@@ -155,6 +156,7 @@ var nanoRewards = {
 			return Decimal.pow(10, x * 10)
 		},
 		light_threshold_speed: function(x) {
+			if (tmp.ngp3c) return Math.sqrt(x + 1) / 10 + 1
 			return Math.max(Math.sqrt(x + 1) / 4, 1)
 		}
 	},
@@ -199,7 +201,7 @@ var nanoRewards = {
 			return "you gain " + shorten(x) + "x more neutrinos"
 		},
 		light_threshold_speed: function(x) {
-			return "Light threshold increases " + x.toFixed(2) + "x slower"
+			return "Light threshold increases " + (x||1).toFixed(2) + "x slower"
 		}
 	},
 	effectsUsed: {
@@ -288,7 +290,7 @@ function getActiveNanoScalings(){
 function getNanoScalingsStart(){
 	let ret = [0, 15, 125, 150, 160, 170, 180]
 	if (tmp.ngp3c) {
-		ret = [0, 7, 45, 75, 150, 200, 400]
+		ret = [0, 7, 45, 75, 200, 300, 400]
 		if (player.masterystudies.includes("t422")) ret[1] = getMTSMult(422)
 	}
 	return ret
@@ -296,7 +298,10 @@ function getNanoScalingsStart(){
 
 function getNanoScalingsBases() {
 	let ret = [4, 2, 2, 1.1, 1.3, 1.6, 2]
-	if (tmp.ngp3c) ret = [8, 4, 4, 3.2, 5, 1.5, 4]
+	if (tmp.ngp3c) {
+		ret = [8, 4, 4, 3.2, 5, 1.5, 4]
+		if (hasBDUpg(11)) ret[3] = Math.pow(ret[3], 1/tmp.bdt.upgs[11])
+	}
 	return ret;
 }
 
@@ -325,7 +330,7 @@ function getNanoRewardReqFixed(n){
 	
 	// Distant (affected by Dark Matter scaling in NG+3C)
 	let distStart = s[1]
-	if (n >= s[4] && a[4] && tmp.ngp3c) distStart -= Math.pow((x - s[4]) * tmp.nf.scaleSpeed + 1, 2) * b[4]
+	if (n >= s[4] && a[4] && tmp.ngp3c) distStart -= Math.pow((n - s[4]) * tmp.nf.scaleSpeed + 1, 2) * b[4]
 	if (n >= distStart && a[1]) x = x.times(Decimal.pow(b[1], (n - distStart) * (n - distStart + 3) * tmp.nf.scaleSpeed))
 
 	// Further

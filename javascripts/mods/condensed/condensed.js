@@ -1039,6 +1039,11 @@ function maxNanoCondense(x) {
 	tmp.qu.nanofield.energy = tmp.qu.nanofield.energy.sub(cost);
 }
 
+function maxNanoCondenseAll() {
+	if (!tmp.ngp3c) return;
+	for (let i=1;i<=8;i++) maxNanoCondense(i);
+}
+
 const NGP3C_BR_COST = 1.65e5;
 const NGP3C_BR_GOAL = Decimal.pow(10, 504693932.039);
 const NGP3C_BE_REQ = new Decimal("1e8300");
@@ -1160,7 +1165,10 @@ var display_scalings_data = [
 				active() { return true },
 				start() { return getSupersonicStart() },
 				power(s) { return getSupersonicMultIncrease() },
-				disp(p) { return "Increases Dimension Boost cost multiplier by "+getFullExpansion(Math.round(p))+" per "+getFullExpansion(Math.round(getSupersonicInterval()))+" Dimension Boosts" },
+				disp(p,s) {
+					let int = getSupersonicInterval(); 
+					return "Increases Dimension Boost cost multiplier by "+getFullExpansion(Math.round(p))+" per "+getFullExpansion(Math.round(int))+" Dimension Boosts (Total: +"+shorten(p*((player.resets-s)/int))+"x)" 
+				},
 			},
 		],
 	},
@@ -1175,7 +1183,7 @@ var display_scalings_data = [
 				active() { return true },
 				start() { return getDistantScalingStart() },
 				power(s) { return getDistantAdd((tmp.grd.galaxies||0)-s+1)*getDistantSpeed(tmp.grd.speed||1) },
-				disp(p) { return "Increases the Galaxy requirement by "+getFullExpansion(Math.round(p))+" Eighth Dimensions" },
+				disp(p,s) { return "Increases the Galaxy requirement by "+getFullExpansion(Math.round(p))+" Eighth Dimensions" },
 			},
 			{
 				id: "further",
@@ -1183,7 +1191,7 @@ var display_scalings_data = [
 				active() { return player.galacticSacrifice != undefined },
 				start() { return getDistantScalingStart()*2.5 },
 				power(s) { return getDistantAdd((tmp.grd.galaxies||0)-s+1)*getDistantSpeed(tmp.grd.speed||1)*4 },
-				disp(p) { return "Increases the Galaxy requirement by "+getFullExpansion(Math.round(p))+" Eighth Dimensions" },
+				disp(p,s) { return "Increases the Galaxy requirement by "+getFullExpansion(Math.round(p))+" Eighth Dimensions" },
 			},
 			{
 				id: "remote",
@@ -1191,7 +1199,7 @@ var display_scalings_data = [
 				active() { return !tmp.be && !(hasNU(6) && !tmp.ngp3c) },
 				start() { return getRemoteScalingStart() },
 				power(s) { return Math.pow(1 + (GUBought("rg1") ? 1 : 2) / (player.aarexModifications.ngmX > 3 ? 10 : 1e3), ((tmp.grd.galaxies||0) - s + 1) * getRemoteSpeed(tmp.grd.speed||1)) },
-				disp(p) { return "Multiplies the Galaxy requirement by "+getFullExpansion(Math.round(p*100)/100) },
+				disp(p,s) { return "Multiplies the Galaxy requirement by "+getFullExpansion(Math.round(p*100)/100) },
 			},
 			{
 				id: "darkMatter",
@@ -1199,7 +1207,7 @@ var display_scalings_data = [
 				active() { return true },
 				start() { return tmp.grd.darkStart||(1/0) },
 				power(s) { return getDarkMatterGalaxyPush(tmp.grd.speed||1) },
-				disp(p) { return "Makes Distant Galaxy scaling start "+getFullExpansion(Math.ceil(((tmp.grd.galaxies||0) - tmp.grd.darkStart + 1) / p))+" sooner" },
+				disp(p,s) { return "Makes Distant Galaxy scaling start "+getFullExpansion(Math.ceil(((tmp.grd.galaxies||0) - tmp.grd.darkStart + 1) / p))+" sooner" },
 			},
 			{
 				id: "ghostly",
@@ -1207,7 +1215,7 @@ var display_scalings_data = [
 				active() { return true },
 				start() { return getGhostlyGalaxyScalingStart() / (tmp.be ? 55 : 1) },
 				power(s) { return tmp.grd.speed },
-				disp(p) { return "Speeds up all previous Galaxy scalings by "+shorten(p)+"x" },
+				disp(p,s) { return "Speeds up all previous Galaxy scalings by "+shorten(p)+"x" },
 			},
 			{
 				id: "cosmic",
@@ -1218,7 +1226,7 @@ var display_scalings_data = [
 					let over = (tmp.grd.galaxies||0) / (s / (tmp.be ? 55 : 1))
 					return Math.pow(over, 6) / 729 
 				},
-				disp(p) { return "Speeds up Ghostly Galaxy scaling by "+shorten(p)+"x" },
+				disp(p,s) { return "Speeds up Ghostly Galaxy scaling by "+shorten(p)+"x" },
 			},
 		],
 	},
@@ -1233,7 +1241,7 @@ var display_scalings_data = [
 				active() { return true },
 				start() { return getDistantRGStart() },
 				power(s) { return (1 - Math.max((s-2) - player.replicanti.gal, 0)) * (15e6/s * (1 - Math.max((s-2) - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, s-2) * 2) - 29935e3) },
-				disp(p) { return "Multiplies Replicated Galaxy cost by "+shorten(Decimal.pow(10, p))+" per RG" },
+				disp(p,s) { return "Multiplies Replicated Galaxy cost by "+shorten(Decimal.pow(10, p))+" per RG (Total: "+shorten(Decimal.pow(10, p*(player.replicanti.gal-s)))+"x)" },
 			},
 			{
 				id: "further",
@@ -1241,7 +1249,7 @@ var display_scalings_data = [
 				active() { return true },
 				start() { return 58200 },
 				power(s) { return (1 - Math.max((s-1) - player.replicanti.gal, 0)) * (1e6 * (1 - Math.max((s-1) - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, (s-1)) * 2) - (s-1)*1e6) },
-				disp(p) { return "Multiplies Replicated Galaxy cost by "+shorten(Decimal.pow(10, p))+" per RG" },
+				disp(p,s) { return "Multiplies Replicated Galaxy cost by "+shorten(Decimal.pow(10, p))+" per RG (Total: "+shorten(Decimal.pow(10, p*(player.replicanti.gal-s)))+"x)" },
 			},
 		],
 	},
@@ -1321,34 +1329,33 @@ var display_scalings_data = [
 		id: "nanoreward",
 		name: "Nanofield Rewards",
 		amt() { return tmp.qu.nanofield.rewards||0 },
-		decimal: true,
 		scalings: [
 			{
 				id: "distant",
 				name: "Distant Nanofield Rewards",
 				active() { return tmp.nf.scalings.active[1] },
 				start() {
-					let sub = tmp.nf.scalings.active[4]?(Math.pow(Math.max(tmp.qu.nanofield.rewards - tmp.nf.scalings.start[4], 0) * tmp.nf.scaleSpeed + 1, 2) * 5):0
+					let sub = tmp.nf.scalings.active[4]?(Math.pow(Math.max(tmp.qu.nanofield.rewards - tmp.nf.scalings.start[4], 0) * tmp.nf.scaleSpeed + 1, 2) * tmp.nf.scalings.bases[4]):0
 					return tmp.nf.scalings.start[1] - sub 
 				},
-				power(s) { return tmp.nf.scalings.bases[1] },
-				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^2" },
+				power(s) { return Math.pow(tmp.nf.scalings.bases[1], tmp.nf.scaleSpeed*(tmp.ppti||1)) },
+				disp(p,s) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^2 (Total: "+shorten(Decimal.pow(p, (tmp.qu.nanofield.rewards - s) * (tmp.qu.nanofield.rewards - s + 3)))+"x)" },
 			},
 			{
 				id: "further",
 				name: "Further Nanofield Rewards",
 				active() { return tmp.nf.scalings.active[2] },
 				start() { return tmp.nf.scalings.start[2] },
-				power(s) { return tmp.nf.scalings.bases[2] },
-				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^2" },
+				power(s) { return Math.pow(tmp.nf.scalings.bases[2], tmp.nf.scaleSpeed*(tmp.ppti||1)) },
+				disp(p,s) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^2 (Total: "+shorten(Decimal.pow(p, (tmp.qu.nanofield.rewards - s) * (tmp.qu.nanofield.rewards - s + 1)))+"x)" },
 			},
 			{
 				id: "remote",
 				name: "Remote Nanofield Rewards",
 				active() { return tmp.nf.scalings.active[3] },
 				start() { return tmp.nf.scalings.start[3] },
-				power(s) { return tmp.nf.scalings.bases[3] },
-				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^3" },
+				power(s) { return Math.pow(tmp.nf.scalings.bases[3], tmp.nf.scaleSpeed*(tmp.ppti||1)) },
+				disp(p,s) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^3 (Total: "+shorten(Decimal.pow(p, (tmp.qu.nanofield.rewards - s) * (tmp.qu.nanofield.rewards - s + 1) * (tmp.qu.nanofield.rewards - s + 2) / 3 + (tmp.qu.nanofield.rewards - s) * (tmp.qu.nanofield.rewards - s + 1) / 2 * 19))+"x)" },
 			},
 			{
 				id: "darkMatter",
@@ -1356,7 +1363,7 @@ var display_scalings_data = [
 				active() { return tmp.nf.scalings.active[4] },
 				start() { return tmp.nf.scalings.start[4] },
 				power(s) { return tmp.nf.scalings.bases[4] },
-				disp(p) { return "Makes Distant Nanofield Reward scaling start "+shorten(p)+" later per Preon Power^2" },
+				disp(p,s) { return "Makes Distant Nanofield Reward scaling start "+getFullExpansion(Math.round(p*tmp.nf.scaleSpeed*10)/10)+" earlier per Preon Power^2 (Total: "+getFullExpansion(Math.round(Math.pow((tmp.qu.nanofield.rewards - s) * tmp.nf.scaleSpeed + 1, 2) * p * 10)/10)+" earlier)" },
 			},
 			{
 				id: "ghostly",
@@ -1371,7 +1378,7 @@ var display_scalings_data = [
 				name: "Cosmic Nanofield Rewards",
 				active() { return tmp.nf.scalings.active[6] },
 				start() { return tmp.nf.scalings.start[6] },
-				power(s) { return tmp.nf.scalings.bases[6] },
+				power(s) { return Math.pow(tmp.nf.scalings.bases[6], tmp.ppti||1) },
 				disp(p) { return "Multiplies Preon Power requirement by "+shorten(p)+" per Preon Power^4" },
 			},
 		],
@@ -1394,7 +1401,7 @@ var display_scalings_data = [
 				name: "Further Light Empowerments",
 				active() { return true },
 				start() { return tmp.leReqScaleStarts[2]||50 },
-				power(s) { return Math.pow(1.2, player.ghostify.ghostlyPhotons.enpowerments - s + 1) - 1 },
+				power(s) { return Math.pow(player.ghostify.ghostlyPhotons.enpowerments - s + 1, 2) * 5/3 },
 				disp(p) { return "Increases Light Empowerment requirement by "+getFullExpansion(Math.round(p)) },
 			},
 		]
@@ -1432,7 +1439,7 @@ function updateScalingsDisplay() {
 				let shown2 = useDecimal?(Decimal.gte(amt, start) && Decimal.gt(power, 0)):(amt>=start && power>0);
 				if (shown2) {
 					document.getElementById(data.id+data2.id+"Start").textContent = useDecimal?shorten(start):getFullExpansion(Math.round(start));
-					document.getElementById(data.id+data2.id+"Effect").textContent = data2.disp(power);
+					document.getElementById(data.id+data2.id+"Effect").textContent = data2.disp(power, start);
 					shown = true;
 				}
 				document.getElementById(data.id+data2.id+"Scaling").style.display = shown2?"":"none"

@@ -485,7 +485,7 @@ function takeEnchantAction(id) {
 		let use = canUseEnchant(id)
 		if (bEn.limit == 1 && use) data.usedEnchants = [id]
 		else {
-			if (data.usedEnchants.includes(id) && (use||hasBDUpg(10))) {
+			if (data.usedEnchants.includes(id) && (use||tmp.ngp3c)) {
 				var newData = []
 				for (var u = 0; u < data.usedEnchants.length; u++) if (data.usedEnchants[u] != id) newData.push(data.usedEnchants[u])
 				data.usedEnchants = newData
@@ -553,7 +553,7 @@ function updateEnchantDescs() {
 	for (var g2 = 2; g2 <= br.limit; g2++) for (var g1 = 1; g1 < g2; g1++) {
 		var id = g1 * 10 + g2
 		if (bEn.action == "upgrade" || bEn.action == "max") document.getElementById("bEn" + id).className = "gluonupgrade "  +(canBuyEnchant(id) ? "bl" : "unavailablebtn")
-		else if (bEn.action == "use") document.getElementById("bEn" + id).className = "gluonupgrade " + ((canUseEnchant(id)||(hasBDUpg(10)&&player.ghostify.bl.usedEnchants.includes(id))) ? "storebtn" : "unavailablebtn")
+		else if (bEn.action == "use") document.getElementById("bEn" + id).className = "gluonupgrade " + ((canUseEnchant(id)||(tmp.ngp3c&&player.ghostify.bl.usedEnchants.includes(id))) ? "storebtn" : "unavailablebtn")
 		if (id == 14 && reduced14) document.getElementById("bEnDesc14").textContent = "Divide the requirement of Higgs."
 		if (id == 14) document.getElementById("bEn14").style = "font-size: "+(reduced14?"9px":"8px")
 		if (shiftDown) document.getElementById("bEnLvl" + id).textContent = "Enchant id: " + id
@@ -919,6 +919,16 @@ var bu = {
 			am: new Decimal("3e400"),
 			g2: 1e65,
 			g4: 2e59,
+		},
+		64: {
+			am: new Decimal("5e491"),
+			g3: 3e71,
+			g5: 5e45,
+		},
+		65: {
+			am: new Decimal("2e511"),
+			g1: 3e74,
+			g4: 1.2e68,
 		},
 	},
 	reqData: {},

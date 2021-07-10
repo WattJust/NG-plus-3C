@@ -67,7 +67,7 @@ function bosonicLabReset() {
 		autoExtract: new Decimal(0),
 		glyphs: [],
 		enchants: {},
-		usedEnchants: hasBDUpg(10)?player.ghostify.bl.usedEnchants:[],
+		usedEnchants: tmp.ngp3c?player.ghostify.bl.usedEnchants:[],
 		upgrades: keepAllUpgs?player.ghostify.bl.upgrades:[],
 		battery: new Decimal(0),
 		odSpeed: player.ghostify.bl.odSpeed,
@@ -109,7 +109,7 @@ function higgsReset() {
 	if (!player.ghostify.bl.am.gte(getHiggsRequirement())) return
 	if (!player.aarexModifications.higgsNoConf && !confirm("You will exchange all your Bosonic Lab stuff for Higgs Bosons. Everything that Light Empowerments resets initally will be reset. Are you ready to proceed?")) return
 	addHiggs(getHiggsGain())
-	bosonicLabReset()
+	if (!hasAch("ng3pc17")) bosonicLabReset()
 	if (oldHiggs == 0) {
 		giveAchievement("The Holy Particle")
 		updateNeutrinoBoosts()

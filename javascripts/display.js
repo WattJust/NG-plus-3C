@@ -40,7 +40,7 @@ function intergalacticDisplay(){
 			getFullExpansion(Math.floor(tmp.igg - player.galaxies)) : "") + "): " + 
 			shorten(dilates(tmp.ig).pow(player.dilation.active ? nanopart : 1)) + 
 			'x to Eighth Dimensions'
-			+ ((tmp.ngp3c && hasBosonicUpg(11)) ? " & First Infinity Dimensions" : "")
+			+ ((tmp.ngp3c && hasBosonicUpg(11)) ? (tmp.qu.bigRip.active?" & All Meta Dimensions":" & First Infinity Dimensions") : "")
 	} else document.getElementById("intergalacticLabel").parentElement.style.display = "none"
 }
 
@@ -744,11 +744,12 @@ function replicantiDisplay() {
 		var replGalCostPortion = player.infinityPoints.lt(Decimal.pow(10, 1e10)) ? "<br>+1 Cost: " + shortenCosts(getRGCost()) + " IP" : ""
 		document.getElementById("replicantimax").innerHTML = replGalName + ": " + getFullExpansion(player.replicanti.gal) + (replGalOver > 1 ? "+" + getFullExpansion(replGalOver) : "") + replGalCostPortion
 		document.getElementById("replicantireset").innerHTML = (!tmp.ngp3l && player.achievements.includes("ng3p67") ? "Get " : (player.achievements.includes("ngpp16")||(player.aarexModifications.ngp3c && player.eternityUpgrades.includes(6))) ? "Divide replicanti amount by " + shorten(Number.MAX_VALUE) + ", but get " : "Reset replicanti amount, but get ")+"1 free galaxy.<br>" + getFullExpansion(player.replicanti.galaxies) + (extraReplGalaxies ? "+" + getFullExpansion(extraReplGalaxies) : "") + " replicated galax" + (getTotalRG() == 1 ? "y" : "ies") + " created."
+		let est = tmp.rep.est
 		document.getElementById("replicantiapprox").innerHTML = tmp.ngp3 && player.dilation.upgrades.includes("ngpp1") && player.timestudy.studies.includes(192) && player.replicanti.amount.gte(Number.MAX_VALUE) && (!player.aarexModifications.nguspV || player.aarexModifications.nguepV) ? 
-			"Replicanti increases by " + (tmp.rep.est < Math.log10(2) ? "x2.00 per " + timeDisplayShort(Math.log10(2) / tmp.rep.est * 10) : (tmp.rep.est.gte(1e4) ? shorten(tmp.rep.est) + " OoMs" : "x" + shorten(Decimal.pow(10, tmp.rep.est.toNumber()))) + " per second") + ".<br>" +
+			"Replicanti increases by " + (est < Math.log10(2) ? "x2.00 per " + timeDisplayShort(Math.log10(2) / est * 10) : (est.gte(1e4) ? shorten(est) + " OoMs" : "x" + shorten(Decimal.pow(10, est.toNumber()))) + " per second") + ".<br>" +
 			"Replicate interval slows down by " + tmp.rep.speeds.inc.toFixed(3) + "x per " + getFullExpansion(Math.floor(tmp.rep.speeds.exp)) + " OoMs.<br>" +
 			"(2x slower per " + getFullExpansion(Math.floor(tmp.rep.speeds.exp * Math.log10(2) / Math.log10(tmp.rep.speeds.inc))) + " OoMs)" :
-			"Approximately "+ timeDisplay(Math.max((Math.log(Number.MAX_VALUE) - tmp.rep.ln) / tmp.rep.est.toNumber(), 0) * 10) + " Until Infinite Replicanti"
+			"Approximately "+ timeDisplay(Math.max((Math.log(Number.MAX_VALUE) - tmp.rep.ln) / est.toNumber(), 0) * 10) + " Until Infinite Replicanti"
 
 		document.getElementById("replicantichance").className = (player.infinityPoints.gte(player.replicanti.chanceCost) && isChanceAffordable()) ? "storebtn" : "unavailablebtn"
 		document.getElementById("replicantiinterval").className = (player.infinityPoints.gte(player.replicanti.intervalCost) && isIntervalAffordable()) ? "storebtn" : "unavailablebtn"

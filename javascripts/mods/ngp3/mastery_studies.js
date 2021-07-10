@@ -382,7 +382,7 @@ var masteryStudies = {
 		263: "Meta-dimension boosts boost dilated time production.",
 		264: "Gain more tachyon particles based on your normal galaxies.",
 		265: "Replicate chance upgrades can go over 100%.",
-		266: "Reduce the post-400 max replicated galaxy cost scaling.",
+		266: "Reduce the post-400 max replicated galaxy cost scaling outside of EC6.",
 		267: "Normal, Infinity, Time, Replicated, Dilated, and Meta Condensers are all 50% stronger.",
 		270: "Double Quark gain, and Quantum Worth boosts Color Power & Quark Energy gain.",
 		271: "You can buy beyond 1ms interval upgrades, but the cost begins to increase faster.",

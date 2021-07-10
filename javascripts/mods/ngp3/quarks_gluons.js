@@ -259,7 +259,7 @@ function updateColorPowers(log) {
 	}
 	if (ghostified && player.ghostify.neutrinos.boosts>4 && tmp.ngp3c) bLog *= 1+tmp.nb[5];
 	if (bLog < 0) bLog = 0
-	colorBoosts.b = Decimal.pow(10,bLog)
+	colorBoosts.b = tmp.ngp3c?softcap(Decimal.pow(10, bLog), "ngp3cFBPE"):Decimal.pow(10,bLog)
 
 	//Dimensions
 	updateColorDimPowers(log)
