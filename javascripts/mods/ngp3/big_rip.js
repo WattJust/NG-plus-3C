@@ -126,7 +126,7 @@ function tweakBigRip(id, reset) {
 function isBigRipUpgradeActive(id, bigRipped) {
 	if (player.masterystudies == undefined) return false
 	if (bigRipped === undefined ? !tmp.qu.bigRip.active : !bigRipped) return false
-	if (id == 1) if (!(tmp.qu.bigRip.upgrades.includes(17)&&!tmp.ngp3c)) for (var u = 3; u < 18; u++) if (tmp.qu.bigRip.upgrades.includes(u)) return false
+	if (id == 1) if (!(tmp.ngp3c?hasBosonicUpg(55):tmp.qu.bigRip.upgrades.includes(17))) for (var u = 3; u < 18; u++) if (tmp.qu.bigRip.upgrades.includes(u)) return false
 	if (id > 2 && id != 4 && id < 9) if (tmp.qu.bigRip.upgrades.includes(9) && (id != 8 || !hasNU(11))) return false
 	if (id == 4) if (tmp.qu.bigRip.upgrades.includes(11) && !(tmp.ngp3c && tmp.qu.bigRip.upgrades.includes(17))) return false
 	return tmp.qu.bigRip.upgrades.includes(id)
@@ -175,10 +175,10 @@ function breakEternity() {
 
 function getEMGain() {
 	let log = player.timeShards.div((tmp.ngp3c&&!ghostified)?2e10:1e9).log10() * 0.25
-	if (log > 15) log = Math.sqrt(log * 15)
+	if (log > (tmp.qu.bigRip.active?15:2)) log = Math.sqrt(log * (tmp.qu.bigRip.active?15:2))
 	
 	let log2log = Math.log10(log) / Math.log10(2)
-	let start = 10 //Starts at e1024.
+	let start = tmp.qu.bigRip.active?10:7 //Starts at e1024 in Big Rip, and at 1e128 outside of Big Rip.
 	if (log2log > start) {
 		let capped = Math.min(Math.floor(Math.log10(Math.max(log2log + 2 - start, 1)) / Math.log10(2)), 20 - start)
 		log2log = (log2log - Math.pow(2, capped) - start + 2) / Math.pow(2, capped) + capped + start - 1

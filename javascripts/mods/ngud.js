@@ -295,7 +295,8 @@ function reverseDilation () {
 			1: 0,
 			2: 0,
 			3: 0
-		}
+		},
+		break: player.dilation.break,
 	}
 	if (player.meta !== undefined) player.dilation.rebuyables[4] = 0
 	resetBlackhole();

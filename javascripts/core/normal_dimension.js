@@ -117,8 +117,10 @@ function getDimensionFinalMultiplier(tier) {
 		if (player.currentChallenge == "postcngc_2" || isIC10Trapped()) forcedMult = (((player.aarexModifications.ngp3c&&tmp.cnd)?tmp.cnd.nrm[tier]:1)||1)
 		else if (player.currentChallenge == "postcngm3_2") forcedMult = tmp.infPow.max(1e100)
 		else if (player.currentEternityChall == "eterc11") forcedMult = tmp.infPow.times(Decimal.pow(getDimensionBoostPower(), player.resets - tier + 1).max(1))
-		if (player.aarexModifications.ngp3c) return softcap(forcedMult, "ngp3cNDs")
-		else return forcedMult;
+		if (player.aarexModifications.ngp3c) {
+			if (isBigRipUpgradeActive(1) && hasBosonicUpg(55)) forcedMult = Decimal.mul(forcedMult, tmp.bru[1])
+			return softcap(forcedMult, "ngp3cNDs")
+		} else return forcedMult;
 	}
 	if ((inNC(7) || player.currentChallenge == "postcngm3_3") && !player.galacticSacrifice) {
 		if (tier == 4) mult = mult.pow(1.4)

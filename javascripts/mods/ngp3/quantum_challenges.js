@@ -73,10 +73,11 @@ function updateQuantumChallenges() {
 }
 
 function updateQCDisplaysSpecifics(){
-	document.getElementById("qc2reward").textContent = Math.round(tmp.qcRewards[2] * 100 - 100)
+	document.getElementById("qc2reward").textContent = Math.round(tmp.qcRewards[2] * 1000 - 1000)/10
 	document.getElementById("qc7desc").textContent = "Dimension and Tickspeed cost multiplier increases are " + shorten(Number.MAX_VALUE) + "x. Multiplier per ten Dimensions and meta-Antimatter boost to Dimension Boosts are disabled."
 	document.getElementById("qc7reward").textContent = (100 - tmp.qcRewards[7] * 100).toFixed(2)
-	document.getElementById("qc8desc").textContent = tmp.ngp3c ? "You are trapped in EC7 & EC13, which also apply to Meta Dimensions. Third Meta Dimensions generate Meta Antimatter, and Infinity & Time Condensers are based on their respective first dimensions. However, Meta Condensers are 115% stronger." : "Infinity and Time Dimensions are disabled, and Meta-Dimension Boosts have no effect."
+	document.getElementById("qc8desc").textContent = tmp.ngp3c ? "You are trapped in EC7 & EC13, which also apply to Meta Dimensions. Third Meta Dimensions generate Meta Antimatter, and Infinity & Time Condensers are based on their respective first dimensions. Time Dimension amounts do not contribute to their generation. However, Meta Condensers are 115% stronger." : "Infinity and Time Dimensions are disabled, and Meta-Dimension Boosts have no effect."
+	if (tmp.ngp3c) document.getElementById("qc8desc").style["font-size"] = "7.5px"
 	document.getElementById("qc8reward").textContent = tmp.ngp3c?(getFullExpansion(Math.round(tmp.qcRewards[8]*1e5)/1e3)+"% slower"):(tmp.qcRewards[8]+"x faster")
 }
 
@@ -106,6 +107,7 @@ function getQCGoal(num, bigRip) {
 	var c2 = 0
 	var mult = 1
 	if (player.achievements.includes("ng3p96") && !bigRip && !tmp.ngp3c) mult *= 0.95
+	if (tmp.ngp3c) mult *= QCModifierExp()
 	let goalData = quantumChallenges[player.aarexModifications.ngp3c?"cond_goals":"goals"]
 	if (num == undefined) {
 		var data = tmp.inQCs
@@ -204,25 +206,43 @@ function updatePCCompletions() {
 	document.getElementById("qcms_normal").style.display = shownormal ? "" : "none"
 	if (r >= 75) {
 		document.getElementById("modifiersdiv").style.display = ""
+		document.getElementById("modifierWarning").innerHTML = tmp.ngp3c?("QC Modifiers are raising QC goals ^"+shorten(QCModifierExp())+"<br>Each individual QC completion with one of the modifiers strengthens its effect by 1%."):""
 		for (var m = 0; m < qcm.modifiers.length; m++) {
 			var id = qcm.modifiers[m]
 			if (QCModifierUnl(id, r) || !qcm.reqs[id]) {
 				document.getElementById("qcm_" + id).className = qcm.on.includes(id) ? "chosenbtn" : "storebtn"
-				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', qcm.descs[id] || "???")
+				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', (qcm.descs[id] || "???")+(tmp.ngp3c?(" Also raises QC goals ^"+shorten(qcm.condExps[id] || 1)+"."):""))
 			} else {
 				document.getElementById("qcm_" + id).className = "unavailablebtn"
 				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', tmp.ngp3c?(qcm.condReqDescs[id]+" to unlock this modifier."):('Get ' + qcm.reqs[id] + ' Paired Challenges ranking to unlock this modifier. Ranking: ' + ranking.toFixed(1)))
 			}
 		}
-	} else document.getElementById("modifiersdiv").style.display = "none"
+	} else document.getElementById("modifiersdiv").style.display = (tmp.ngp3c && QCModifierUnl("ad", r))?"":"none"
 	
 	ranking = r // its global
+}
+
+function QCModifierExp() {
+	let exp = 1;
+	for (let m = 0; m < qcm.modifiers.length; m++) if (inQCModifier(qcm.modifiers[m])) exp *= qcm.condExps[qcm.modifiers[m]]
+	return exp;
+}
+
+function QCModifierEff(qc) {
+	if (!tmp.qu.qcsMods) return 1;
+	let mul = 1
+	for (let m = 0; m < qcm.modifiers.length; m++) {
+		if (!tmp.qu.qcsMods[qcm.modifiers[m]]) continue;
+		mul *= Math.pow(1.01, tmp.qu.qcsMods[qcm.modifiers[m]]["qc"+qc]||0)
+	}
+	return mul;
 }
 
 let qcRewards = {
 	effects: {
 		1: function(comps) {
 			if (comps == 0) return 1
+			comps *= QCModifierEff(1);
 			let base = Decimal.mul(getDimensionFinalMultiplier(1), getDimensionFinalMultiplier(2)).max(1).log10()
 			let exp = 0.225 + comps * .025
 			let div = player.aarexModifications.ngp3c?(25/Math.pow(3, comps)):200
@@ -230,10 +250,12 @@ let qcRewards = {
 		},
 		2: function(comps) {
 			if (comps == 0) return 1
+			comps *= QCModifierEff(2);
 			return 1.2 + comps * 0.2
 		},
 		3: function(comps) {
 			if (comps == 0) return 1
+			comps *= QCModifierEff(3);
 			let exp = Math.log10(player.quantum.gluons.gb.plus(1).log10()+1)*3+1
 			let ipow = player.infinityPower.plus(1).log10()
 			let log = Math.sqrt(ipow / 2e8) 
@@ -245,6 +267,7 @@ let qcRewards = {
 		},
 		4: function(comps) {
 			if (comps == 0) return 1
+			comps *= QCModifierEff(4);
 			let mult = player.meta[2].amount.times(player.meta[4].amount).times(player.meta[6].amount).times(player.meta[8].amount).max(1)
 			if (comps <= 1) return Decimal.pow(10 * comps, Math.sqrt(mult.log10()) / 10)
 			return mult.pow(comps / 150)
@@ -252,20 +275,24 @@ let qcRewards = {
 		},
 		5: function(comps) {
 			if (comps == 0) return 0
+			comps *= QCModifierEff(5);
 			let r = player.resets
 			return Math.log10(1 + r) * Math.pow(comps, 0.4)
 		},
 		6: function(comps) {
 			if (comps == 0) return 1
+			comps *= QCModifierEff(6);
 			let mag = player.aarexModifications.ngp3c?((Math.log10(player.quantum.gluons.rg.plus(1).log10()+1)+1)*comps):comps
 			return player.achPow.pow(mag * 2 - 1)
 		},
 		7: function(comps) {
 			if (comps == 0) return 1
+			comps *= QCModifierEff(7);
 			return Math.pow(0.975, comps)
 		},
 		8: function(comps) {
 			if (comps == 0) return tmp.ngp3c?0:1;
+			comps *= QCModifierEff(8);
 			if (tmp.ngp3c) {
 				let br = player.quantum.gluons.br
 				if (br.gte(1e10)) br = Decimal.mul(br.log10(), 1e9)
@@ -359,26 +386,36 @@ function updatePCTable() {
 }
 
 var qcm={
-	modifiers:["ad", "sm"],
+	modifiers:["ad", "sm", "sp"],
 	names:{
 		ad: "Anti-Dilation",
-		sm: "Supermastery"
+		sm: "Supermastery",
+		sp: "Spiritual"
 	},
 	reqs:{
 		ad: 100,
-		sm: 165
+		sm: 165,
+		sp: 1/0
 	},
 	condReqs: {
 		ad() { return player.ghostify.wzb.unl },
 		sm() { return player.ghostify.hb.unl },
+		sp() { return player.dilation.break.unl },
 	},
 	condReqDescs: {
 		ad: "Unlock Bosonic Lab",
 		sm: "Unlock Higgs Bosons",
+		sp: "Unlock Break Dilation",
 	},
 	descs:{
 		ad: "You always have no Tachyon particles. You can dilate time, but you can't gain Tachyon particles.",
-		sm: "You can't have normal Time Studies, and can't have more than 20 normal Mastery Studies."
+		sm: "You can't have normal Time Studies, and can't have more than 20 normal Mastery Studies.",
+		sp: "Starting a Quantum Challenge forces a Ghostify reset, and all Normal Dimension & Tickspeed Obscurements are 400% stronger."
+	},
+	condExps: {
+		ad: 2,
+		sm: 250,
+		sp: 1e5,
 	},
 	on: []
 }

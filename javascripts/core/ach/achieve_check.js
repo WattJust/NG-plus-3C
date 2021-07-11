@@ -1,3 +1,21 @@
+function litImpCheck() {
+	if (!tmp.ngp3c) return false;
+
+	if (player.tickSpeedCost.gt(1e3)) return false;
+	for (let i=1;i<=8;i++) {
+		if (player[TIER_NAMES[i]+"Bought"]>0) return false;
+		if (player["infinityDimension"+i].bought>0) return false;
+		if (player["timeDimension"+i].bought>0) return false;
+		if (player.meta[i].bought>0) return false;
+
+		if (player.condensed.normal[i]>0) return false;
+		if (player.condensed.inf[i]>0) return false;
+		if (player.condensed.time[i]>0) return false;
+		if (player.condensed.meta[i]>0) return false;
+	}
+	return true;
+}
+
 function cantHoldInfinitiesCheck(){
 	if (getDimensionFinalMultiplier(1).gte(new Decimal("1e308")) &&
 	getDimensionFinalMultiplier(2).gte(new Decimal("1e308")) &&
@@ -265,7 +283,7 @@ function ngP3AchieveCheck(){
 		if (ableToGetRid8 && player.infinityPoints.log10() >= 9.5e5) giveAchievement("Please answer me why you are dying.")
 		if (ableToGetRid9 && player.infinityPoints.log10() >= 1.8e6) giveAchievement("Aren't you already dead?")
 		if (ableToGetRid10 && player.infinityPoints.log10() >= (tmp.ngp3c?2e6:2.25e4)) giveAchievement("I give up.")
-		if (player.matter.log10() >= 5000) giveAchievement("Really?")
+		if (player.matter.log10() >= 5000 && !tmp.ngp3c) giveAchievement("Really?")
 	}
 	if (tmp.qu.bigRip.spaceShards.log10() >= 33 && !tmp.qu.breakEternity.did) giveAchievement("Finite Time")
 	if (minUQ.quarks.log10() >= 1e12 && minUQ.decays >=(tmp.ngp3c?4:2) && !tmp.qu.bigRip.times) giveAchievement("Weak Decay")		
@@ -296,6 +314,19 @@ function ngP3AchieveCheck(){
 	if (!tmp.ngp3c) if (player.unstableThisGhostify <= 10 && getTwoDecaysBool()) giveAchievement("... references to EC8?")
 }
 
+function ngP3CAchieveCheck() {
+	if (!tmp.bd) return;
+
+	if (tmp.bd.active) giveAchievement("Shattered in the 25th Century")
+	if (tmp.bl && tmp.bl.am.gte(Number.MAX_VALUE)) giveAchievement("Bosonic Infinity when?")
+	if (player.eternityPoints.e>=1e7 && tmp.qu.bigRip.active && tmp.qu.qcsMods.current.length>=2) giveAchievement("Tornado Valley")
+	if (tmp.eds[8].perm>=1315 && !tmp.bd.active && player.dilation.tachyonParticles.max(player.dilation.bestTPOverGhostifies||0).eq(0)) giveAchievement("The True Emperor")
+	if (tmp.bl && tmp.bl.am.gte(1e96) && player.ghostify.wzb.wpb.eq(0) && player.ghostify.wzb.wnb.eq(0) && player.ghostify.wzb.zb.eq(0)) giveAchievement("Quitting the Alphabet")
+	if (tmp.hb.higgs>=100) giveAchievement("Where did the Gravitons go?")
+	if (nG(player.timestudy.theorem, Number.MAX_VALUE)) giveAchievement("The Theory of Infinite Onion Layers")
+	if (!player.achievements.includes("ng3pc18")) if (player.money.l>=5e11 && inQC(6) && inQC("8c") && litImpCheck()) giveAchievement("This Should Be Literally Impossible")
+}
+
 function ALLACHIEVECHECK(){
 	//PRE NG+3 ACHIEVEMENTS ONLY!!!
 	checkIPReqAchieve() //IP Req
@@ -308,4 +339,5 @@ function ALLACHIEVECHECK(){
 	checkOtherPreNGp3Achieve() //Other
 	
 	if (tmp.ngp3) ngP3AchieveCheck()
+	if (tmp.ngp3c) ngP3CAchieveCheck()
 }

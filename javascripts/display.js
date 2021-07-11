@@ -22,7 +22,9 @@ function galaxyReqDisplay(){
 }
 
 var galaxyScalings = ["", "Distant ", "Further ", "Remote ", "Dark Matter ", "Ghostly ", "Ethereal ", "Ethereal+ ", "Ethereal++ ", "Ethereal IV ", "Ethereal V "]
+var condGalaxyScalings = ["", "Distant ", "Further ", "Remote ", "Dark Matter ", "Ghostly ", "Cosmic ", "Ethereal ", "Annihilated ", "Spectral ", "Radiant "]
 function getGalaxyScaleName(x) {
+	if (tmp.ngp3c) return condGalaxyScalings[x]
 	return galaxyScalings[x]
 }
 
@@ -38,6 +40,7 @@ function intergalacticDisplay(){
 			getFullExpansion(Math.floor(tmp.igg - player.galaxies)) : "") + "): " + 
 			shorten(dilates(tmp.ig).pow(player.dilation.active ? nanopart : 1)) + 
 			'x to Eighth Dimensions'
+			+ ((tmp.ngp3c && hasBosonicUpg(11)) ? (tmp.qu.bigRip.active?" & All Meta Dimensions":" & First Infinity Dimensions") : "")
 	} else document.getElementById("intergalacticLabel").parentElement.style.display = "none"
 }
 
@@ -636,10 +639,10 @@ function eternityUpgradesDisplay(){
 
 function uponDilationDisplay(){
 	let gain = getDilGain()
-	let msg = "Disable dilation"
+	let msg = player.dilation.active?"Disable dilation":""
 	if (player.infinityPoints.lt(Number.MAX_VALUE)||inQCModifier("ad")) {}
-	else if (player.dilation.totalTachyonParticles.gt(gain)) msg += ".<br>"+player.aarexModifications.ngp3c?("<br>Get more antimatter to gain more Tachyon Particles"):("Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon particles")
-	else msg += " for " + shortenMoney(gain.sub(player.dilation.totalTachyonParticles)) + " Tachyon particles"
+	else if (player.dilation.totalTachyonParticles.gt(gain)) msg += (player.dilation.active?".<br>":"")+"Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon particles"
+	else msg += (player.dilation.active?" for ":"Gain ") + shortenMoney(gain.sub(player.dilation.totalTachyonParticles)) + " Tachyon particles"
 	document.getElementById("enabledilation").innerHTML = msg + "."
 }
 
@@ -656,7 +659,7 @@ function exdilationDisplay(){
 }
 
 function mainDilationDisplay(){
-	if (player.dilation.active) uponDilationDisplay()
+	if (player.dilation.active || ((tmp.bd&&tmp.ngp3c)?tmp.bd.active:false)) uponDilationDisplay()
 	else document.getElementById("enabledilation").textContent = "Dilate time."+((player.eternityBuyer.isOn&&player.eternityBuyer.dilationMode&&!player.eternityBuyer.slowStopped&&player.eternityBuyer.dilMode=="amount"?!isNaN(player.eternityBuyer.statBeforeDilation):false) ? " " + (player.eternityBuyer.dilationPerAmount - player.eternityBuyer.statBeforeDilation) + " left before dilation." : "")
 	if (player.exdilation==undefined||player.aarexModifications.ngudpV?false:player.blackhole.unl) {
 		exdilationDisplay()
@@ -741,11 +744,12 @@ function replicantiDisplay() {
 		var replGalCostPortion = player.infinityPoints.lt(Decimal.pow(10, 1e10)) ? "<br>+1 Cost: " + shortenCosts(getRGCost()) + " IP" : ""
 		document.getElementById("replicantimax").innerHTML = replGalName + ": " + getFullExpansion(player.replicanti.gal) + (replGalOver > 1 ? "+" + getFullExpansion(replGalOver) : "") + replGalCostPortion
 		document.getElementById("replicantireset").innerHTML = (!tmp.ngp3l && player.achievements.includes("ng3p67") ? "Get " : (player.achievements.includes("ngpp16")||(player.aarexModifications.ngp3c && player.eternityUpgrades.includes(6))) ? "Divide replicanti amount by " + shorten(Number.MAX_VALUE) + ", but get " : "Reset replicanti amount, but get ")+"1 free galaxy.<br>" + getFullExpansion(player.replicanti.galaxies) + (extraReplGalaxies ? "+" + getFullExpansion(extraReplGalaxies) : "") + " replicated galax" + (getTotalRG() == 1 ? "y" : "ies") + " created."
+		let est = tmp.rep.est
 		document.getElementById("replicantiapprox").innerHTML = tmp.ngp3 && player.dilation.upgrades.includes("ngpp1") && player.timestudy.studies.includes(192) && player.replicanti.amount.gte(Number.MAX_VALUE) && (!player.aarexModifications.nguspV || player.aarexModifications.nguepV) ? 
-			"Replicanti increases by " + (tmp.rep.est < Math.log10(2) ? "x2.00 per " + timeDisplayShort(Math.log10(2) / tmp.rep.est * 10) : (tmp.rep.est.gte(1e4) ? shorten(tmp.rep.est) + " OoMs" : "x" + shorten(Decimal.pow(10, tmp.rep.est.toNumber()))) + " per second") + ".<br>" +
+			"Replicanti increases by " + (est < Math.log10(2) ? "x2.00 per " + timeDisplayShort(Math.log10(2) / est * 10) : (est.gte(1e4) ? shorten(est) + " OoMs" : "x" + shorten(Decimal.pow(10, est.toNumber()))) + " per second") + ".<br>" +
 			"Replicate interval slows down by " + tmp.rep.speeds.inc.toFixed(3) + "x per " + getFullExpansion(Math.floor(tmp.rep.speeds.exp)) + " OoMs.<br>" +
 			"(2x slower per " + getFullExpansion(Math.floor(tmp.rep.speeds.exp * Math.log10(2) / Math.log10(tmp.rep.speeds.inc))) + " OoMs)" :
-			"Approximately "+ timeDisplay(Math.max((Math.log(Number.MAX_VALUE) - tmp.rep.ln) / tmp.rep.est.toNumber(), 0) * 10) + " Until Infinite Replicanti"
+			"Approximately "+ timeDisplay(Math.max((Math.log(Number.MAX_VALUE) - tmp.rep.ln) / est.toNumber(), 0) * 10) + " Until Infinite Replicanti"
 
 		document.getElementById("replicantichance").className = (player.infinityPoints.gte(player.replicanti.chanceCost) && isChanceAffordable()) ? "storebtn" : "unavailablebtn"
 		document.getElementById("replicantiinterval").className = (player.infinityPoints.gte(player.replicanti.intervalCost) && isIntervalAffordable()) ? "storebtn" : "unavailablebtn"
@@ -836,9 +840,9 @@ function ABTypeDisplay(){
 	else document.getElementById("galaxybulk").style.display = "none"
 	if (getEternitied() > 99 && player.meta) document.getElementById("toggleautoetermode").style.display = "inline-block"
 	else document.getElementById("toggleautoetermode").style.display = "none"
-	if (getEternitied() > 99 && player.achievements.includes("ng3p52")) document.getElementById('aftereternity').style.display = "inline-block"
+	if (getEternitied() > 99 && player.achievements.includes("ng3p52") && !player.aarexModifications.hideAutoEternity) document.getElementById('aftereternity').style.display = "inline-block"
 	else document.getElementById('aftereternity').style.display = "none"
-	if (getEternitied() > 99 && player.achievements.includes("ng3p52")) document.getElementById('autoEternityTabbtn').style.display = ""
+	if (getEternitied() > 99 && player.achievements.includes("ng3p52") && !player.aarexModifications.hideAutoEternity) document.getElementById('autoEternityTabbtn').style.display = ""
 	else document.getElementById('autoEternityTabbtn').style.display = "none"
 }
 

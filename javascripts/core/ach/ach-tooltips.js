@@ -375,7 +375,7 @@ function setR18Tooltip(){
 	let dying = document.getElementById("Are you currently dying?")
 
 	//ACHIEVEMENT ROW 18
-	notrelative.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 411))+" dilated time without gaining tachyon particles." + (tmp.ngp3l ? "" : " Reward: You gain more DT based on the amount of Nanofield rewards."))
+	notrelative.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 411))+" dilated time without dilating time during this Quantum." + (tmp.ngp3l ? "" : " Reward: You gain more DT based on the amount of Nanofield rewards."))
 	error404.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, tmp.ngp3c?1.6e11:1.6e12))+" antimatter "+(tmp.ngp3c?"without any First Time Dimensions.":"while having only the 1st Dimensions of each type of Dimension and at least 2 normal galaxies."))
 	ie.setAttribute('ach-tooltip', "Get " + shorten(Decimal.pow(10, 8e6)) + " antimatter in a paired challenge with the PC6+8 combination." + (tmp.ngp3l ? "" : " Reward: Automatically buy the Quark multiplier to dimensions every second if you have the 8th brave milestone."))
 	wasted.setAttribute('ach-tooltip', "Get " + shorten(1.1e7) + " TT without having TT generation, keeping your previous TT, and respeccing studies. Reward: While you have less than 1 hour worth of TT production, you gain 10x as much TT.")
@@ -427,7 +427,7 @@ function setR20Tooltip(){
 
 	//ACHIEVEMENT ROW 20
 	finite.setAttribute('ach-tooltip', "Get " + shortenCosts(1e33) + " Space Shards without Breaking Eternity within this Ghostify." + (tmp.ngp3l ? "" : " Reward: Outside of Big Rips, Tree Upgrades are 10% stronger. "+(tmp.ngp3c?"":"In Big Rips, 8th Time Dimensions gain an small exponent boost based on your current Ghostify time.")))
-	really.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, 5000)) + " matter in Big Rip." + (tmp.ngp3l ? "":" Reward: Buying Electron upgrades doesn't consume Meta-Dimension Boosts."))
+	really.setAttribute('ach-tooltip', (tmp.ngp3c?"Complete EC14 with 5 completions in Big Rip.":("Reach " + shortenCosts(Decimal.pow(10, 5000)) + " matter in Big Rip.")) + (tmp.ngp3l ? "":" Reward: Buying Electron upgrades doesn't consume Meta-Dimension Boosts."))
 	grind.setAttribute('ach-tooltip', "Get the 21st Nanofield reward without having Tree Upgrades. " + (tmp.ngp3l ? "" : "Reward: Gain more Quarks based on Radioactive Decays."))
 	willenough.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, player.aarexModifications.ngudpV ? 268435456 : 36000000))+" replicanti." + (willenoughReward != "" ? " Reward: " + willenoughReward + "." : ""))
 	oppose.setAttribute('ach-tooltip', "Become a ghost with at most 1x quantumed stat." + (tmp.ngp3l ? "" : (" Reward: You gain more Quarks based on your quantumed stat"+(tmp.ngp3c?", keep Nano-Condensers on Ghostify reset, and Nano-Condenser costs scale 25% slower.":"."))))
@@ -482,9 +482,9 @@ function setR22Tooltip(){
 	//ACHIEVEMENT ROW 22
 	ghostierthanbefore.setAttribute("ach-tooltip", "Unlock Bosonic Lab." + (tmp.ngp3l ? "" : " Reward: The meta-antimatter effect uses your best meta-antimatter in your current Ghostify instead of your best in the current Quantum, and unlock all achievements prior to Ghostly Photons."))
 	ee.setAttribute('ach-tooltip', "Get "+shorten(Number.MAX_VALUE)+" eternities." + (tmp.ngp3l ? "" : " Reward: Boost quark gain by 10 per Light Empowerment squared."))
-	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e4:3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the second nanofield reward scaling."))
+	oc.setAttribute('ach-tooltip', "Become a ghost with at least "+shortenCosts(Decimal.pow(10, tmp.ngp3c?3.5e4:3.75e5)) + " EP while Big Ripped with the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the Further Nanofield reward scaling."))
 	paan.setAttribute('ach-tooltip', tmp.ngp3c?("Awaken Anti-Preontius. Reward: Gain 666x more GhP."):("Get 165 Paired Challenges ranking. Reward: Paired Challenges ranking multiplies GHP gain."))
-	btco.setAttribute('ach-tooltip', "Complete Paired Challenge 1 after getting "+shortenCosts(Decimal.pow(10, tmp.ngp3c?1.05e8:1.65e9)) + " antimatter in Quantum Challenges 6 and 8." + (tmp.ngp3l ? "" : " Reward: Ghostifies only makes you lose 25% of your radiocative decays."))
+	btco.setAttribute('ach-tooltip', "Complete Paired Challenge 1 after getting "+shortenCosts(Decimal.pow(10, tmp.ngp3c?1.05e8:1.65e9)) + " antimatter in Quantum Challenges 6 and 8 without any other Paired Challenges completed." + (tmp.ngp3l ? "" : " Reward: Ghostifies only makes you lose 25% of your radiocative decays."))
 	tdc.setAttribute('ach-tooltip', "Complete Eternity Challenge 11 with "+shortenCosts(Decimal.pow(10, 15500)) + " IP in a Paired Challenge with the Quantum Challenges 6 and 8 combination and the Anti-Dilation modifier." + (tmp.ngp3l ? "" : " Reward: Remove the quadratic cost scaling and the level softcap of fifth Tree of Decay upgrade and make it based on best meta-antimatter over Ghostifies, instead of over quantums."))
 	igu.setAttribute('ach-tooltip', "Reach " + shortenCosts(Decimal.pow(10, tmp.ngp3c?2e6:2.25e4)) + " IP while dilated and Big Ripped with Anti-Dilation modifier and without having studies, EP mult upgrades, Tree Upgrades, and Break Eternity within this Ghostify.")
 	isnotenough.setAttribute('ach-tooltip', (tmp.ngp3c?("Reach "+shorten(Decimal.pow(10, 2.98e8))+" antimatter in Big Rip without Breaking Eternity during this Ghostify run."):"Complete a Paired Challenge with Quantum Challenges 6 and 8 combinations.") + (tmp.ngp3l ? "" : " Reward: Remove the hardcap reduction of 'And so your life?'."))
@@ -502,13 +502,32 @@ function setR23Tooltip(){
 	let metae18 = document.getElementById("Meta-Quintillion")
 
 	//ACHIEVEMENT ROW 23
-	holyparticle.setAttribute('ach-tooltip', "Get a Higgs Boson. Reward: Bosonic Upgrades and Enchants are 2x cheaper"+(tmp.ngp3c?" per Higgs Boson (up to 5x cheaper)":"")+", achievement power boosts bosonic antimatter production at a reduced rate and light empowerements no longer reset photons era resources.")
+	holyparticle.setAttribute('ach-tooltip', "Get a Higgs Boson. Reward: Bosonic Upgrades and Enchants are 2x cheaper"+(tmp.ngp3c?" per Higgs Boson (up to 5x cheaper)":"")+", achievement power boosts bosonic antimatter production at a reduced rate and light empowerments no longer reset photons era resources.")
 	antisun.setAttribute('ach-tooltip', "Reach "+(tmp.ngp3c?10:25)+" Light Empowerments. Reward: You always have the 12th Bosonic Upgrade"+(tmp.ngp3c?", you can change selected Particle Mass without being forced to Higgs reset, and the selected Particle Mass grows 5x faster.":"."))
 	ghostliest.setAttribute('ach-tooltip', "Get " + shorten(Math.pow(Number.MAX_VALUE, tmp.ngp3c?0.1:1/4)) + " Ghostifies. Reward: Ghostifies boost the gain of Ghost Particles at a reduced rate.")
 	metae18.setAttribute('ach-tooltip', (tmp.ngp3c?("Get an Intergalactic reward of "+shortenCosts(Decimal.pow(10, 1e18))+"x"):("Get " + shortenCosts(Decimal.pow(10, 1e18)) + " antimatter"))+". Reward: Distant Antimatter Galaxies scaling is 10% weaker and Higgs Bosons "+(tmp.ngp3c?"boost the Bosonic AM gain exponent.":"produce Bosonic Antimatter at a linear rate."))
 	aretheseanother.setAttribute('ach-tooltip', tmp.ngp3c?("Reach 5 Higgs Bosons. Reward: Bosonic Runes are extracted 10x faster, and the Higgs reduction to Bosonic Antimatter production only starts when you can increase your Higgs Bosons by 50%."):("Reach " + shortenCosts(Decimal.pow(10, 55555)) + " Quarks. Reward: Gain 500x more Quarks and Ghost Particles."))
 	refToEC8.setAttribute('ach-tooltip', "Get at least 2 Radioactive Decays of every color with at most 10 gains of Unstable Quarks"+(tmp.ngp3c?" and without TS432":"")+". Reward: Gain 1 level of Branch upgrade 2 per 1 Radioactive Decay.")
 	notsoverychall.setAttribute('ach-tooltip', tmp.ngp3c?"Become a ghost without Breaking Eternity in this Ghostify. Reward: Neutrino Boost 1 & Nanofield Reward 1 are 50% stronger, Bosonic Upgrade 1 is 15% stronger, and all Particle Masses are always selected.":"Get 190 Paired Challenges ranking. Reward: Quantum and Paired Challenge goals are decreased by 5%, except during Big Rip.")
+}
+
+function setR24Tooltip() {
+	// Row 24 (ng3pc1)
+
+	//ng3pc11///// 
+	let bInf = document.getElementById("Bosonic Infinity when?")
+	let tornado = document.getElementById("Tornado Valley")
+	//ng3pc14/////
+	let quit = document.getElementById("Quitting the Alphabet")
+	//ng3pc16/////
+	let onion = document.getElementById("The Theory of Infinite Onion Layers")
+	let litImp = document.getElementById("This Should Be Literally Impossible")
+
+	bInf.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Bosonic Antimatter. Reward: Ghostly Galaxies scaling is 50% weaker, and you can have 1 more Bosonic Enchant active at a time.")
+	tornado.setAttribute('ach-tooltip', "Reach "+shortenCosts(Decimal.pow(10, 1e7))+" EP while Big Ripped with at least two active QC Modifiers. Reward: You can gain Eternal Matter outside of Big Rip at a reduced rate.")
+	quit.setAttribute('ach-tooltip', "Reach "+shorten(1e96)+" Bosonic Antimatter without any W Bosons or Z Bosons. Reward: W Bosons' boost to Oscillate Progression gain is squared.")
+	onion.setAttribute('ach-tooltip', "Reach "+shorten(Number.MAX_VALUE)+" Time Theorems. Reward: Electron Upgrades are 3 levels cheaper, Time Theorems multiply Neutrino production, and gaining Higgs Bosons resets nothing.")
+	litImp.setAttribute('ach-tooltip', "Reach "+shorten(Decimal.pow(10, 5e11))+" Antimatter in QC6+8 without buying any Normal Tickspeed Upgrades or Normal, Infinity, Time, or Meta Dimensions or Condensers. Reward: The third Nanofield reward also makes Light thresholds increase slower.")
 }
 
 function setPreNGP3AchievementTooltip() {
@@ -547,8 +566,13 @@ function setNGP3p1AchievementTooltip(){
 	setR23Tooltip()
 }
 
+function setNGP3CAchievementTooltip() {
+	setR24Tooltip()
+}
+
 function setAchieveTooltip() { 
 	setPreNGP3AchievementTooltip()
 	if (tmp.ngp3) setPreNGP3p1AchievementTooltip()
 	if (!tmp.ngp3l) setNGP3p1AchievementTooltip()
+	if (tmp.ngp3c) setNGP3CAchievementTooltip()
 }

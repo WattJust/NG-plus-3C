@@ -8,6 +8,7 @@ function setupHiggsSave() {
 		data.type = 0;
 	}
 	player.ghostify.hb = data
+	tmp.hb = player.ghostify.hb
 	return data
 }
 
@@ -55,6 +56,7 @@ function bosonicLabReset() {
 	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 	tmp.updateLights = true
 	var startingEnchants = getEnchantEffect(14, true).bUpgs||0
+	var keepAllUpgs = hasBosonicUpg(62) && tmp.ngp3c
 	player.ghostify.bl = {
 		watt: new Decimal(0),
 		ticks: player.ghostify.bl.ticks,
@@ -66,19 +68,21 @@ function bosonicLabReset() {
 		autoExtract: new Decimal(0),
 		glyphs: [],
 		enchants: {},
-		usedEnchants: [],
-		upgrades: [],
+		usedEnchants: tmp.ngp3c?player.ghostify.bl.usedEnchants:[],
+		upgrades: keepAllUpgs?player.ghostify.bl.upgrades:[],
 		battery: new Decimal(0),
 		odSpeed: player.ghostify.bl.odSpeed,
 		UPGSUNL: tmp.ngp3c?true:undefined,
 	}
-	var order = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45]
-	//tmp.bl.upgrades needs to be updated (also 12 needs to be added)
-	for (let i = 0; i < startingEnchants; i++){
-		if (i == 20) break
-		player.ghostify.bl.upgrades.push(order[i])
+	if (!keepAllUpgs) {
+		var order = [11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55, 61, 62, 63, 64, 65]
+		//tmp.bl.upgrades needs to be updated (also 12 needs to be added)
+		for (let i = 0; i < startingEnchants; i++){
+			if (i == 20 && !tmp.ngp3c) break
+			player.ghostify.bl.upgrades.push(order[i])
+		}
+		if (!player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)
 	}
-	if (!player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)
 	for (var g = 1; g <= br.maxLimit; g++) player.ghostify.bl.glyphs.push(new Decimal(0))
 	player.ghostify.wzb = {
 		unl: true,
@@ -106,7 +110,7 @@ function higgsReset() {
 	if (!player.ghostify.bl.am.gte(getHiggsRequirement())) return
 	if (!player.aarexModifications.higgsNoConf && !confirm("You will exchange all your Bosonic Lab stuff for Higgs Bosons. Everything that Light Empowerments resets initally will be reset. Are you ready to proceed?")) return
 	addHiggs(getHiggsGain())
-	bosonicLabReset()
+	if (!hasAch("ng3pc17")) bosonicLabReset()
 	if (oldHiggs == 0) {
 		giveAchievement("The Holy Particle")
 		updateNeutrinoBoosts()
@@ -133,26 +137,42 @@ function restartHiggs(force=false) {
 function getHiggsRequirementBase() {
 	var div = new Decimal(1)
 	if (player.ghostify.bl.usedEnchants.includes(14)) div = div.times(tmp.bEn[14].higgs || 1)
+	if (hasBosonicUpg(62) && tmp.ngp3c) div = div.times(tmp.blu[62] || 1)
 	return new Decimal(1e20).divide(div)
 }
 
 function getHiggsRequirementMult() {
-	return new Decimal(100)
+	let mult = new Decimal(100)
+	if (player.ghostify.bl.usedEnchants.includes(15) && tmp.ngp3c) mult = mult.root(tmp.bEn[15] || 1);
+	return mult;
 }
 
 var higgs_scaling = {
 	1: {
+		name: "Distant",
 		start: 50,
 		exp: 1.5,
 	},
 }
 
+function getHiggsScalingName(h) {
+	let name = "";
+	for (let i=1;i<=Object.keys(higgs_scaling).length;i++) {
+		if (h<higgs_scaling[i].start) break;
+		else name = higgs_scaling[i].name;
+	}
+	if (name.length>0) name += " ";
+	return name;
+}
+
 function getHiggsScalingData(index) {
-	let data = higgs_scaling[index];
+	let data = JSON.parse(JSON.stringify(higgs_scaling[index]));
+	if (hasBosonicUpg(55) && index==1) data.start += 5;
 	return data;
 }
 
 function implementHiggsReqScaling(x, invert=false) {
+	if (!tmp.ngp3c) return x;
 	for (let i=1;i<=Object.keys(higgs_scaling).length;i++) {
 		if (invert) i = Object.keys(higgs_scaling).length-i+1
 		let data = getHiggsScalingData(i);
@@ -330,6 +350,6 @@ function particleMassSelected(id) {
 function getHiggsDirectEffHTML() {
 	if (!tmp.ngp3c) return ""
 	let html = ""
-	if (player.achievements.includes("ng3p98")) html += ", which increases the Bosonic AM gain exponent by <span class='yellow' style='font-size: 30px;'>"+shorten(tmp.hm.baseEff||0)+"</span>"
+	if (player.achievements.includes("ng3p98")) html += ", which increase the Bosonic AM gain exponent by <span class='yellow' style='font-size: 30px;'>"+shorten(tmp.hm.baseEff||0)+"</span>"
 	return html;
 }

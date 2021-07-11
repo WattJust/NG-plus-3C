@@ -318,7 +318,7 @@ strong { color: #0072e5 }
 #infDimMultAmount,
 #infDimEffectPower,
 #replicantiamount,
-#replicantimult {
+#replicantimult, #replCond, #replCond1, #replCond2 {
     color: #e2bd00 !important;
     font-weight: 500 !important;
 }
@@ -639,7 +639,7 @@ strong { color: #0072e5 }
     border-color: #191919 !important
 }
 
-#tachyonParticleAmount,
+#tachyonParticleAmount, #tachyonParticleAmount2,
 #dilatedTimeAmount,
 #dilatedTimePerSecond,
 #exDilationBenefit {
@@ -756,12 +756,13 @@ strong { color: #0072e5 }
 }
 
 
-.red {
+.red, .red2 {
     color: #f66;
     font-weight: 500 !important;
 }
 
 .green,
+.green2,
 #quarkTranslation,
 #quarkCharge,
 #quarkChargeRate {
@@ -1323,4 +1324,12 @@ strong { color: #0072e5 }
 {
     font-weight:500 !important;
     animation: rggluons 5s linear infinite;
+}
+
+.glowspan {
+    color: #888888;
+}
+
+#elecCond, #elecCondEff {
+    color: yellow;
 }

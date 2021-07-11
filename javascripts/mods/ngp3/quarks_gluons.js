@@ -16,6 +16,7 @@ function updateQuantumWorth(mode) {
 				automaticCharge *= 1.25;
 				if (automaticCharge>=20) automaticCharge = Math.sqrt(automaticCharge*20);
 				if (automaticCharge>=25) automaticCharge = Math.sqrt(automaticCharge*25);
+				if (automaticCharge>=35.5) automaticCharge = Math.pow(automaticCharge, 1.5)/Math.sqrt(35.5)
 			}
 			player.ghostify.automatorGhosts.power = Math.max(automaticCharge, player.ghostify.automatorGhosts.power)
 			if (mode != "quick") {
@@ -258,7 +259,7 @@ function updateColorPowers(log) {
 	}
 	if (ghostified && player.ghostify.neutrinos.boosts>4 && tmp.ngp3c) bLog *= 1+tmp.nb[5];
 	if (bLog < 0) bLog = 0
-	colorBoosts.b = Decimal.pow(10,bLog)
+	colorBoosts.b = tmp.ngp3c?softcap(Decimal.pow(10, bLog), "ngp3cFBPE"):Decimal.pow(10,bLog)
 
 	//Dimensions
 	updateColorDimPowers(log)
@@ -337,6 +338,7 @@ function getQuarkEnergyGain(ma) {
 	else x = Math.pow(x, 1.5)
 	if (x >= 1.5 && tmp.ngp3c && !player.masterystudies.includes("t302")) x = Math.sqrt(x*1.5);
 	if (x >= 12 && tmp.ngp3c) x = Math.pow(x*144, 1/3)
+	if (hasBosonicUpg(61) && tmp.ngp3c) x *= tmp.blu[61]
 	return Decimal.pow(10, x)
 }
 

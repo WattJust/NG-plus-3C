@@ -281,7 +281,7 @@ input {
     text-shadow: 0px 0px 7px #03A9F4;
 }
 
-#replicantimult {
+#replicantimult, #replCond, #replCond1, #replCond2 {
     color: #03A9F4 !important;
     text-shadow: 0px 0px 7px #03A9F4;
 }
@@ -569,7 +569,7 @@ input {
     border: 1px solid #B84B5F !important;
 }
 
-#tachyonParticleAmount {
+#tachyonParticleAmount, #tachyonParticleAmount2 {
     color: #64ddad !important;
     text-shadow: 0px 0px 7px #64ddad;
 }
@@ -585,6 +585,22 @@ input {
 
 #replicantAmountED {
 	color: #757575 !important
+}
+
+.green2 {
+    color: #02fa93;
+}
+
+.red2 {
+    color: #ff0051;
+}
+
+.glowspan {
+    color: #888888;
+}
+
+#elecCond, #elecCondEff {
+    color: rgb(255, 203, 31);
 }
 
 @keyframes antimatterGlow {

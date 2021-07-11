@@ -52,7 +52,7 @@ function calcNGM2atleastTDPreVPostDilMultiplier(tier){
 	if (player.currentEternityChall == "eterc9") ret2 = ret2.times(tmp.infPow)
 	if (ECTimesCompleted("eterc1") !== 0) ret2 = ret2.times(getECReward(1))
 	if (player.eternityUpgrades.includes(4)) ret2 = ret2.times(player.achPow)
-	if (player.eternityUpgrades.includes(5)) ret2 = ret2.times(Math.max(new Decimal(player.timestudy.theorem), 1))
+	if (player.eternityUpgrades.includes(5)) ret2 = ret2.times(new Decimal(player.timestudy.theorem).max(1))
 	if (player.eternityUpgrades.includes(6)) ret2 = ret2.times((player.totalTimePlayed + ngPlus) / 10 / 60 / 60 / 24)
 	if (tmp.ngex) ret2 = ret2.div(10 / tier)
 	return ret2
@@ -178,7 +178,7 @@ function updateTimeDimensions() {
 		for (let tier = 1; tier <= 8; ++tier) {
 			if (isTDUnlocked(tier)) {
 				document.getElementById("timeRow" + tier).style.display = "table-row"
-				document.getElementById("timeD" + tier).textContent = DISPLAY_NAMES[tier] + " Time Dimension x" + shortenMoney(getTimeDimensionPower(tier));
+				document.getElementById("timeD" + tier).textContent = DISPLAY_NAMES[tier] + " Time Dimension x" + shortenMoney(inQC("8c")?dilates(getTimeDimensionPower(tier)):getTimeDimensionPower(tier));
 				document.getElementById("timeAmount" + tier).textContent = getTimeDimensionDescription(tier);
 				document.getElementById("timeMax" + tier).textContent = (quantumed ? '':"Cost: ") + shortenDimensions(player["timeDimension" + tier].cost) + (player.aarexModifications.ngmX > 3 ? "" : " EP")
 				if (player.aarexModifications.ngp3c) updateTimeCondenser(tier);

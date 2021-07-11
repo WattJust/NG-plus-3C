@@ -64,7 +64,7 @@ document.getElementById("secondSoftReset").onclick = function() {
 function getGalaxyRequirement(offset = 0, display) {
 	tmp.grd = {} //Galaxy requirement data
 	tmp.grd.galaxies = player.galaxies + offset
-	if (tmp.ngp3c) tmp.grd.darkStart = 3300
+	if (tmp.ngp3c) tmp.grd.darkStart = getDarkMatterGalaxyStart()
 	let mult = getGalaxyReqMultiplier()
 	let base = tmp.grd.galaxies * mult
 	let amount = 80 + base
@@ -82,27 +82,19 @@ function getGalaxyRequirement(offset = 0, display) {
 	if (!player.boughtDims) {
 		tmp.grd.speed = 1
 		let ghostlySpeed = tmp.be ? 55 : 1
-		let div = 1e4
-		let over = tmp.grd.galaxies / (302500 / ghostlySpeed)
+		let ghostlyStart = getGhostlyGalaxyScalingStart()
+
+		let over = tmp.grd.galaxies / (ghostlyStart / ghostlySpeed)
 		if (over >= 1) {
-			if (over >= 3) {
-				div /= Math.pow(over, 6) / 729
-				scaling = 6
-			}
-			if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2]
-			tmp.grd.speed = Math.pow(2, (tmp.grd.galaxies + 1 - 302500 / ghostlySpeed) * ghostlySpeed / div)
+			let div = getGhostlyGalaxyDiv(over)
+			if (over >= 3) scaling = 6
+			tmp.grd.speed = Math.pow(2, (tmp.grd.galaxies + 1 - ghostlyStart / ghostlySpeed) * ghostlySpeed / div)
 			scaling = Math.max(scaling, 5)
 		}
 
 		let distantStart = getDistantScalingStart()
 		if (tmp.grd.galaxies >= distantStart) {
-			let speed = tmp.grd.speed
-			if (GUBought("rg6")) speed *= 0.867
-			if (GUBought("gb6")) speed /= 1 + Math.pow(player.infinityPower.plus(1).log10(), 0.25) / 2810
-			if (GUBought("br6")) speed /= 1 + player.meta.resets / 340
-			if (ghostified && player.ghostify.neutrinos.boosts > 5 && !tmp.ngp3c) speed /= tmp.nb[6]
-			if (hasBosonicUpg(45)) speed /= tmp.ngp3c?tmp.blu[45].dg:tmp.blu[45]
-			if (player.achievements.includes("ng3p98")) speed *= 0.9
+			let speed = getDistantSpeed(tmp.grd.speed)
 			amount += getDistantAdd(tmp.grd.galaxies-distantStart+1)*speed
 			if (tmp.grd.galaxies >= distantStart * 2.5 && player.galacticSacrifice != undefined) {
 				// 5 times worse scaling
@@ -113,10 +105,7 @@ function getGalaxyRequirement(offset = 0, display) {
 
 		let remoteStart = getRemoteScalingStart()
 		if (tmp.grd.galaxies >= remoteStart && !tmp.be && !(hasNU(6) && !tmp.ngp3c)) {
-			let speed2 = tmp.grd.speed
-			if (GUBought("rg7")) speed2 *= 0.9
-			if (GUBought("gb7")) speed2 /= 1+Math.log10(1+player.infinityPoints.max(1).log10())/100
-			if (GUBought("br7")) speed2 /= 1+Math.log10(1+player.eternityPoints.max(1).log10())/80
+			let speed2 = getRemoteSpeed(tmp.grd.speed)
 			amount *= Math.pow(1 + (GUBought("rg1") ? 1 : 2) / (player.aarexModifications.ngmX > 3 ? 10 : 1e3), (tmp.grd.galaxies - remoteStart + 1) * speed2)
 			scaling = Math.max(scaling, 3)
 		}
@@ -148,7 +137,7 @@ function getGalaxyReqMultiplier() {
 }
 
 function getDistantScalingStart() {
-	if (player.currentEternityChall == "eterc5") return 0
+	if (player.currentEternityChall == "eterc5" && !tmp.ngp3c) return 0
 	var n = (player.aarexModifications.ngp3c?1:100) + getECReward(5)
 	if (player.timestudy.studies.includes(223)) n += 7
 	if (player.timestudy.studies.includes(224)) n += Math.floor(player.resets/2000)
@@ -156,11 +145,7 @@ function getDistantScalingStart() {
 	if (player.dilation.upgrades.includes("ngmm11")) n += 25
 
 	if (tmp.grd.galaxies >= tmp.grd.darkStart) {
-		let push = 5 / tmp.grd.speed
-		if (isLEBoostUnlocked(2) && tmp.be && tmp.ngp3c) push *= tmp.leBonus[2]
-		if (GUBought("rg5")) push *= 1.13
-		if (GUBought("gb5")) push *= 1 + Math.sqrt(player.replicanti.galaxies) / 550
-		if (GUBought("br5")) push *= 1 + Math.min(Math.sqrt(player.dilation.tachyonParticles.max(1).log10()) * 0.013, 0.14)
+		let push = getDarkMatterGalaxyPush(tmp.grd.speed);
 		n -= Math.ceil((tmp.grd.galaxies - tmp.grd.darkStart + 1) / push)
 	}
 
@@ -180,6 +165,16 @@ function getDistantAdd(x) {
 	return (x + 1) * x
 }
 
+function getDistantSpeed(speed) {
+	if (GUBought("rg6")) speed *= 0.867
+	if (GUBought("gb6")) speed /= 1 + Math.pow(player.infinityPower.plus(1).log10(), 0.25) / 2810
+	if (GUBought("br6")) speed /= 1 + player.meta.resets / 340
+	if (ghostified && player.ghostify.neutrinos.boosts > 5 && !tmp.ngp3c) speed /= tmp.nb[6]
+	if (hasBosonicUpg(45)) speed /= tmp.ngp3c?tmp.blu[45].dg:tmp.blu[45]
+	if (player.achievements.includes("ng3p98")) speed *= 0.9
+	return speed;
+}
+
 function getRemoteScalingStart(galaxies) {
 	var n = 800
 	if (player.aarexModifications.ngp3c) n = 150
@@ -196,4 +191,41 @@ function getRemoteScalingStart(galaxies) {
 		if (galaxies > 1/0 && !tmp.be) n -= galaxies - 1/0 
 	}
 	return n
+}
+
+function getRemoteSpeed(speed2) {
+	if (GUBought("rg7")) speed2 *= 0.9
+	if (GUBought("gb7")) speed2 /= 1+Math.log10(1+player.infinityPoints.max(1).log10())/100
+	if (GUBought("br7")) speed2 /= 1+Math.log10(1+player.eternityPoints.max(1).log10())/80
+	return speed2;
+}
+
+function getDarkMatterGalaxyStart() {
+	let start = 3300;
+	if (hasBDUpg(7) && !tmp.qu.bigRip.active) start += tmp.bdt.upgs[7];
+	return start;
+}
+
+function getDarkMatterGalaxyPush(spd) {
+	let push = 5 / spd
+	if (isLEBoostUnlocked(2) && tmp.be && tmp.ngp3c) push *= tmp.leBonus[2]
+	if (GUBought("rg5")) push *= 1.13
+	if (GUBought("gb5")) push *= 1 + Math.sqrt(player.replicanti.galaxies) / 550
+	if (GUBought("br5")) push *= 1 + Math.min(Math.sqrt(player.dilation.tachyonParticles.max(1).log10()) * 0.013, 0.14)
+	return push;
+}
+
+function getGhostlyGalaxyScalingStart() {
+	let start = 302500;
+	if (hasBDUpg(7) && !tmp.qu.bigRip.active) start += tmp.bdt.upgs[7];
+	return start;
+}
+
+function getGhostlyGalaxyDiv(over) {
+	let div = 1e4
+	if (over >= 3) div /= Math.pow(over, 6) / 729
+	if (hasAch("ng3pc12")) div *= 2;
+	if (isLEBoostUnlocked(2) && tmp.be && !tmp.ngp3c) div *= tmp.leBonus[2];
+	if (hasBDUpg(11)) div *= tmp.bdt.upgs[11]
+	return div;
 }

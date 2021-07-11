@@ -171,7 +171,9 @@ var masteryStudies = {
 			var intensity = 5
 			if (ghostified && player.ghostify.neutrinos.boosts > 1 && !uses.includes("pn")) intensity += tmp.nb[2]
 			if (uses.includes("intensity")) return intensity
-			return Decimal.max(Math.log10(player.replicanti.chance + 1), 1).pow(intensity)
+			let eff = Decimal.max(Math.log10(player.replicanti.chance + 1), 1).pow(intensity)
+			if (tmp.ngp3c) return softcap(eff, "ngp3cTS273")
+			else return eff
 		},
 		281: function(){
 			return Decimal.pow(player.aarexModifications.ngp3c?1e5:10, Math.pow(tmp.rm.max(1).log10(), 0.25) / 10 * (tmp.newNGP3E ? 2 : 1))
@@ -380,7 +382,7 @@ var masteryStudies = {
 		263: "Meta-dimension boosts boost dilated time production.",
 		264: "Gain more tachyon particles based on your normal galaxies.",
 		265: "Replicate chance upgrades can go over 100%.",
-		266: "Reduce the post-400 max replicated galaxy cost scaling.",
+		266: "Reduce the post-400 max replicated galaxy cost scaling outside of EC6.",
 		267: "Normal, Infinity, Time, Replicated, Dilated, and Meta Condensers are all 50% stronger.",
 		270: "Double Quark gain, and Quantum Worth boosts Color Power & Quark Energy gain.",
 		271: "You can buy beyond 1ms interval upgrades, but the cost begins to increase faster.",
@@ -439,7 +441,7 @@ var masteryStudies = {
 		},
 		413: "Preon Charge boosts the base of TS403.",
 		421: "Tickspeed boosts preon energy production.",
-		422: "Electrons & Nanorewards make the first scaling of Preon Power start later.",
+		422: "Electrons & Nanorewards make Distant Reward scaling start later.",
 		431: function() { return (tmp.ngp3c?"Emperor Dimensions, Nanofield,":"DT production")+" and branches are faster based on your free galaxies." },
 		432: "Gain 3x more Quark Spins, color powers don't cancel, and you gain 5% of Quark Spins when not decaying unstable quarks.",
 	},

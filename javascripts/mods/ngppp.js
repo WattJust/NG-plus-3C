@@ -125,14 +125,24 @@ function updateBankedEter(updateHtml = true) {
 
 //v1.99871
 function fillAll() {
+	let notifyHere = false;
 	var oldLength = player.timestudy.studies.length
+	var oldLength2 = player.masterystudies.length
 	for (var t = 0; t < all.length; t++) buyTimeStudy(all[t], 0, true)
+	for (var t = 0; t < Object.keys(masteryStudies.timeStudyDescs).length; t++) buyMasteryStudy("t", Number(Object.keys(masteryStudies.timeStudyDescs)[t]), true);
 	if (player.timestudy.studies.length > oldLength) {
 		updateTheoremButtons()
 		updateTimeStudyButtons()
 		drawStudyTree()
-		if (player.timestudy.studies.length > 56) $.notify("All studies in time study tab are now filled.")
+		notifyHere = true;
 	}
+	if (player.masterystudies.length > oldLength2) {
+		updateMasteryStudyCosts()
+		updateMasteryStudyButtons()
+		drawMasteryTree()
+		notifyHere = true;
+	}
+	if (notifyHere) $.notify("All time/mastery studies are now filled.")
 }
 
 //v1.99872
@@ -175,7 +185,7 @@ function maxAllDilUpgs() {
 //v1.99874
 function maybeShowFillAll() {
 	var display = "none"
-	if (player.masterystudies) if (player.masterystudies.includes("t302")) display = "block"
+	if (player.masterystudies) if (player.masterystudies.includes("t302")||(tmp.ngp3c&&ghostified)) display = "block"
 	document.getElementById("fillAll").style.display = display
 	document.getElementById("fillAll2").style.display = display
 }
@@ -484,11 +494,15 @@ function getGHPGain() {
 		if (!player.achievements.includes("ng3p84")) x = Math.min(x, 600 / y)
 		log += x
 	}
-	return Decimal.pow(10, log).times(getGHPMult()).floor()
+	let gain = Decimal.pow(10, log).times(getGHPMult())
+	
+	if (tmp.ngp3c) gain = softcap(gain, "ngp3cGHP")
+	if (hasBosonicUpg(63) && tmp.ngp3c) gain = gain.times(Decimal.pow(getGHPMultUpgInc(), player.ghostify.multPower - 1))
+	return gain.floor()
 }
 
 function getGHPMult() {
-	let x = Decimal.pow(2, player.ghostify.multPower - 1)
+	let x = (hasBosonicUpg(63)&&tmp.ngp3c)?new Decimal(1):Decimal.pow(getGHPMultUpgInc(), player.ghostify.multPower - 1)
 	if (player.achievements.includes("ng3p93") && !tmp.ngp3c) x = x.times(500)
 	if (player.achievements.includes("ng3p83")) x = x.times(tmp.ngp3c?666:(ranking + 1))
 	if (player.achievements.includes("ng3p97")) x = x.times(Decimal.pow(player.ghostify.times + 1, 1/3))
@@ -496,7 +510,7 @@ function getGHPMult() {
 }
 
 ghostified = false
-function ghostify(auto, force) {	
+function ghostify(auto, force, resetQCs=true) {	
 	if (!force&&(!isQuantumReached()||!tmp.qu.bigRip.active||implosionCheck)) return
 	if (!auto && !force && player.aarexModifications.ghostifyConf && !confirm("Becoming a ghost resets everything Quantum resets, and also resets your banked stats, best TP & MA, quarks, gluons, electrons, Quantum Challenges, Replicants, Nanofield, and Tree of Decay to gain a Ghost Particle. Are you ready for this?")) {
 		denyGhostify()
@@ -519,12 +533,12 @@ function ghostify(auto, force) {
 		}, seconds * 250)
 		setTimeout(function(){
 			if (Math.random()<1e-3) giveAchievement("Boo!")
-			ghostifyReset(true, gain, amount)
+			ghostifyReset(true, gain, amount, resetQCs)
 		}, seconds * 500)
 		setTimeout(function(){
 			implosionCheck=0
 		}, seconds * 1000)
-	} else ghostifyReset(false, 0, 0, force)
+	} else ghostifyReset(false, 0, 0, force, resetQCs)
 	updateAutoQuantumMode()
 }
 
@@ -534,7 +548,7 @@ function denyGhostify() {
 	if (!tmp.ngp3l && ghostifyDenied >= 15) giveAchievement("Deny the afterlife")
 }
 
-function ghostifyReset(implode, gain, amount, force) {
+function ghostifyReset(implode, gain, amount, force, resetQCs=true) {
 	var bulk = getGhostifiedGain()
 	if (!force) {
 		if (!tmp.ngp3l && tmp.qu.times >= 1e3 && player.ghostify.milestones >= 16) giveAchievement("Scared of ghosts?")
@@ -564,14 +578,14 @@ function ghostifyReset(implode, gain, amount, force) {
 	if (!tmp.qu.breakEternity.did && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
 	if (player.ghostify.best<=((tmp.ngp3c?20:6))) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
-	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU)
+	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs)
 	
 	tmp.qu = player.quantum
 	updateInQCs()
 	doPreInfinityGhostifyResetStuff()
 	doInfinityGhostifyResetStuff(implode, bm)
 	doEternityGhostifyResetStuff(implode, bm)	
-	doQuantumGhostifyResetStuff(implode, bm)
+	doQuantumGhostifyResetStuff(implode, bm, resetQCs)
 	doGhostifyGhostifyResetStuff(bm, force)
 
 	//After that...
@@ -652,6 +666,7 @@ function updateGhostifyTabs() {
 	if (document.getElementById("automaticghosts").style.display == "block") if (player.ghostify.milestones > 7) updateQuantumWorth("display")
 	if (document.getElementById("gphtab").style.display == "block" && player.ghostify.ghostlyPhotons.unl) updatePhotonsTab()
 	if (document.getElementById("bltab").style.display == "block" && player.ghostify.wzb.unl) updateBosonicLabTab()
+	if (document.getElementById("annihilationtab").style.display == "block" && tmp.ngp3c) annihilationDisplay()
 }
 
 function buyGHPMult() {
@@ -662,7 +677,7 @@ function buyGHPMult() {
 	player.ghostify.multPower++
 	player.ghostify.automatorGhosts[15].a = player.ghostify.automatorGhosts[15].a.times(5)
 	document.getElementById("autoGhost15a").value = formatValue("Scientific", player.ghostify.automatorGhosts[15].a, 2, 1)
-	document.getElementById("ghpMult").textContent = shortenDimensions(Decimal.pow(2,player.ghostify.multPower-1))
+	document.getElementById("ghpMult").textContent = shortenDimensions(Decimal.pow(getGHPMultUpgInc(),player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent = shortenDimensions(getGHPMultCost())
 }
 
@@ -698,7 +713,7 @@ function maxGHPMult() {
 			player.ghostify.multPower+=toBuy
 		}
 	}
-	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(2,player.ghostify.multPower-1))
+	document.getElementById("ghpMult").textContent=shortenDimensions(Decimal.pow(getGHPMultUpgInc(),player.ghostify.multPower-1))
 	document.getElementById("ghpMultUpgCost").textContent=shortenDimensions(getGHPMultCost())
 }
 
@@ -715,9 +730,9 @@ function setupAutomaticGhostsData() {
 	return data
 }
 
-var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40]
+var autoGhostRequirements=[2,4,4,4.5,5,5,6,6.5,7,7,7.5,8,20,24,28,32,36,40,36,37]
 var powerConsumed
-var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,6,3,4,3,6,3]
+var powerConsumptions=[0,1,1,1,1,2,2,0.5,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,4,3,4,3,6,3,2.5,1]
 function getAutoGhostReq(x) {
 	if (tmp.ngp3c) {
 		if (x==13||x==14) return autoGhostRequirements[x]+(x==14?1:3);
@@ -827,7 +842,7 @@ function rotateAutoUnstable() {
 }
 
 function getMaxAutoGhosts() {
-	return tmp.ngp3l ? 15 : 21
+	return tmp.ngp3c ? (autoGhostRequirements.length+3) : (tmp.ngp3l ? 15 : 21)
 }
 
 //v2.1
@@ -886,6 +901,11 @@ function toggleHiggsConf() {
 	document.getElementById("higgsConfirmBtn").textContent = "Higgs Boson confirmation: O" + (player.aarexModifications.higgsNoConf ? "FF" : "N")
 }
 
+function toggleBDConf() {
+	player.aarexModifications.bdNoConf = !player.aarexModifications.bdNoConf
+	document.getElementById("bdConfirmBtn").textContent = "Fix Dilation confirmation: O" + (player.aarexModifications.bdNoConf ? "FF" : "N")
+}
+
 //Anti-Preontius' Lair
 function getAntiPreonGhostWake() {
 	return 104
@@ -897,7 +917,12 @@ function setNonlegacyStuff() {
 
 function displayNonlegacyStuff() {
 	//QC Modifiers
-	for (var m = 1; m < qcm.modifiers.length; m++) document.getElementById("qcm_" + qcm.modifiers[m]).style.display = tmp.ngp3l ? "none" : ""
+	for (var m = 1; m <= 2; m++) document.getElementById("qcm_" + qcm.modifiers[m]).style.display = tmp.ngp3l ? "none" : ""
+}
+
+function displayCondensedStuff() {
+	//QC Modifiers
+	for (var m = 3; m < qcm.modifiers.length; m++) document.getElementById("qcm_" + qcm.modifiers[m]).style.display = tmp.ngp3c ? "" : "none"
 }
 
 function getOldAgeRequirement() {

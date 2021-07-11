@@ -177,7 +177,7 @@ input {
     color: #03A9F4 !important;
 }
 
-#replicantimult {
+#replicantimult, #replCond, #replCond1, #replCond2 {
     color: #03A9F4 !important;
 }
 
@@ -537,7 +537,7 @@ input {
     background: #EF5350 !important;
 }
 
-#tachyonParticleAmount {
+#tachyonParticleAmount, #tachyonParticleAmount2 {
     color: #64ddad !important;
 }
 
@@ -551,6 +551,22 @@ input {
 
 #replicantAmountED {
 	color: #757575 !important
+}
+
+.green2 {
+    color: #02fa93;
+}
+
+.red2 {
+    color: #ff0051;
+}
+
+.glowspan {
+    color: #888888;
+}
+
+#elecCond, #elecCondEff {
+    color: rgb(255, 203, 31);
 }
 
 @keyframes metroStudyGlowIn {

@@ -888,6 +888,14 @@ button {
     user-select: none;
 }
 
+.achievementtext {
+    font-size: 11px;
+    font-weight: bold;
+    font-family: Typewriter;
+    color: white;
+    text-shadow: 0px 0px 4px black;
+}
+
 .achRowInfo {
     width: 104px;
     margin: 0px auto;
@@ -1673,6 +1681,49 @@ button {
     background: white;
 }
 
+.breakdilationbtn {
+    color: #64ddad;
+    text-shadow: 0px 0px 2px red;
+    background-color: black;
+    font-weight: bold;
+    font-size: 0.7rem;
+    border: 2px solid #64ddad;
+    width: 190px;
+    height: 90px;
+    transition-duration: 0.2s;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: Typewriter;
+    animation: dilationBtnGlow2 10s infinite;
+}
+
+.breakdilationbtn:hover {
+    color: #0e7a4f;
+    text-shadow: 0px 0px 2px rgb(235, 241, 176);
+    background-color: #b7ddce;
+    animation: outerDilationBtnGlow2 10s infinite;
+}
+
+.bdupg {
+    width: 190px;
+    height: 120px;
+}
+
+.breakdilationupgbought {
+    color: black;
+    background: #64ddad;
+    font-weight: bold;
+    font-family: Typewriter;
+    border: 1px solid black;
+    width: 190px;
+    height: 120px;
+    transition-duration: 0.2s;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    vertical-align: top;
+    margin:7px;
+}
+
 @keyframes glow {
     20% { text-shadow: 0 0 10px green; }
     100% { text-shadow: 0 0 10px white; }
@@ -1989,7 +2040,7 @@ br {
     position: relative;
 }
 
-.qtable, .qtable_4col, #gluonupgrades {
+.qtable, .qtable_2col, .qtable_4col, #gluonupgrades {
 	width:100%
 }
 
@@ -2005,6 +2056,14 @@ br {
 	min-width: 25%;
 	width: 25%;
 	max-width: 25%;
+	text-align: center;
+	vertical-align: 0
+}
+
+.qtable_2col td {
+    min-width: 50%;
+	width: 50%;
+	max-width: 50%;
 	text-align: center;
 	vertical-align: 0
 }
@@ -2438,7 +2497,7 @@ br {
 	cursor: pointer
 }
 
-td.red {
+td.red, td.red2 {
 	background: rgba(191, 0, 0, 0.25)
 }
 
@@ -2458,7 +2517,7 @@ td.yellow {
 	background: rgba(191, 191, 0, 0.25)
 }
 
-td.green {
+td.green, td.green2 {
 	background: rgba(0, 191, 0, 0.25)
 }
 
@@ -2488,6 +2547,14 @@ td.violet {
 
 td.uv {
 	background: rgba(143, 0, 191, 0.25)
+}
+
+.red2 {
+    color: #52303b;
+}
+
+.green2 {
+    color: #305244;
 }
 
 .lEp {
@@ -2535,9 +2602,9 @@ td.lEp {
 	box-shadow: 0px 0px 12px #6a00ff
 }
 
-.bRune.Ethereal {
-	background: #3f6fff;
-	box-shadow: 0px 0px 12px #002fbf
+.bRune.Cosmic {
+	background: radial-gradient(circle, #020024 0%, #8b43ff 0%, #1900f1 50%, #bf0083 100%);
+	box-shadow: 0px 0px 12px #bf0083
 }
 
 .bRune.Sixth {
@@ -2753,6 +2820,10 @@ td.subFactorH {
 	color: #bf0000
 }
 
+.elecCond, .elecCondEff {
+    color: black;
+}
+
 .nfCond {
 	background: black !important;
 	border: 1px solid #4c4c4c;
@@ -2786,6 +2857,43 @@ td.subFactorH {
     font-weight: bold;
     font-family: Typewriter;
 	transition-duration: 0.2s
+}
+
+.cosmicOrb {
+    font-size: 40px;
+	background: radial-gradient(circle, #020024 0%, #8b43ff 0%, #1900f1 50%, #bf0083 100%);
+	height: 5em;
+	width: 5em;
+    border: none;
+    border-radius: 50%;
+	box-shadow: 0px 0px 12px #bf0083;
+	display: inline-block;
+    color: white;
+    font-weight: bold;
+    line-height: 1em;
+    cursor: pointer;
+    font-family: Typewriter;
+    transition-duration: 0.5s;
+    padding-top: -5px;
+}
+
+.cosmicOrb.unavailablebtn {
+    color: #000000;
+    background: #A3A3A3;
+    font-weight: bold;
+    font-family: Typewriter;
+    border: 1px solid #B84B5F;
+    box-shadow: none;
+    cursor: default;
+}
+
+.cosmicOrb:not(.unavailablebtn):hover {
+    filter: brightness(120%);
+    transform: scale(1.1);
+}
+
+.cosmicOrb.unavailablebtn:hover {
+    background: #B84B5F;
 }
 
 @media print,
@@ -2934,6 +3042,14 @@ screen and (max-width: 480px) {
     50% {box-shadow: inset 5px 0px 20px #64ddad;}
     75% {box-shadow: inset 0px 5px 20px #64ddad;}
     100% {box-shadow: inset -5px 0px 20px #64ddad;}
+}
+
+@keyframes outerDilationBtnGlow2 {
+    0%  {box-shadow: -5px 0px 20px #64ddad;}
+    25% {box-shadow: 0px -5px 20px #64ddad;}
+    50% {box-shadow: 5px 0px 20px #64ddad;}
+    75% {box-shadow: 0px 5px 20px #64ddad;}
+    100% {box-shadow: -5px 0px 20px #64ddad;}
 }
 
 @keyframes barrelRoll {

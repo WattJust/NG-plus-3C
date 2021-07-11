@@ -5,13 +5,14 @@ function updateLightEmpowermentReq() {
 function getLightEmpowermentBoost() {
 	let r = player.ghostify.ghostlyPhotons.enpowerments
 	if (hasBosonicUpg(13)) r *= tmp.blu[13]
+	if (isLEBoostUnlocked(11) && tmp.ngp3c) r *= tmp.leBonus[11]||1
 	return r
 }
 
 var leBoosts = {
-	reqs: [null, 1, 2, 3, 10, 13, 16, 19, 22, 25],
-	condReqs: [null, 1, 2, 3, 5, 6, 7, 8, 9, 10],
-	max: 9,
+	reqs: [null, 1, 2, 3, 10, 13, 16, 19, 22, 25, 1/0, 1/0],
+	condReqs: [null, 1, 2, 3, 5, 6, 7, 8, 9, 10, 20, 25],
+	max: 11,
 	effects: [
 		null,
 		//Boost #1
@@ -62,7 +63,20 @@ var leBoosts = {
 		},
 		//Boost #9
 		function() {
-			return Math.pow(tmp.effL[1] / 10 + 1, 1/3) - 1
+			let l1 = tmp.effL[1]
+			if (l1>=1e5) l1 = Math.pow(1e5, Math.sqrt(Math.log(l1)/Math.log(1e5)))
+			return Math.pow(l1 / 10 + 1, 1/3) - 1
+		},
+		//Boost #10 (NG+3C exclusive)
+		function() {
+			let x = tmp.leBoost / 100;
+			if (x>=1) x = Math.sqrt(x)
+			if (x>=2) x = Math.log2(x) + 1
+			return x + 1
+		},
+		// Boost #11 (NG+3C exclusive)
+		function() {
+			return Math.log10(tmp.effL[7] / 40 + 1)/3 + 1
 		},
 	]
 }
@@ -72,6 +86,7 @@ function isLEBoostUnlocked(x) {
 	if (!ghostified) return false
 	if (!player.ghostify.ghostlyPhotons.unl) return false
 	if (x >= 4 && !hasBosonicUpg(32)) return false
+	if (x >= 10 && !(hasBosonicUpg(52) && tmp.ngp3c)) return false
 	return player.ghostify.ghostlyPhotons.enpowerments >= (tmp.ngp3c?leBoosts.condReqs[x]:leBoosts.reqs[x])
 }
 
@@ -162,9 +177,11 @@ function updateLEmpowermentBoosts(){
 	if (boosts >= 3) document.getElementById("leBoost3").textContent = tmp.leBonus[3].toFixed(2)
 	if (boosts >= 5) document.getElementById("leBoost5").textContent = "(" + shorten(tmp.leBonus[5].mult) + "x+1)^" + tmp.leBonus[5].exp.toFixed(3)
 	if (boosts >= 6) document.getElementById("leBoost6").textContent = shorten(tmp.leBonus[6])
-	if (boosts >= 7) document.getElementById("leBoost7").textContent = (tmp.leBonus[7] * 100).toFixed(1)
+	if (boosts >= 7) document.getElementById("leBoost7").textContent = getFullExpansion(Math.round(tmp.leBonus[7] * 1e3)/10)
 	if (boosts >= 8) document.getElementById("leBoost8").textContent = (tmp.leBonus[8] * 100).toFixed(1)
 	if (boosts >= 9) document.getElementById("leBoost9").textContent = tmp.leBonus[9].toFixed(2)
+	if (boosts >= 10) document.getElementById("leBoost10").textContent = ((tmp.leBonus[10]-1) * 100).toFixed(1)
+	if (boosts >= 11) document.getElementById("leBoost11").textContent = ((tmp.leBonus[11]-1) * 100).toFixed(1)
 }
 
 function getGHRProduction() {
@@ -221,6 +238,7 @@ function lightEmpowerment() {
 	if (!player.aarexModifications.leNoConf && !confirm("You will become a ghost, but Ghostly Photons will be reset. You will gain 1 Light Empowerment from this. Are you sure you want to proceed?")) return
 	if (!player.ghostify.ghostlyPhotons.enpowerments) document.getElementById("leConfirmBtn").style.display = "inline-block"
 	player.ghostify.ghostlyPhotons.enpowerments++
+	if (hasAch("ng3pc16")) return;
 	ghostify(false, true)
 	if (player.achievements.includes("ng3p91")) return
 	player.ghostify.ghostlyPhotons.amount = new Decimal(0)
@@ -230,22 +248,44 @@ function lightEmpowerment() {
 	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 }
 
+var LE_scale_start = {
+	1() { 
+		let start = 20;
+		if (hasBosonicUpg(55) && tmp.ngp3c) start += 5;
+		return start; 
+	},
+	2() { return 50 },
+}
+
+function loadLEReqScaleStarts() {
+	let obj = {}
+	for (let i=1;i<=Object.keys(LE_scale_start).length;i++) obj[i] = LE_scale_start[i]()
+	return obj;
+}
+
 function getLightEmpowermentReq(le) {
 	if (le === undefined) le = player.ghostify.ghostlyPhotons.enpowerments
 	let mult = tmp.ngp3c ? 3.6 : 2.4;
 	let x = le * mult + (tmp.ngp3c?3:1)
 	let scale = 0
+	tmp.leReqScaleStarts = loadLEReqScaleStarts();
 	if (!tmp.ngp3l) {
-		if (le > 19) {
-			x += Math.pow(le - 19, 2) / 3
+		if (le >= tmp.leReqScaleStarts[1]) {
+			x += Math.pow(le - tmp.leReqScaleStarts[1] + 1, 2) / 3
 			scale = 1
 		}
-		if (le > 49) {
-			x += Math.pow(1.2, le - 49) - 1
+		if (le >= tmp.leReqScaleStarts[2]) {
+			// In NG+3C, it's the same as Distant but 5x stronger
+			if (tmp.ngp3c) x += Math.pow(le - tmp.leReqScaleStarts[2] + 1, 2) * 5/3
+			else x += Math.pow(1.2, le - tmp.leReqScaleStarts[2] + 1) - 1
 			scale = 2
 		}
 	}
 	if (player.achievements.includes("ng3p95")) x--
+	if (hasBosonicUpg(64) && tmp.ngp3c) {
+		x -= tmp.blu[64].sub
+		x /= tmp.blu[64].div
+	}
 	tmp.leReqScale = scale
 	return Math.floor(x)
 }

@@ -33,7 +33,25 @@ function quantum(auto, force, challid, bigRip = false, quick) {
 					if (player.options.challConf || (tmp.qu.pairedChallenges.completions.length < 1 && !ghostified)) if (!confirm("You will start a Quantum Challenge, but as a Paired Challenge, there will be two challenges at once. Completing it boosts the rewards of the Quantum Challenges that you chose in this Paired Challenge. You will keep electrons & sacrificed galaxies, but they don't work in this Challenge.")) return
 				} else if (player.options.challConf || (QCIntensity(1) == 0 && !ghostified)) if (!confirm("You will do a Quantum reset, but you will not gain quarks, you keep your electrons & sacrificed galaxies, and you can't buy electron upgrades. You have to reach the set goal of antimatter while getting the meta-antimatter requirement to Quantum to complete this challenge. Electrons and banked eternities have no effect in Quantum Challenges and your electrons and sacrificed galaxies don't reset until you end the challenge.")) return
 				tmp.qu.electrons.amount -= cond_br?NGP3C_BR_COST:getQCCost(challid)
-				if (!quick) for (var m = 0; m < qcm.on.length; m++) if (QCModifierUnl(qcm.on[m], ranking) || !qcm.reqs[qcm.on[m]]) tmp.qu.qcsMods.current.push(qcm.on[m])
+				let spMod = false;
+				if (!quick) for (var m = 0; m < qcm.on.length; m++) if (QCModifierUnl(qcm.on[m], ranking) || !qcm.reqs[qcm.on[m]]) {
+					tmp.qu.qcsMods.current.push(qcm.on[m])
+					if (qcm.on[m]=="sp" && tmp.ngp3c) spMod = true;
+				}
+				if (spMod) {
+					if (pc < 1) tmp.qu.challenge = [challid]
+					else if (!cond_br) {
+						tmp.qu.challenge = tmp.qu.pairedChallenges.order[pc]
+						tmp.qu.pairedChallenges.current = pc
+					} else tmp.qu.bigRip.active = true
+					ghostify(false, true, false)
+					if (tmp.qu.qcsMods.current.includes("sm")) superMasteryReset()
+					if (tmp.qu.qcsMods.current.includes("ad")) {
+						player.dilation.tachyonParticles = new Decimal(0)
+						player.dilation.dilatedTime = new Decimal(0)
+					}
+					return
+				}
 			} else if (pcFocus && pc < 1) {
 				if (!assigned.includes(challid)) {
 					if (!tmp.qu.pairedChallenges.order[pcFocus]) tmp.qu.pairedChallenges.order[pcFocus]=[challid]
@@ -389,24 +407,7 @@ function quantumReset(force, auto, challid, bigRip, implode = false) {
 			for (var s = 0; s < player.masterystudies.length; s++) if (player.masterystudies[s].indexOf("t") == 0) tmp.qu.bigRip.storedTS.studies.push(parseInt(player.masterystudies[s].split("t")[1]))
 		}
 		if (bigRip != tmp.qu.bigRip.active) switchAB()
-		if (inQCModifier("sm")) {
-			var count = 0
-			var newMS = []
-			for (var i = 0; i < player.masterystudies.length; i++) {
-				var study = player.masterystudies[i]
-				var split = study.split("t")
-				if (!split[1]) newMS.push(study)
-				else if (count < 20) {
-					newMS.push(study)
-					count++
-				} else {
-					if (study == "t373") updateColorCharge()
-					player.timestudy.theorem = nA(player.timestudy.theorem, masteryStudies.costs.time[split[1]])
-				}
-			}
-			player.masterystudies = newMS
-			respecUnbuyableTimeStudies()
-		}
+		if (inQCModifier("sm")) superMasteryReset()
 		if (!bigRip && tmp.qu.bigRip.active) {
 			if (tmp.ngp3c) if (player.galaxies >= 900) giveAchievement("We can really afford 9.")
 			else if (player.galaxies == 9 && player.replicanti.galaxies == 9 && player.timeDimension4.amount.round().eq(9)) giveAchievement("We can really afford 9.")
@@ -747,4 +748,23 @@ function updateQuarkDisplay() {
 function metaReset2() {
 	if (tmp.ngp3 && tmp.qu.bigRip.active) ghostify()
 	else quantum(false, false, 0)
+}
+
+function superMasteryReset() {
+	var count = 0
+	var newMS = []
+	for (var i = 0; i < player.masterystudies.length; i++) {
+		var study = player.masterystudies[i]
+		var split = study.split("t")
+		if (!split[1]) newMS.push(study)
+		else if (count < 20) {
+			newMS.push(study)
+			count++
+		} else {
+			if (study == "t373") updateColorCharge()
+			player.timestudy.theorem = nA(player.timestudy.theorem, masteryStudies.costs.time[split[1]])
+		}
+	}
+	player.masterystudies = newMS
+	respecUnbuyableTimeStudies()
 }

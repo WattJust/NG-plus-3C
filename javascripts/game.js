@@ -284,7 +284,9 @@ function setupToDHTMLandData(){
 function setupNanofieldHTMLandData(){
 	var nfRewards = document.getElementById("nfRewards")
 	var row = 0
+	nfRewards.insertRow(0).innerHTML = "<td></td><td id='maxNanoCondenseAll' style='display: none; text-align: center; height: 20px;' colspan='2' onclick='maxNanoCondenseAll()' class='storebtn'>Max All Condensers</td><td></td>"
 	for (var r = 1; r <= 8; r += 4) {
+		row++
 		nfRewards.insertRow(row).innerHTML = 
 			"<td id='nfRewardHeader" + r + "' class='milestoneText'></td>" +
 			"<td id='nfRewardHeader" + (r + 1) + "' class='milestoneText'></td>" +
@@ -308,7 +310,6 @@ function setupNanofieldHTMLandData(){
 			"<td><button class='nfCondlocked' id='nfCond" + (r + 1) +"' style='display: none' onclick='condenseNanoReward(" + (r + 1) + ")'></button></td>" +
 			"<td><button class='nfCondlocked' id='nfCond" + (r + 2) +"' style='display: none' onclick='condenseNanoReward(" + (r + 2) + ")'></button></td>" +
 			"<td><button class='nfCondlocked' id='nfCond" + (r + 3) +"' style='display: none' onclick='condenseNanoReward(" + (r + 3) + ")'></button></td>"
-		row++
 	}
 	document.getElementById("nfReward7").style["font-size"] = "10px"
 	document.getElementById("nfReward8").style["font-size"] = "10px"
@@ -342,7 +343,7 @@ function setupBosonicExtraction(){
 			var col = row.insertCell(g1 - 1)
 			var id = (g1 * 10 + g2)
 			let desc = bEn.descs[id]
-			col.innerHTML = "<button id='bEn" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='takeEnchantAction("+id+")'>"+(desc||"???")+"<br>"+
+			col.innerHTML = "<button id='bEn" + id + "' class='gluonupgrade unavailablebtn' style='font-size: 9px' onclick='takeEnchantAction("+id+")'><span id='bEnDesc"+id+"'>"+(desc||"???")+"</span><br>"+
 			"Currently: <span id='bEnEffect" + id + "'>???</span><br>"+
 			"<span id='bEnLvl" + id + "'></span><br>" +
 			"<span id='bEnOn" + id + "'></span><br>" +
@@ -402,7 +403,7 @@ function setupHiggsMechanism() {
 			col.id = "hm"+type+"div"
 			col.style.display = "none"
 			col.style.margin = "0 20px 0 20px"
-			col.innerHTML = "<br><h2 style='font-size: 25px;'>"+data.title+"<span id='hm"+type+"sel'></span></h2>Mass: <b id='hm"+type+"'>0</b> amu <span style='font-size: 15px;'>(+<span id='hm"+type+"gain'>0</span> amu/s)</span><br>Effect: <b id='hm"+type+"eff'>???</b><br><button id='hm"+type+"selectbtn' class='storebtn' onclick='toggleHiggsMech("+(x-1)+")'>Toggle</button>"
+			col.innerHTML = "<br><h2 style='font-size: 25px;' class='glowspan'>"+data.title+"<span id='hm"+type+"sel'></span></h2>Mass: <b id='hm"+type+"'>0</b> amu <span style='font-size: 15px;'>(+<span id='hm"+type+"gain'>0</span> amu/s)</span><br>Effect: <b id='hm"+type+"eff'>???</b><br><button id='hm"+type+"selectbtn' class='storebtn' onclick='toggleHiggsMech("+(x-1)+")'>Toggle</button>"
 
 		}
 	}
@@ -423,6 +424,7 @@ function setupHTMLAndData() {
 	setupBosonicRunes()
 	setupHiggsMechanism()
 	setupAutobuyerHTMLandData()
+	setupScalingsHTML()
 }
 
 function updateNewPlayer(reseted) {
@@ -2181,6 +2183,14 @@ function toggleProductionTab() {
 	if (document.getElementById("production").style.display == "block") showDimTab("antimatterdimensions")
 }
 
+function toggleAutoEternityTabShown() {
+	if (!player.achievements.includes("ng3p52")) return;
+	player.aarexModifications.hideAutoEternity=!player.aarexModifications.hideAutoEternity
+	document.getElementById("hideAutoEternity").textContent = (player.aarexModifications.hideAutoEternity?"Show":"Hide")+" Auto-Eternity tab"
+	if (document.getElementById("autoEternity").style.display == "block") showEternityTab('timestudies')
+
+}
+
 function toggleRepresentation() {
 	// 0 == visible, 1 == not visible
 	player.aarexModifications.hideRepresentation=!player.aarexModifications.hideRepresentation
@@ -2374,7 +2384,7 @@ function changeSaveDesc(saveId, placement) {
 			for (ec=1;ec<13;ec++) totalChallengeCompletions+=(temp.eternityChalls['eterc'+ec]?temp.eternityChalls['eterc'+ec]:0)
 			if (totalChallengeCompletions>0) {
 				msg+="Time Theorems: "+getFullExpansion(getTotalTT(temp))+", Challenge completions: "+totalChallengeCompletions
-			} else if (temp.eternities>(temp.aarexModifications.newGameMinusVersion?-20:0)) msg+="Eternity points: "+shortenDimensions(new Decimal(temp.eternityPoints))+", Eternities: "+temp.eternities.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+", Time Theorems: "+getTotalTT(temp)
+			} else if (temp.eternities>(temp.aarexModifications.newGameMinusVersion?-20:0)) msg+="Eternity points: "+shortenDimensions(new Decimal(temp.eternityPoints))+", Eternities: "+temp.eternities.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")+", Time Theorems: "+getFullExpansion(getTotalTT(temp))
 			else if (temp.achievements.includes("r51")) {
 				msg+="Antimatter: "+shortenMoney(new Decimal(temp.money))+", Infinity points: "+shortenDimensions(new Decimal(temp.infinityPoints))
 				if (temp.postChallUnlocked>0&&!temp.replicanti.unlocked) {
@@ -3859,6 +3869,8 @@ function updateRespecButtons() {
 function doCheckECCompletionStuff(){
 	var forceRespec = false
 	if (player.currentEternityChall !== "") {
+		if (tmp.ngp3c && tmp.qu) if (tmp.qu.bigRip.active && player.currentEternityChall === "eterc14" && player.eternityChalls.eterc14==5) giveAchievement("Really?")
+
 		if (player.eternityChalls[player.currentEternityChall] === undefined) {
 			player.eternityChalls[player.currentEternityChall] = 1
 		} else if (player.eternityChalls[player.currentEternityChall] < 5) {
@@ -4861,6 +4873,7 @@ function doNGP3UnlockStuff(){
 	if (canUnlockWZB() && tmp.ngp3c && !player.ghostify.wzb.WZBUNL) doWZBUnlockStuff()
 	if (canUnlockBosonicUpgrades() && tmp.ngp3c && !player.ghostify.bl.UPGSUNL) doBosonicUpgUnlockStuff()
 	if (!tmp.ng3l) unlockHiggs()
+	if (tmp.ngp3c) doCondensedUnlocks()
 }
 
 function updateResetTierButtons(){
@@ -4959,6 +4972,11 @@ function doPerSecondNGP3Stuff(){
 	if (player.achievements.includes("ng3p43")) if (player.ghostify.milestones >= 8) maxUpgradeColorDimPower()
 	if (tmp.qu.autoOptions.assignQK && player.ghostify.milestones > 7) assignAll(true) 
 	givePerSecondNeuts()
+
+	if (tmp.ngp3c) {
+		if (isAutoGhostActive(22)) for (let i=1;i<=8;i++) maxCondenseLight(i);
+		if (isAutoGhostActive(23)) maxNanoCondenseAll();
+	}
 }
 
 function checkGluonRounding(){
@@ -5005,6 +5023,7 @@ setInterval(function() {
 	eternityBtnDisplayType()
 	updateQuarkDisplay()
 	primaryStatsDisplayResetLayers()
+	updateScalingsDisplay()
 	crunchAnimationBtn()
 	TPAnimationBtn()
 
@@ -5282,18 +5301,26 @@ function ghostifyAutomationUpdating(diff){
 	} 
 }
 
-function WZBosonsUpdating(diff){
+function WZBosonsUpdating(diff) {
 	var data = player.ghostify.bl
-	var wattGained = Math.max(getBosonicWattGain(), data.watt)
-	var wattMult = getBosonicSpeedMult();
-	data.speed = Math.max(Math.min(wattGained * wattMult + (data.watt * wattMult - data.speed) * 2, wattGained * wattMult), data.speed)
-	data.watt = wattGained
+	updateBosonicWatts()
 	if (data.speed > 0) {
 		var limitDiff = Math.min(diff,data.speed * 14400)
 		let change = (data.speed-limitDiff / 28800) * limitDiff;
 		bosonicTick(change);
-		data.speed = Math.max(data.speed-limitDiff/ 14400, 0)
+		data.speed = Math.max(data.speed-limitDiff/14400, 0)
 	}
+}
+
+function updateBosonicWatts(keepSpd=true) {
+	var data = player.ghostify.bl
+	let wattSub = tmp.bEn.totalLvlEffect * getBosonicWattGainMultPostTotalLvl()
+	if (!keepSpd) tmp.bEn.totalLvlEffect = tmp.ngp3c?getBENTotalLevelEffect():new Decimal(1);
+	var wattGained = Math.max(getBosonicWattGain(), keepSpd?data.watt:(data.watt-wattSub))
+	var wattMult = getBosonicSpeedMult();
+	var effectiveWattGain = wattGained * wattMult
+	data.speed = Math.max(Math.min(effectiveWattGain + (effectiveWattGain - data.speed) * 2, effectiveWattGain), keepSpd?data.speed:0)
+	data.watt = wattGained
 }
 
 function ghostlyPhotonsUpdating(diff){
@@ -5324,6 +5351,7 @@ function nanofieldProducingChargeUpdating(diff){
 }
 
 function nanofieldUpdating(diff){
+	let extra = tmp.nf?tmp.nf.extra:0
 	var AErate = getQuarkAntienergyProduction()
 	var toAddAE = AErate.times(diff).min(getQuarkChargeProductionCap().sub(tmp.qu.nanofield.antienergy))
 	if (tmp.qu.nanofield.producingCharge) nanofieldProducingChargeUpdating(diff)
@@ -5333,13 +5361,20 @@ function nanofieldUpdating(diff){
 		updateNextPreonEnergyThreshold()
 		if (tmp.qu.nanofield.power > tmp.qu.nanofield.rewards) {
 			tmp.qu.nanofield.rewards = tmp.qu.nanofield.power
-			if (!tmp.qu.nanofield.apgWoke && tmp.qu.nanofield.rewards >= tmp.apgw) {
-				tmp.qu.nanofield.apgWoke = tmp.apgw
-				$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
-				showTab("quantumtab")
-				showQuantumTab("nanofield")
-				showNFTab("antipreon")
-			}
+			if (extra==0) doAPGW()
+		}
+	}
+	if (extra>0) doAPGW()
+}
+
+function doAPGW() {
+	if (!tmp.qu.nanofield.apgWoke && (tmp.qu.nanofield.rewards+(tmp.nf?tmp.nf.extra:0)) >= tmp.apgw) {
+		tmp.qu.nanofield.apgWoke = tmp.apgw
+		if (!(tmp.ngp3c && (tmp.hb.higgs>=2||tmp.bd.unl))) {
+			$.notify("You reached " + getFullExpansion(tmp.apgw) + " rewards... The Anti-Preontius has woken up and took over the Nanoverse! Be careful!")
+			showTab("quantumtab")
+			showQuantumTab("nanofield")
+			showNFTab("antipreon")
 		}
 	}
 }
@@ -5658,7 +5693,7 @@ function doEternityButtonDisplayUpdating(diff){
 	if (document.getElementById("eternitybtn").style.display == "inline-block") {
 		document.getElementById("eternitybtnFlavor").textContent = (((!player.dilation.active&&gainedEternityPoints().lt(1e6))||player.eternities<1||player.currentEternityChall!==""||(player.options.theme=="Aarex's Modifications"&&player.options.notation!="Morse code"))
 									    ? ((player.currentEternityChall!=="" ? "Other challenges await..." : player.eternities>0 ? "" : "Other times await...") + " I need to become Eternal.") : "")
-		if (player.dilation.active && player.dilation.totalTachyonParticles.gte(getDilGain())) document.getElementById("eternitybtnEPGain").innerHTML = player.aarexModifications.ngp3c?("Get more antimatter to gain more Tachyon Particles."):("Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon Particles.")
+		if ((player.dilation.active) && player.dilation.totalTachyonParticles.gte(getDilGain())) document.getElementById("eternitybtnEPGain").innerHTML = "Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon Particles."
 		else {
 			if ((EPminpeak.lt(Decimal.pow(10,9)) && EPminpeakType == "logarithm") || (EPminpeakType == 'normal' && EPminpeak.lt(Decimal.pow(10, 1e9)))) {
 				document.getElementById("eternitybtnEPGain").innerHTML = ((player.eternities > 0 && (player.currentEternityChall==""||player.options.theme=="Aarex's Modifications"))
@@ -6108,7 +6143,7 @@ function passiveQuantumLevelStuff(diff){
 		}
 		if (player.ghostify.milestones>15) tmp.qu.quarks=tmp.qu.quarks.add(quarkGain().times(diff / 100))
 	}
-	if (tmp.be && player.ghostify.milestones>14) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
+	if ((tmp.be && player.ghostify.milestones>14)||(tmp.qu.breakEternity.break && hasAch("ng3pc13"))) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
 	updateQuarkDisplay()
 	updateQuantumWorth("quick")
 }
@@ -6257,6 +6292,7 @@ function gameLoop(diff) {
 		if (ghostified) {
 			if (player.ghostify.wzb.unl) WZBosonsUpdating(diff) // Bosonic Lab
 			if (player.ghostify.ghostlyPhotons.unl) ghostlyPhotonsUpdating(diff) // Ghostly Photons
+			if (tmp.ngp3c && tmp.bd) if (tmp.bd.unl) breakDilationTick(diff) // Break Dilation
 		}
 	}
 	
@@ -6617,6 +6653,8 @@ function showStatsTab(tabName) {
 		}
 	}
 	player.aarexModifications.tabsSave.tabStats = tabName
+
+	if (tabName=="scalings" && tmp.ngp3c) updateScalingsDisplay()
 }
 
 function showDimTab(tabName) {

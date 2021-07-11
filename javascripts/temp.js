@@ -1,7 +1,9 @@
-function updateTemp() {
+function updateTemp(tempInit=false) {
 	if (typeof player != "undefined") {
-		if (player.money) tmp.ri = player.money.gte(getLimit()) && ((player.currentChallenge != "" && player.money.gte(player.challengeTarget)) || !onPostBreak())
-		else tmp.ri = false
+		if (player.money) {
+			if (!(player.money instanceof Decimal)) player.money = new Decimal(player.money)
+			tmp.ri = player.money.gte(getLimit()) && ((player.currentChallenge != "" && player.money.gte(player.challengeTarget)) || !onPostBreak())
+		} else tmp.ri = false
 	} else {
 		tmp.ri = false
 		return
@@ -10,7 +12,7 @@ function updateTemp() {
 	if (player.timestudy.studies.includes(101)) tmp.nrm = player.replicanti.amount.max(1)
 	tmp.rg4 = false
 	if (tmp.ngp3) {
-		updateGhostifyTempStuff()
+		updateGhostifyTempStuff(tempInit)
 		if (tmp.qu.breakEternity.unlocked) updateBreakEternityUpgradesTemp()
 		if (player.masterystudies.includes("d14")) updateBigRipUpgradesTemp()
 		if (tmp.nrm !== 1 && player.quantum.bigRip.active) {
@@ -25,6 +27,7 @@ function updateTemp() {
 		updateMasteryStudyTemp()
 		if (player.masterystudies.includes("d13")) tmp.branchSpeed = getBranchSpeed()
 		if (player.masterystudies.includes("d12") && tmp.nf !== undefined && tmp.nf.rewardsUsed !== undefined) {
+			if (tmp.nf.extra===undefined) tmp.nf.extra = 0;
 			var x = getNanoRewardPowerEff()
 			var y = tmp.qu.nanofield.rewards
 			tmp.ns = getNanofieldSpeed()
@@ -66,7 +69,10 @@ function updateTemp() {
 	updateTS232Temp()
 	updateMatterSpeed()
 
-	updateCondenseTemp()
+	updateCondenseTemp(tempInit)
+	if (tmp.ngp3c) {
+		updateTempBreakDilation()
+	}
 	
 	tmp.tsReduce = getTickSpeedMultiplier()
 	updateInfinityPowerEffects()
@@ -93,7 +99,7 @@ let tmp = {
 	bm: [200,175,150,100,50,40,30,25,20,15,10,5,4,3,2,1],
 	nbc: [1,2,4,6,15,50,1e3,1e14,1e35,"1e900","1e3000", 1e185],
 	nu: [],
-	nuc: [null,1e6,1e7,1e8,2e8,5e8,2e9,5e9,75e8,1e10,7e12,1e18,1e55,1e125,1e160,1e280,"1e1240", "1e1350"],
+	nuc: [null,1e6,1e7,1e8,2e8,5e8,2e9,5e9,75e8,1e10,7e12,1e18,1e55,1e125,1e160,1e280,"1e1240", "1e1350", "1e1700"],
 	lt: [12800,16e4,48e4,16e5,6e6,5e7,24e7,125e7],
 	lti: [2,4,1.5,10,4,1e3,2.5,3],
 	effL: [0,0,0,0,0,0,0],
@@ -238,16 +244,16 @@ function updateIntergalacticTemp() {
 		tmp.ig = Decimal.pow(10, igLog)
 		return
 	}
-	if ((player.aarexModifications.ngudpV || !tmp.ngp3l) && !tmp.ngp3c && igLog > 1e15) { //Further
-		igLog = Math.pow(10 + 6 * Math.log10(igLog), 7.5)
+	if ((player.aarexModifications.ngudpV || !tmp.ngp3l) && igLog > (tmp.ngp3c?4e18:1e15)) { //Further
+		igLog = Math.pow(10 + 6 * Math.log10(igLog), tmp.ngp3c?8.92195:7.5)
 		tmp.igs = 2
 	}
-	if (player.aarexModifications.ngudpV && !tmp.ngp3c && igLog > 1e16) { //Remote
-		igLog = Math.pow(84 + Math.log10(igLog), 8)
+	if (player.aarexModifications.ngudpV && igLog > (tmp.ngp3c?7e18:1e16)) { //Remote
+		igLog = Math.pow(84 + Math.log10(igLog), tmp.ngp3c?9.36436:8)
 		tmp.igs = 3
 	}
 
-	if (!tmp.ngp3l && igLog > 1e20) { //Dark Matter or Ghostly or Ethereal
+	if (!tmp.ngp3l && igLog > 1e20) { //Dark Matter or Ghostly or Ethereal (Cosmic in NG+3C)
 		igLog = softcap(igLog, "ig_log_high")
 		tmp.igs = Math.min(Math.floor(Math.log10(igLog) - 16), 8)
 		if (igLog > 1e24) igLog = Math.pow(Math.pow(Math.log10(igLog), 2) + 424, 8)
@@ -268,7 +274,7 @@ function updateAntiElectronGalaxiesTemp(){
 
 function updateTS232Temp() {
 	var exp = 0.2
-	if (tmp.ngp3 && player.galaxies >= 1e4 && !tmp.be) exp *= Math.max(6 - player.galaxies / 2e3,0)
+	if (tmp.ngp3 && player.galaxies >= 1e4 && !tmp.be && !(hasBosonicUpg(52) && tmp.ngp3c)) exp *= Math.max(6 - player.galaxies / 2e3,0)
 	tmp.ts232 = Math.pow(1 + initialGalaxies() / 1000, exp)
 }
 
@@ -305,6 +311,8 @@ function updateReplicantiTemp() {
 	}
 
 	data.est = Decimal.div((data.freq ? data.freq.times(Math.log10(2) / Math.log10(Math.E) * 1e3) : Decimal.add(data.chance, 1).log(Math.E) * 1e3), data.interval)
+	
+	
 	data.estLog = data.est.times(Math.log10(Math.E))
 }
 
@@ -329,8 +337,8 @@ function updatePPTITemp(){
 	tmp.ppti = x
 }
 
-function updateGhostifyTempStuff(){
-	updateBosonicLabTemp()
+function updateGhostifyTempStuff(tempInit=false){
+	updateBosonicLabTemp(tempInit)
 	tmp.apgw = tmp.qu.nanofield.apgWoke || getAntiPreonGhostWake()
 	updatePPTITemp() //preon power threshold increase
 	if (player.ghostify.ghostlyPhotons.unl) {
@@ -351,7 +359,10 @@ function updateGhostifyTempStuff(){
 		updateNeutrinoUpgradesTemp()
 		updateNeutrinoBoostsTemp()
 	}
-	if (player.ghostify.hb.unl && tmp.ngp3c) updateNU16Temp()
+	if (tmp.ngp3c && player.ghostify.hb) if (player.ghostify.hb.unl) {
+		updateNU16Temp()
+		updateNU18Temp()
+	}
 }
 
 function updateNeutrinoBoostsTemp() {
@@ -436,6 +447,13 @@ function updateNU15Temp(){
 function updateNU16Temp() {
 	tmp.nu[7] = Math.sqrt(Decimal.add(getReplicantiCap(), 1).log(Number.MAX_VALUE)/(tmp.qu.bigRip.active?1e9:1e10)+1)
 	//NU16
+}
+
+function updateNU18Temp() {
+	let e = player.ghostify.ghostlyPhotons.enpowerments;
+	if (e>=25) e = Math.sqrt(e*25)
+	tmp.nu[8] = Math.round(e)
+	//NU18
 }
 
 function updateNeutrinoUpgradesTemp(){
@@ -697,6 +715,7 @@ function updateWZBosonsTemp(){
 	if (tmp.ngp3c) if (player.ghostify.hb.unl && tmp.hm && tmp.hm.wb && player.ghostify.hb.masses.wb) data.wbt = data.wbt.times(tmp.hm.wb.eff).sqrt().max(data.wbt)
 	
 	data.wbo = Decimal.pow(10, Math.max(bosonsExp, 0)) //W Bosons boost to Z Neutrino oscillation requirement
+	if (hasAch("ng3pc15")) data.wbo = data.wbo.pow(2);
 	
 	let wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(tmp.ngp3c?((player.ghostify.bl.upgrades.length>1)?.01:.1):100).max(1)
 	if (tmp.ngp3c) wbp = Decimal.pow(2, Math.pow(wbp.log2(), .95));
@@ -718,6 +737,11 @@ function updateNanoEffectUsages() {
 	//First reward
 	var data2 = [hasBosonicUpg(21) ? "supersonic_start" : "hatch_speed"]
 	nanoRewards.effectsUsed[1] = data2
+
+	//Third reward
+	var data2 = ["dil_gal_gain"]
+	if (hasAch("ng3pc18")) data2.push("light_threshold_speed")
+	nanoRewards.effectsUsed[3] = data2
 
 	//Fifth reward
 	var data2 = [tmp.ngp3c ? "infdim_eff_exp" : "dil_effect_exp"]
@@ -748,6 +772,8 @@ function updateNanoRewardPowers() {
 }
 
 function updateNanoRewardEffects() {
+	tmp.nf.extra = getExtraNanoRewards()
+	
 	var data = {}
 	tmp.nf.effects = data
 
@@ -757,19 +783,32 @@ function updateNanoRewardEffects() {
 	}
 }
 
+function updateNanoRewardScalings() {
+	if (!tmp.nf.scalings) tmp.nf.scalings = {}
+	tmp.nf.scalings.active = getActiveNanoScalings()
+	tmp.nf.scalings.start = getNanoScalingsStart()
+	tmp.nf.scalings.bases = getNanoScalingsBases()
+	tmp.nf.lastScale = getLastNFScale()
+	if (!tmp.nf.scaleSpeed) tmp.nf.scaleSpeed = 1
+}
+
 function updateNanoRewardTemp() {
-	tmp.nf = {}
+	if (!tmp.nf) tmp.nf = {}
 
 	if (!tmp.ngp3) return
 	if (!player.masterystudies.includes("d11")) return
 
 	updateNanoEffectUsages()
+	if (!tmp.nf.scalings) updateNanoRewardScalings()
 	//The rest is calculated by updateTemp().
 }
 
-function updateHiggsMechanismTemp() {
-	if (!tmp.hm) tmp.hm = {};
-	tmp.hm.baseEff = Math.log((player.ghostify.hb.higgs||0)/10+1)
+function updateHiggsMechanismTemp(tempInit=false) {
+	if (!tmp.hm || tempInit) tmp.hm = {}
+	
+	let h = (player.ghostify.hb.higgs||0);
+	if (player.ghostify.bl.usedEnchants.includes(35) && tmp.ngp3c) h *= (tmp.bEn[35] || 1);
+	tmp.hm.baseEff = Math.log(h/10+1)
 	tmp.hm.gb = getParticleMassGainBase()
 	tmp.hm.unlocks = 0;
 	for (let type in hm) {
@@ -781,8 +820,8 @@ function updateHiggsMechanismTemp() {
 	}
 }
 
-function updateCondenseTemp() {
-	if (!tmp.cnd) tmp.cnd = {}
+function updateCondenseTemp(tempInit) {
+	if (!tmp.cnd || tempInit) tmp.cnd = {}
 	
 	if (!player.aarexModifications.ngp3c) return;
 	
@@ -825,4 +864,32 @@ function updateCondenseTemp() {
 	tmp.ts413 = getMTSMult(413);
 
 	tmp.cnd.lightPow = getLightCondenserPow()
+}
+
+function updateTempBreakDilation() {
+	updateTempCosmicOrbs();
+
+	if (!tmp.bdt) tmp.bdt = {};
+	tmp.bdt.upgPow = getBDUpgPower()
+	if (!tmp.bdt.upgs) tmp.bdt.upgs = {};
+	for (let i=1;i<=BDUpgs.amt;i++) tmp.bdt.upgs[i] = BDUpgs[i].eff(tmp.bdt.upgPow);
+
+	tmp.bdt.radGain = getCherenkovRadGain();
+	tmp.bdt.radEff = getCherenkovRadEff(); 
+	tmp.bdt.radEffFlipped = tmp.bdt.radEff.lt(1)
+}
+
+function updateTempCosmicOrbs() {
+	if (!tmp.co) tmp.co = {};
+	tmp.co.amt = tmp.bd?(tmp.bd.cp||0):0
+
+	tmp.co.posAmt = posCosmicOrbPower(tmp.co.amt);
+	tmp.co.plus1 = cosmicOrbEffects.plus1(tmp.co.posAmt)
+	tmp.co.plus2 = cosmicOrbEffects.plus2(tmp.co.posAmt)
+	tmp.co.plus3 = cosmicOrbEffects.plus3(tmp.co.amt) // not affected by Positive Cosmic Orb Power
+
+	tmp.co.negAmt = negaCosmicOrbPower(tmp.co.amt);
+	tmp.co.minus1 = cosmicOrbEffects.minus1(tmp.co.negAmt)
+	tmp.co.minus2 = cosmicOrbEffects.minus2(tmp.co.negAmt)
+	tmp.co.minus3 = cosmicOrbEffects.minus3(tmp.co.negAmt)
 }

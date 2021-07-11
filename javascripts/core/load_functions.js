@@ -1090,13 +1090,13 @@ function doNGp3v199tov19995(){
         if (player.aarexModifications.newGame3PlusVersion < 1.9987) player.eternitiesBank=0
         if (player.aarexModifications.newGame3PlusVersion < 1.99871) {
                 tmp.qu.replicants.limit=Math.min(tmp.qu.replicants.limit,10)
-                tmp.qu.replicants.limitCost=Math.pow(200,tmp.qu.replicants.limit-1)*getReplicantLimitBaseCost()
+                tmp.qu.replicants.limitCost=Math.pow(getWorkerLimitCostBase(),tmp.qu.replicants.limit-1)*getReplicantLimitBaseCost()
                 tmp.qu.replicants.workers=Decimal.min(tmp.qu.replicants.workers,10)
                 if (tmp.qu.replicants.workers.eq(10)) tmp.qu.replicants.workerProgress=0
         }
         if (player.aarexModifications.newGame3PlusVersion < 1.998711) {
                 tmp.qu.quantumFood=0
-                tmp.qu.quantumFoodCost=getQFBaseCost()*Math.pow(5,Math.round(new Decimal(tmp.qu.replicants.workers).toNumber()*3+new Decimal(tmp.qu.replicants.workerProgress).toNumber()))
+                tmp.qu.quantumFoodCost=getQFBaseCost()*Math.pow(getQuantumFoodCostBase(),Math.round(new Decimal(tmp.qu.replicants.workers).toNumber()*3+new Decimal(tmp.qu.replicants.workerProgress).toNumber()))
         }
         if (player.aarexModifications.newGame3PlusVersion < 1.99873) {
                 tmp.qu.pairedChallenges.completions = {}
@@ -1818,6 +1818,7 @@ function setConfirmationsDisplay(){
         document.getElementById("ghostifyConfirmBtn").style.display = ghostified ? "inline-block" : "none"
         document.getElementById("leConfirmBtn").style.display = ghostified && player.ghostify.ghostlyPhotons.enpowerments ? "inline-block" : "none"
         document.getElementById("higgsConfirmBtn").style.display = ghostified && player.ghostify.hb.higgs ? "inline-block" : "none"
+        document.getElementById("bdConfirmBtn").style.display = (tmp.ngp3c && ghostified && tmp.bd.unl) ? "inline-block" : "none"
 
         document.getElementById("confirmation").checked = !player.options.sacrificeConfirmation
         document.getElementById("sacConfirmBtn").textContent = "Sacrifice confirmation: O" + (player.options.sacrificeConfirmation ? "N" : "FF")
@@ -1832,6 +1833,7 @@ function setConfirmationsDisplay(){
         document.getElementById("ghostifyConfirmBtn").textContent = "Ghostify confirmation: O" + (player.aarexModifications.ghostifyConf ? "N" : "FF")
         document.getElementById("leConfirmBtn").textContent = "Light Empowerment confirmation: O" + (player.aarexModifications.leNoConf ? "FF" : "N")
         document.getElementById("higgsConfirmBtn").textContent = "Higgs Boson confirmation: O"+ (player.aarexModifications.higgsNoConf ? "FF" : "N")
+        document.getElementById("bdConfirmBtn").textContent = "Fix Dilation confirmation: O"+ (player.aarexModifications.bdNoConf ? "FF" : "N")
 }
 
 function setOptionsDisplaysStuff1(){
@@ -1873,6 +1875,8 @@ function setOptionsDisplaysStuff1(){
         document.getElementById("decimalMode").textContent = "Big number library: "+(break_infinity_js?"break_infinity (slow)":"logarithmica_numerus (fast)")
         document.getElementById("decimalMode").style.visibility = Decimal.gt(player.totalmoney,Decimal.pow(10, 9e15)) ? "hidden" : ""
         document.getElementById("hideProductionTab").textContent = (player.aarexModifications.hideProductionTab?"Show":"Hide")+" production tab"
+        document.getElementById("hideAutoEternity").style.display = player.achievements.includes("ng3p52")?"":"none"
+        document.getElementById("hideAutoEternity").textContent = (player.aarexModifications.hideAutoEternity?"Show":"Hide")+" Auto-Eternity tab"
         document.getElementById("hideRepresentation").textContent=(player.aarexModifications.hideRepresentation?"Show":"Hide")+" antimatter representation"
         document.getElementById("showAchRowNums").textContent=(player.aarexModifications.showAchRowNums?"Hide":"Show")+" achievement row info"
         document.getElementById("hideCompletedAchs").textContent=(player.aarexModifications.hideCompletedAchs?"Show":"Hide")+" completed achievement rows"
@@ -2016,6 +2020,7 @@ function setTSDisplay(){
 
 function updateNGp3DisplayStuff(){
         displayNonlegacyStuff()
+        displayCondensedStuff()
 		setupMasteryStudiesHTML()
         for (var i=0;i<masteryStudies.timeStudies.length;i++) {
                 var t=masteryStudies.timeStudies[i]
@@ -2132,6 +2137,7 @@ function updateNGp3DisplayStuff(){
         updateHiggsUnlocks()
         if (tmp.ngp3c) {
                 updateHiggsMechanismTab(new Decimal(0), true)
+                updateCondensedUnlocks()
         }
 }
 
@@ -2150,7 +2156,7 @@ function setSomeQuantumAutomationDisplay(){
                 for (i=1;i<9;i++) document.getElementById("td"+i+'auto').textContent="Auto: O"+(player.autoEterOptions["td"+i]?"N":"FF")
         }
         document.getElementById('replicantibulkmodetoggle').textContent="Mode: "+(player.galaxyMaxBulk?"Max":"Singles")
-        document.getElementById('versionMod').textContent = tmp.ngp3l ? "NG+3: Legacy" : "New Game Plus 3"
+        document.getElementById('versionMod').textContent = tmp.ngp3c ? "New Game Plus 3 Condensed" : (tmp.ngp3l ? "NG+3: Legacy" : "New Game Plus 3")
         document.getElementById('versionDesc').style.display = tmp.ngp3 ? "" : "none"
         document.getElementById('sacrificeAuto').style.display=speedrunMilestonesReached>24?"":"none"
         document.getElementById('toggleautoquantummode').style.display=(player.masterystudies?tmp.qu.reachedInfQK||player.achievements.includes("ng3p25"):false)?"":"none"
@@ -2371,7 +2377,7 @@ function onLoad(noOffline) {
         } else if (player.aarexModifications.popUpId!="STD") showNextModeMessage()
         document.getElementById("ghostlyNewsTicker").style.height=((player.options.secrets!==undefined?player.options.secrets.ghostlyNews:false)?24:0)+"px"
         document.getElementById("ghostlyNewsTickerBlock").style.height=((player.options.secrets!==undefined?player.options.secrets.ghostlyNews:false)?16:0)+"px"
-        updateTemp()
+        updateTemp(true)
         updateTemp()
 }
 
