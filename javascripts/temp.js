@@ -1,4 +1,4 @@
-function updateTemp() {
+function updateTemp(tempInit=false) {
 	if (typeof player != "undefined") {
 		if (player.money) {
 			if (!(player.money instanceof Decimal)) player.money = new Decimal(player.money)
@@ -12,7 +12,7 @@ function updateTemp() {
 	if (player.timestudy.studies.includes(101)) tmp.nrm = player.replicanti.amount.max(1)
 	tmp.rg4 = false
 	if (tmp.ngp3) {
-		updateGhostifyTempStuff()
+		updateGhostifyTempStuff(tempInit)
 		if (tmp.qu.breakEternity.unlocked) updateBreakEternityUpgradesTemp()
 		if (player.masterystudies.includes("d14")) updateBigRipUpgradesTemp()
 		if (tmp.nrm !== 1 && player.quantum.bigRip.active) {
@@ -69,7 +69,7 @@ function updateTemp() {
 	updateTS232Temp()
 	updateMatterSpeed()
 
-	updateCondenseTemp()
+	updateCondenseTemp(tempInit)
 	if (tmp.ngp3c) {
 		updateTempBreakDilation()
 	}
@@ -337,8 +337,8 @@ function updatePPTITemp(){
 	tmp.ppti = x
 }
 
-function updateGhostifyTempStuff(){
-	updateBosonicLabTemp()
+function updateGhostifyTempStuff(tempInit=false){
+	updateBosonicLabTemp(tempInit)
 	tmp.apgw = tmp.qu.nanofield.apgWoke || getAntiPreonGhostWake()
 	updatePPTITemp() //preon power threshold increase
 	if (player.ghostify.ghostlyPhotons.unl) {
@@ -803,9 +803,9 @@ function updateNanoRewardTemp() {
 	//The rest is calculated by updateTemp().
 }
 
-function updateHiggsMechanismTemp() {
-	if (!tmp.hm) tmp.hm = {};
-
+function updateHiggsMechanismTemp(tempInit=false) {
+	if (!tmp.hm || tempInit) tmp.hm = {}
+	
 	let h = (player.ghostify.hb.higgs||0);
 	if (player.ghostify.bl.usedEnchants.includes(35) && tmp.ngp3c) h *= (tmp.bEn[35] || 1);
 	tmp.hm.baseEff = Math.log(h/10+1)
@@ -820,8 +820,8 @@ function updateHiggsMechanismTemp() {
 	}
 }
 
-function updateCondenseTemp() {
-	if (!tmp.cnd) tmp.cnd = {}
+function updateCondenseTemp(tempInit) {
+	if (!tmp.cnd || tempInit) tmp.cnd = {}
 	
 	if (!player.aarexModifications.ngp3c) return;
 	

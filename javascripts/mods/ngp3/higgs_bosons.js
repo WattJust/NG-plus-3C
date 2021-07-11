@@ -8,6 +8,7 @@ function setupHiggsSave() {
 		data.type = 0;
 	}
 	player.ghostify.hb = data
+	tmp.hb = player.ghostify.hb
 	return data
 }
 

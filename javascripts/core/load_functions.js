@@ -2156,7 +2156,7 @@ function setSomeQuantumAutomationDisplay(){
                 for (i=1;i<9;i++) document.getElementById("td"+i+'auto').textContent="Auto: O"+(player.autoEterOptions["td"+i]?"N":"FF")
         }
         document.getElementById('replicantibulkmodetoggle').textContent="Mode: "+(player.galaxyMaxBulk?"Max":"Singles")
-        document.getElementById('versionMod').textContent = tmp.ngp3l ? "NG+3: Legacy" : "New Game Plus 3"
+        document.getElementById('versionMod').textContent = tmp.ngp3c ? "New Game Plus 3 Condensed" : (tmp.ngp3l ? "NG+3: Legacy" : "New Game Plus 3")
         document.getElementById('versionDesc').style.display = tmp.ngp3 ? "" : "none"
         document.getElementById('sacrificeAuto').style.display=speedrunMilestonesReached>24?"":"none"
         document.getElementById('toggleautoquantummode').style.display=(player.masterystudies?tmp.qu.reachedInfQK||player.achievements.includes("ng3p25"):false)?"":"none"
@@ -2377,7 +2377,7 @@ function onLoad(noOffline) {
         } else if (player.aarexModifications.popUpId!="STD") showNextModeMessage()
         document.getElementById("ghostlyNewsTicker").style.height=((player.options.secrets!==undefined?player.options.secrets.ghostlyNews:false)?24:0)+"px"
         document.getElementById("ghostlyNewsTickerBlock").style.height=((player.options.secrets!==undefined?player.options.secrets.ghostlyNews:false)?16:0)+"px"
-        updateTemp()
+        updateTemp(true)
         updateTemp()
 }
 

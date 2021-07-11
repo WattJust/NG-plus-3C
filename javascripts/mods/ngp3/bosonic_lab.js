@@ -34,7 +34,7 @@ function updateBLUpgUnlocks() {
 }
 
 function canUnlockWZB() {
-	return (tmp.bEn&&tmp.bEn.totalLvl)?(tmp.bEn.totalLvl.gte(10) && tmp.ngp3c):false;
+	return (tmp.bEn&&tmp.bEn.totalLvl)?(tmp.bEn.totalLvl.gte(10) && tmp.ngp3c && player.ghostify.wzb.unl):false;
 }
 
 function canUnlockBosonicUpgrades() {
@@ -387,9 +387,9 @@ function getBosonicFinalCost(x) {
 	return x.ceil()
 }
 
-function updateBosonicLabTemp() {
-	if (!tmp.bEn) tmp.bEn = {}
-	if (!tmp.blu) tmp.blu = {}
+function updateBosonicLabTemp(tempInit=false) {
+	if (!tmp.bEn || tempInit) tmp.bEn = {}
+	if (!tmp.blu || tempInit) tmp.blu = {}
 	tmp.wzb = {}
 
 	if (!tmp.ngp3) return 
@@ -398,7 +398,7 @@ function updateBosonicLabTemp() {
 	updateBosonicEnchantsTemp()
 	updateBosonicUpgradesTemp()
 	updateWZBosonsTemp()
-	if (tmp.ngp3c) updateHiggsMechanismTemp()
+	if (tmp.ngp3c) updateHiggsMechanismTemp(tempInit)
 }
 
 //Bosonic Extractor / Bosonic Runes

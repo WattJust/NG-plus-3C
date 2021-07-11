@@ -90,7 +90,7 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		player.ghostify.hb.mechType = 0;
 	}
 
-	player.aarexModifications.ngp3c = 1.29;
+	player.aarexModifications.ngp3c = 1.3;
 }
 
 function updateCondensedUnlocks() {
