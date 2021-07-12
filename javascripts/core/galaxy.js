@@ -61,10 +61,14 @@ document.getElementById("secondSoftReset").onclick = function() {
 	}
 }
 
-function getGalaxyRequirement(offset = 0, display) {
-	tmp.grd = {} //Galaxy requirement data
+function updateGalReqData(offset=0) {
+	tmp.grd = {}
 	tmp.grd.galaxies = player.galaxies + offset
 	if (tmp.ngp3c) tmp.grd.darkStart = getDarkMatterGalaxyStart()
+}
+
+function getGalaxyRequirement(offset = 0, display) {
+	updateGalReqData(offset);
 	let mult = getGalaxyReqMultiplier()
 	let base = tmp.grd.galaxies * mult
 	let amount = 80 + base
@@ -138,6 +142,8 @@ function getGalaxyReqMultiplier() {
 
 function getDistantScalingStart() {
 	if (player.currentEternityChall == "eterc5" && !tmp.ngp3c) return 0
+	if (!tmp.grd) return 0
+
 	var n = (player.aarexModifications.ngp3c?1:100) + getECReward(5)
 	if (player.timestudy.studies.includes(223)) n += 7
 	if (player.timestudy.studies.includes(224)) n += Math.floor(player.resets/2000)

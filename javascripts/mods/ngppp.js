@@ -533,7 +533,7 @@ function ghostify(auto, force, resetQCs=true) {
 		}, seconds * 250)
 		setTimeout(function(){
 			if (Math.random()<1e-3) giveAchievement("Boo!")
-			ghostifyReset(true, gain, amount, resetQCs)
+			ghostifyReset(true, gain, amount, force, resetQCs)
 		}, seconds * 500)
 		setTimeout(function(){
 			implosionCheck=0

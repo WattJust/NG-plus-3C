@@ -157,7 +157,7 @@ input {
     color: #757575 !important;
 }
 
-#infPowAmount {
+#infPowAmount, #infPowEffectPower {
     color: #FF9800 !important;
 }
 

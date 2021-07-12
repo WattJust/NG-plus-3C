@@ -216,6 +216,7 @@ function checkOtherPreNGp3Achieve(){
 	if (getEternitied() >= 100) giveAchievement("This mile took an Eternity")
 	if (player.bestEternity < 300) giveAchievement("That wasn't an eternity");
 	if (player.bestEternity <= 0.01) giveAchievement("Less than or equal to 0.001");
+	if (tmp.ngp3c && player.condensed.normal[8]>=3) giveAchievement("Fake News")
 }
 
 function getTwoDecaysBool(){

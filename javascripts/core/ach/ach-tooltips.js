@@ -16,7 +16,7 @@ function setR1Tooltip(){
 function setR2Tooltip(){
 	// Row 2 (6/8)
 	let infinity = document.getElementById("To infinity!")
-	//r22/////
+	let fakenews = document.getElementById("Fake News")
 	let ndial = document.getElementById("The 9th Dimension is a lie");
 	let apocAchieve = document.getElementById("Antimatter Apocalypse");
 	//r25/////
@@ -25,6 +25,7 @@ function setR2Tooltip(){
 	let noPointAchieve = document.getElementById("There's no point in doing that");
 
 	//ACHIEVEMENT ROW 2
+	fakenews.setAttribute('ach-tooltip', tmp.ngp3c?"Purchase 3 Eighth Condensers.":"Encounter 50 different news messages.")
 	ndial.setAttribute('ach-tooltip', "Have exactly 99 Eighth Dimensions. Reward: Eighth Dimensions are 10% stronger" + (player.tickspeedBoosts==undefined ? "." : " and you gain more GP based on your Eighth Dimensions and your Tickspeed Boosts."));
 	apocAchieve.setAttribute('ach-tooltip', "Get over " + formatValue(player.options.notation, 1e80, 0, 0) + " antimatter.");
 	gal.setAttribute('ach-tooltip', 'Buy an Antimatter Galaxy. ' + (player.aarexModifications.ngmX > 3 ? "Reward: Upon a Time Dimension Boost, your Dimension Boosts don’t reset unless you have more Time Dimension Boosts than your Dimension Boosts." : ''));
