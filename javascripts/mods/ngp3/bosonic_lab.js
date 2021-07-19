@@ -46,7 +46,8 @@ function updateBLUnlockDisplay() {
 }
 
 function getBosonicWattGain() {
-	let gain = player.money.log10() / (tmp.ngp3c ? 1e15 : 2e16) - 1.25
+	let gain = player.money.log10() / (tmp.an ? 8e9 : (tmp.ngp3c ? 1e15 : 2e16)) - 1.25
+	if (tmp.an) gain = Math.sqrt(gain+1.25)-1.125;
 	if (tmp.ngp3c) {
 		gain *= player.ghostify.bl.upgrades.length/5+1
 		if (hasBosonicUpg(14)) gain *= tmp.blu[14]||1;
@@ -54,7 +55,7 @@ function getBosonicWattGain() {
 
 		gain *= getBosonicWattGainMultPostTotalLvl();		
 	}
-	return gain;
+	return Math.max(gain, 0);
 }
 
 function getBosonicWattGainMultPostTotalLvl() {

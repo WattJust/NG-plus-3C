@@ -1572,10 +1572,11 @@ function showTab(tabName, init) {
 		player.aarexModifications.tabsSave.tabMain = tabName
 		if ((document.getElementById("antimatterdimensions").style.display != "none" || document.getElementById("metadimensions").style.display != "none") && player.aarexModifications.progressBar && tabName == "dimensions") document.getElementById("progress").style.display = "block";
 		else document.getElementById("progress").style.display = "none"
-		if ((document.getElementById("timestudies").style.display != "none" || document.getElementById("ers_timestudies").style.display != "none" || document.getElementById("masterystudies").style.display != "none") && tabName=="eternitystore") document.getElementById("TTbuttons").style.display = "block";
+		if ((document.getElementById("timestudies").style.display != "none" || document.getElementById("ers_timestudies").style.display != "none" || document.getElementById("dilationstudies").style.display != "none" || document.getElementById("masterystudies").style.display != "none") && tabName=="eternitystore") document.getElementById("TTbuttons").style.display = "block";
 		else document.getElementById("TTbuttons").style.display = "none"
+		document.getElementById("ExTbuttons").style.display = (tabName=="eternitystore")?document.getElementById("exoticstudies").style.display:"none";
 		if (tabName=="eternitystore") {
-			if (document.getElementById('timestudies') !== "none" || document.getElementById('masterystudies') !== "none" || document.getElementById('dilation') !== "none" || document.getElementById("blackhole") !== "none") resizeCanvas()
+			if (document.getElementById('timestudies') !== "none" || document.getElementById('masterystudies') !== "none" || document.getElementById("dilationstudies").style.display !== "none" || document.getElementById("exoticstudies").style.display !== "none" || document.getElementById('dilation') !== "none" || document.getElementById("blackhole") !== "none") resizeCanvas()
 			if (document.getElementById("dilation") !== "none") requestAnimationFrame(drawAnimations)
 			if (document.getElementById("blackhole") !== "none") requestAnimationFrame(drawBlackhole)
 			if (document.getElementById("autoEternity").style.display === "block") loadAP()
@@ -2024,7 +2025,7 @@ function updateEternityUpgrades() {
 	} else {
 		document.getElementById("dilationeterupgrow").style.display = "none"
 	}
-	if (player.aarexModifications.ngp3c) {
+	if (player.aarexModifications.ngp3c && !tmp.an) {
 		document.getElementById("eterrowcond").style.display = ""
 		document.getElementById("eter10").className = (player.eternityUpgrades.includes(10)) ? "eternityupbtnbought" : (player.eternityPoints.gte("1e625")) ? "eternityupbtn" : "eternityupbtnlocked"
 		document.getElementById("eter11").className = (player.eternityUpgrades.includes(11)) ? "eternityupbtnbought" : (player.eternityPoints.gte("1e870")) ? "eternityupbtn" : "eternityupbtnlocked"
@@ -3013,6 +3014,7 @@ function sacrifice(auto = false) {
 	if (player.eightAmount == 0) return false;
 	if (player.resets < 5) return false
 	if (player.currentEternityChall == "eterc3") return false
+	if (tmp.an) return false
 	var sacGain = calcSacrificeBoost()
 	var maxPower = player.galacticSacrifice ? "1e8888" : Number.MAX_VALUE
 	if (inNC(11) && (tmp.sacPow.gte(maxPower) || player.chall11Pow.gte(maxPower))) return false
@@ -4758,6 +4760,7 @@ function notifyQuantumMilestones(){
 }
 
 function notifyGhostifyMilestones(){
+	if (tmp.an) notifyId2 = 16
 	if (typeof notifyId2 == "undefined") notifyId2 = 16
 	if (notifyId2 <= 0) notifyId2 = 0
 	if (player.ghostify.milestones > notifyId2) {
@@ -4914,7 +4917,7 @@ function updateResetTierButtons(){
 	document.getElementById("ghostparticles").style.display = ghostified ? "" : "none"
 	if (ghostified) {
 		document.getElementById("GHPAmount").textContent = shortenDimensions(player.ghostify.ghostParticles)
-		var showQuantumed = player.ghostify.times > 0 && player.ghostify.milestones < 16
+		var showQuantumed = player.ghostify.times > 0 && player.ghostify.milestones < 16 && !tmp.an
 		document.getElementById("quantumedBM").style.display = showQuantumed ? "" : "none"
 		if (showQuantumed) document.getElementById("quantumedBMAmount").textContent = getFullExpansion(tmp.qu.times)
 	}
@@ -5313,6 +5316,8 @@ function WZBosonsUpdating(diff) {
 }
 
 function updateBosonicWatts(keepSpd=true) {
+	keepSpd = keepSpd && !tmp.qu.bigRip.active
+	
 	var data = player.ghostify.bl
 	let wattSub = tmp.bEn.totalLvlEffect * getBosonicWattGainMultPostTotalLvl()
 	if (!keepSpd) tmp.bEn.totalLvlEffect = tmp.ngp3c?getBENTotalLevelEffect():new Decimal(1);
@@ -5325,8 +5330,13 @@ function updateBosonicWatts(keepSpd=true) {
 
 function ghostlyPhotonsUpdating(diff){
 	var data = player.ghostify.ghostlyPhotons
-	var type = tmp.qu.bigRip.active ? "amount" : "darkMatter"
-	data[type] = data[type].add(getGPHProduction().times(diff))
+	if (hasExS(33)) {
+		data.amount = data.amount.add(getGPHProduction().times(diff));
+		data.darkMatter = data.darkMatter.add(getDMProduction().times(diff))
+	} else {
+		var type = tmp.qu.bigRip.active ? "amount" : "darkMatter"
+		data[type] = data[type].add((tmp.qu.bigRip.active?getGPHProduction():getDMProduction()).times(diff))
+	}
 	data.ghostlyRays = data.ghostlyRays.add(getGHRProduction().times(diff)).min(getGHRCap())
 	for (var c = 0; c < 8; c++) {
 		if (data.ghostlyRays.gte(getLightThreshold(c))) {
@@ -5729,7 +5739,7 @@ function doQuantumButtonDisplayUpdating(diff){
 	}
 	
 	document.getElementById("quantumbtnFlavor").textContent = ((tmp.qu!==undefined?!tmp.qu.times&&(player.ghostify!==undefined?!player.ghostify.milestones:true):false)||!inQC(0)?((tmp.ngp3 ? tmp.qu.bigRip.active : false)?"I am":inQC(0)?"My computer is":tmp.qu.challenge.length>1?"These paired challenges are":"This challenge is")+" not powerful enough... ":"") + "I need to go quantum."
-	var showGain = ((quantumed && tmp.qu.times) || (ghostified && player.ghostify.milestones)) && (inQC(0)||player.options.theme=="Aarex's Modifications") ? "QK" : ""
+	var showGain = ((quantumed && tmp.qu.times) || (ghostified && player.ghostify.milestones) || tmp.an) && (inQC(0)||player.options.theme=="Aarex's Modifications") ? "QK" : ""
 	if (tmp.ngp3) if (tmp.qu.bigRip.active) showGain = "SS"
 	document.getElementById("quantumbtnQKGain").textContent = showGain == "QK" ? "Gain "+shortenDimensions(quarkGain())+" quark"+(quarkGain().eq(1)?".":"s.") : ""
 	if (showGain == "SS") document.getElementById("quantumbtnQKGain").textContent = "Gain " + shortenDimensions(getSpaceShardsGain()) + " Space Shards."
@@ -6097,12 +6107,12 @@ function galSacBtnUpdating(){
 }
 
 function IPonCrunchPassiveGain(diff){
-	if (player.timestudy.studies.includes(181)) player.infinityPoints = player.infinityPoints.plus(gainedInfinityPoints().times(diff / 100))
+	if (player.timestudy.studies.includes(181) || hasExS(11)) player.infinityPoints = player.infinityPoints.plus(gainedInfinityPoints().times(diff / 100))
 }
 
 function EPonEternityPassiveGain(diff){
 	if (tmp.ngp3) {
-		if (player.masterystudies.includes("t291")) {
+		if (player.masterystudies.includes("t291") || hasExS(11)) {
 			player.eternityPoints = player.eternityPoints.plus(gainedEternityPoints().times(diff / 100))
 			document.getElementById("eternityPoints2").innerHTML = "You have <span class=\"EPAmount2\">"+shortenDimensions(player.eternityPoints)+"</span> Eternity points."
 		}
@@ -6292,7 +6302,10 @@ function gameLoop(diff) {
 		if (ghostified) {
 			if (player.ghostify.wzb.unl) WZBosonsUpdating(diff) // Bosonic Lab
 			if (player.ghostify.ghostlyPhotons.unl) ghostlyPhotonsUpdating(diff) // Ghostly Photons
-			if (tmp.ngp3c && tmp.bd) if (tmp.bd.unl) breakDilationTick(diff) // Break Dilation
+			if (tmp.ngp3c) {
+				if (tmp.bd) if (tmp.bd.unl) breakDilationTick(diff) // Break Dilation
+				if (tmp.an) player.ghostify.annihilation.theorem = nQ(nMx(player.ghostify.annihilation.theorem, getPotentialExThm()));
+			}
 		}
 	}
 	
@@ -6709,11 +6722,12 @@ function showEternityTab(tabName, init) {
 			tab.style.display = 'none';
 		}
 	}
-	if ((tabName === 'timestudies' || tabName === 'ers_timestudies' || tabName === 'masterystudies') && !init) document.getElementById("TTbuttons").style.display = "block"
+	if ((tabName === 'timestudies' || tabName === 'ers_timestudies' || tabName === 'dilationstudies' || tabName === 'masterystudies') && !init) document.getElementById("TTbuttons").style.display = "block"
 	else document.getElementById("TTbuttons").style.display = "none"
+	document.getElementById("ExTbuttons").style.display = (tabName == "exoticstudies") ? "block" : "none"
 	if (tabName != oldTab) {
 		player.aarexModifications.tabsSave.tabEternity = tabName
-		if (tabName === 'timestudies' || tabName === 'masterystudies' || tabName === 'dilation' || tabName === 'blackhole') resizeCanvas()
+		if (tabName === 'timestudies' || tabName === 'masterystudies' || tabName === 'dilation' || tabName === 'dilationstudies' || tabName === 'exoticstudies' || tabName === 'blackhole') resizeCanvas()
 		if (tabName === "dilation") requestAnimationFrame(drawAnimations)
 		if (tabName === "blackhole") requestAnimationFrame(drawBlackhole)
 		if (tabName === "autoEternity" && document.getElementById("eternitystore").style.display === "block") loadAP()

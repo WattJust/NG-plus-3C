@@ -104,7 +104,7 @@ function getTimeDimensionPower(tier) {
 	if (player.galacticSacrifice !== undefined) ret = ret.times(ret2)
 
 	ret = dilates(ret, 1)
-	if (quantumed && !tmp.ngp3l) ret = ret.times(colorBoosts.dim.b)
+	if (quantumed && !tmp.ngp3l && !tmp.an) ret = ret.times(colorBoosts.dim.b)
 	if (player.dilation.upgrades.includes("ngmm2") && player.dilation.upgrades.includes(5) && !player.aarexModifications.ngp3c && player.replicanti.amount.gt(1)) ret = ret.times(tmp.rm.pow(0.1))
 	
 	if (player.aarexModifications.ngp3c && tmp.cnd) ret = ret.times(tmp.cnd.time[tier])

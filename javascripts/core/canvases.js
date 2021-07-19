@@ -14,6 +14,10 @@ var bhc = document.getElementById("blackHoleCanvas");
 var bhctx = bhc.getContext("2d");
 var msc = document.getElementById("studyTreeCanvas2");
 var msctx = msc.getContext("2d");
+var dsc = document.getElementById("studyTreeCanvas3");
+var dsctx = dsc.getContext("2d");
+var exc = document.getElementById("studyTreeCanvas4");
+var exctx = exc.getContext("2d");
 var qkc = document.getElementById("quarkCanvas");
 var qkctx = qkc.getContext("2d");
 
@@ -24,6 +28,8 @@ function resizeCanvas() {
 	canvas3.height = 0;
 	msc.width = 0;
 	msc.height = 0;
+    dsc.width = 0;
+    dsc.height = 0;
 	canvas.width = document.body.scrollWidth;
 	canvas.height = document.body.scrollHeight;
 	canvas3.width = document.body.scrollWidth;
@@ -32,10 +38,16 @@ function resizeCanvas() {
 	bhc.height = document.body.scrollHeight;
 	msc.width = document.body.scrollWidth;
 	msc.height = document.body.scrollHeight;
+    dsc.width = document.body.scrollWidth;
+	dsc.height = document.body.scrollHeight;
+    exc.width = document.body.scrollWidth;
+    exc.height = document.body.scrollHeight;
 	qkc.width = document.body.scrollWidth;
 	qkc.height = document.body.scrollHeight;
 	drawStudyTree();
 	drawMasteryTree();
+    drawDilStudyTree();
+    drawExoticStudyTree();
 }
 
 function point(x, y, ctz){

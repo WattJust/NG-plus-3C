@@ -5,6 +5,7 @@ presets={}
 function getTTManualMult() {
 	let mult = 1;
 	if (tmp.ngp3c && player.achievements.includes("ng3p61")) mult = 5;
+	if (hasAch("ng3pc21")) mult *= 2;
 	return mult;
 }
 
@@ -75,6 +76,7 @@ function maxTheorems() {
 }
 
 function updateTheoremButtons() {
+	document.getElementById("presetsbtn").style.display = (document.getElementById("dilationstudies").style.display == "none")?"":"none"
 	if (player.dilation.upgrades.includes(10)) {
 		document.getElementById("theoremmax").style.display = "none"
 		document.getElementById("theoremam").style.display = "none"
@@ -129,7 +131,7 @@ function updateTheoremButtons() {
 }
 
 function buyTimeStudy(name, check, quickBuy) {
-	if (inQCModifier("sm")) return
+	if (inQCModifier("sm") || tmp.an) return
 	var cost = studyCosts[all.indexOf(name)]
 	if (player.boughtDims) {
 		if (player.timestudy.theorem < player.timestudy.ers_studies[name] + 1) return

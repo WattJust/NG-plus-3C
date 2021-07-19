@@ -44,7 +44,7 @@ function updateHiggsUnlocks() {
 	if (!unl) updateNextParticleUnlockDisplay()
 }
 
-function bosonicLabReset() {
+function bosonicLabReset(full=false, an=false) {
 	delete tmp.qu.nanofield.apgWoke
 	player.ghostify.neutrinos.electron = new Decimal(0)
 	player.ghostify.neutrinos.mu = new Decimal(0)
@@ -55,8 +55,8 @@ function bosonicLabReset() {
 	player.ghostify.ghostlyPhotons.lights = [0,0,0,0,0,0,0,0]
 	if (tmp.ngp3c) player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0];
 	tmp.updateLights = true
-	var startingEnchants = getEnchantEffect(14, true).bUpgs||0
-	var keepAllUpgs = hasBosonicUpg(62) && tmp.ngp3c
+	var startingEnchants = full?0:(getEnchantEffect(14, true).bUpgs||0)
+	var keepAllUpgs = hasBosonicUpg(62) && tmp.ngp3c && !full
 	player.ghostify.bl = {
 		watt: new Decimal(0),
 		ticks: player.ghostify.bl.ticks,
@@ -81,7 +81,7 @@ function bosonicLabReset() {
 			if (i == 20 && !tmp.ngp3c) break
 			player.ghostify.bl.upgrades.push(order[i])
 		}
-		if (!player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)
+		if (!full && !player.ghostify.bl.upgrades.includes(32) && player.achievements.includes("ng3p92")) player.ghostify.bl.upgrades.push(32)
 	}
 	for (var g = 1; g <= br.maxLimit; g++) player.ghostify.bl.glyphs.push(new Decimal(0))
 	player.ghostify.wzb = {
@@ -100,7 +100,7 @@ function bosonicLabReset() {
 	}
 	if (tmp.ngp3c) for (let x in player.ghostify.hb.masses) player.ghostify.hb.masses[x] = new Decimal(0);
 	updateBosonicAMDimReturnsTemp()
-	ghostify(false, true)
+	ghostify(false, true, true, true)
 	matchTempPlayerHiggs()
 }
 
@@ -110,7 +110,13 @@ function higgsReset() {
 	if (!player.ghostify.bl.am.gte(getHiggsRequirement())) return
 	if (!player.aarexModifications.higgsNoConf && !confirm("You will exchange all your Bosonic Lab stuff for Higgs Bosons. Everything that Light Empowerments resets initally will be reset. Are you ready to proceed?")) return
 	addHiggs(getHiggsGain())
-	if (!hasAch("ng3pc17")) bosonicLabReset()
+	if (!hasAch("ng3pc17")) {
+		if (tmp.an) {
+			alert("You cannot reset Bosonic Lab while the timeline is Annihilated!")
+			return;
+		}
+		bosonicLabReset()
+	}
 	if (oldHiggs == 0) {
 		giveAchievement("The Holy Particle")
 		updateNeutrinoBoosts()
@@ -128,6 +134,10 @@ function higgsReset() {
 }
 
 function restartHiggs(force=false) {
+	if (tmp.an) {
+		alert("You cannot reset Bosonic Lab while the timeline is Annihilated!");
+		return;
+	}
 	if (!force && !player.aarexModifications.higgsNoConf) if (!confirm("Restarting will act as a Higgs reset, but you won't gain anything. Are you sure you want to restart?")) return
 	bosonicLabReset()
 	player.ghostify.hb.bosonicSemipowerment = true

@@ -450,18 +450,18 @@ strong { color: #0072e5 }
 }
 
 
-#TTbuttons {
+#TTbuttons, #ExTbuttons {
     font-family:'IBM Plex Mono', monospace !important
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background-color: #e5e5e5 !important;
     border-color: #191919 !important;
     border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important
 }
 
-#TTbuttons button {
+#TTbuttons button, #ExTbuttons button {
     font-family:'IBM Plex Mono', monospace !important;
     border-radius: 0px
 }
@@ -677,7 +677,7 @@ strong { color: #0072e5 }
     animation: none
 }
 
-#timestudies .dilationupgbought {
+#timestudies .dilationupgbought, #dilationstudies .dilationupgbought {
     background-color: #72e572 !important;
     color: #191919 !important;
     border-color: #191919 !important

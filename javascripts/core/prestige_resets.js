@@ -579,7 +579,7 @@ function getReplicantsOnGhostifyData(){
 	}
 }
 
-function getToDOnGhostifyData(){
+function getToDOnGhostifyData(an=false){
 	var bm = player.ghostify.milestones
 	let ret = {
 		r: {
@@ -599,9 +599,9 @@ function getToDOnGhostifyData(){
 		},
 		upgrades: {}
 	}
-	if (player.quantum.tod.b.decays && player.achievements.includes("ng3p86")) ret.b.decays = Math.floor(player.quantum.tod.b.decays * .75)
-	if (player.quantum.tod.r.decays && player.achievements.includes("ng3p86")) ret.r.decays = Math.floor(player.quantum.tod.r.decays * .75)
-	if (player.quantum.tod.g.decays && player.achievements.includes("ng3p86")) ret.g.decays = Math.floor(player.quantum.tod.g.decays * .75)
+	if (player.quantum.tod.b.decays && !an && player.achievements.includes("ng3p86")) ret.b.decays = Math.floor(player.quantum.tod.b.decays * .75)
+	if (player.quantum.tod.r.decays && !an && player.achievements.includes("ng3p86")) ret.r.decays = Math.floor(player.quantum.tod.r.decays * .75)
+	if (player.quantum.tod.g.decays && !an && player.achievements.includes("ng3p86")) ret.g.decays = Math.floor(player.quantum.tod.g.decays * .75)
 	return ret
 }
 
@@ -633,7 +633,7 @@ function getBreakEternityDataOnGhostify(nBEU, bm){
 	}
 }
 
-function getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs=true){
+function getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs=true, an=false){
 	return {
 		reached: true,
 		times: 0,
@@ -713,7 +713,7 @@ function getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs=true){
 			apgWoke: tmp.qu.nanofield.apgWoke
 		},
 		reachedInfQK: bm,
-		tod: getToDOnGhostifyData(),
+		tod: getToDOnGhostifyData(an),
 		bigRip: getBigRipOnGhostifyData(nBRU, resetQCs),
 		breakEternity: getBreakEternityDataOnGhostify(nBEU, bm),
 		notrelative: true,
@@ -739,7 +739,7 @@ function getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs=true){
 	}
 }
 
-function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs=true){
+function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs=true, an=false){
 	var bm = player.ghostify.milestones
 	player.galacticSacrifice = resetGalacticSacrifice()
 	completelyResetNormalDimensions()
@@ -882,7 +882,7 @@ function doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, re
 	/*function */ doMetaDimensionsReset(false, false, 0) //meta dimboosts are set on the next line
 	player.meta.resets = bm ? 4 : 0
 	player.masterystudies = bm ? player.masterystudies : []
-	player.quantum = getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs)
+	player.quantum = getQuantumOnGhostifyData(bm, nBRU, nBEU, resetQCs, an)
 	player.old = false
 	player.dontWant = true	
 	player.unstableThisGhostify = 0
@@ -902,7 +902,7 @@ function doPreInfinityGhostifyResetStuff(implode){
 	tmp.tickUpdate = true
 }
 
-function doInfinityGhostifyResetStuff(implode, bm){
+function doInfinityGhostifyResetStuff(implode, bm, an=false){
 	if (player.achievements.includes("r85")) player.infMult = player.infMult.times(4)
 	if (player.achievements.includes("r93")) player.infMult = player.infMult.times(4)
 	if (player.achievements.includes("r104")) player.infinityPoints = new Decimal(2e25)
@@ -922,7 +922,7 @@ function doInfinityGhostifyResetStuff(implode, bm){
 	updateNCVisuals()
 	updateAutobuyers()
 	hideMaxIDButton()
-	if (!bm) {
+	if (!bm && !an) {
 		ipMultPower = player.masterystudies.includes("t241") ? 2.2 : 2
 		player.autobuyers[9].bulk = Math.ceil(player.autobuyers[9].bulk)
 		document.getElementById("bulkDimboost").value = player.autobuyers[9].bulk
@@ -952,8 +952,8 @@ function doNGUpdateGhostifyResetStuff(){
 	}
 }
 
-function doTOUSOnGhostify(bm){
-	if (player.achievements.includes("ng3p77")) { //thry of ultimate studies
+function doTOUSOnGhostify(bm, an){
+	if (player.achievements.includes("ng3p77") && !an) { //thry of ultimate studies
 		player.timestudy.studies=[]
 		player.masterystudies=[]
 		for (var t = 0; t < all.length; t++) player.timestudy.studies.push(all[t])
@@ -968,7 +968,7 @@ function doTOUSOnGhostify(bm){
 	}
 }
 
-function doEternityGhostifyResetStuff(implode, bm){
+function doEternityGhostifyResetStuff(implode, bm, an){
 	EPminpeakType = 'normal'
 	EPminpeak = new Decimal(0)
 	if (bm) {
@@ -979,11 +979,11 @@ function doEternityGhostifyResetStuff(implode, bm){
 	player.dilation.bestTP = player.dilation.tachyonParticles
 	player.dilation.totalTachyonParticles = player.dilation.bestTP
 	doNGUpdateGhostifyResetStuff()
-	doTOUSOnGhostify(bm) //thry of ultimate studies
+	doTOUSOnGhostify(bm, an) //thry of ultimate studies
 	document.getElementById("eternitybtn").style.display = "none"
 	document.getElementById("eternityPoints2").innerHTML = "You have <span class=\"EPAmount2\">"+shortenDimensions(player.eternityPoints)+"</span> Eternity point"+((player.eternityPoints.eq(1)) ? "." : "s.")
 	document.getElementById("epmult").innerHTML = "You gain 5 times more EP<p>Currently: 1x<p>Cost: 500 EP"
-	if (((document.getElementById("masterystudies").style.display == "block" || document.getElementById("breakEternity").style.display == "block") && !bm) || implode) showEternityTab("timestudies", document.getElementById("eternitystore").style.display == "none")
+	if (!an) if (((document.getElementById("masterystudies").style.display == "block" || document.getElementById("breakEternity").style.display == "block") && !bm) || implode) showEternityTab("timestudies", document.getElementById("eternitystore").style.display == "none")
 	updateLastTenEternities()
 	resetTimeDimensions()
 	updateRespecButtons()
@@ -1003,7 +1003,7 @@ function doEternityGhostifyResetStuff(implode, bm){
 	updateMasteryStudyButtons()
 }
 
-function doQuantumGhostifyResetStuff(implode, bm, resetQCs=true){
+function doQuantumGhostifyResetStuff(implode, bm, resetQCs=true, an=false){
 	if (!tmp.ngp3l) tmp.qu.quarkEnergy = new Decimal(0)
 	if (resetQCs) tmp.qu.qcsMods.current = []
 	tmp.qu.replicants.amount = new Decimal(0)
@@ -1041,7 +1041,7 @@ function doQuantumGhostifyResetStuff(implode, bm, resetQCs=true){
 		document.getElementById("autoBuyerQuantum").style.display="none"
 		document.getElementById('toggleautoquantummode').style.display="none"
 	}
-	if (!bm && !player.achievements.includes("ng3p77")) {
+	if ((!bm && !player.achievements.includes("ng3p77")) || an) {
 		document.getElementById("electronstabbtn").style.display = "none"
 		document.getElementById("nanofieldtabbtn").style.display = "none"
 		document.getElementById("edtabbtn").style.display = "none"

@@ -100,7 +100,7 @@ function toggleAutoQuantumContent(id) {
 	tmp.qu.autoOptions[id]=!tmp.qu.autoOptions[id]
 	if (id=='sacrifice') {
 		document.getElementById('sacrificeAuto').textContent = "Auto: " + ((tmp.qu.autoOptions.sacrifice||tmp.ngp3c) ? "ON" : "OFF")
-		if (tmp.qu.autoOptions.sacrifice||tmp.ngp3c) sacrificeGalaxy(6)
+		if (tmp.qu.autoOptions.sacrifice&&!tmp.ngp3c) sacrificeGalaxy(6)
 	}
 }
 
@@ -165,7 +165,7 @@ function maxAllDilUpgs() {
 						var cost = Decimal.pow(10,player.dilation.rebuyables[2] * getRebuyableDilUpgCostScaling(2) * 2 + 6)
 						if (player.dilation.dilatedTime.gte(cost)) {
 							var toBuy = Math.floor(player.dilation.dilatedTime.div(cost).times(99).add(1).log(100))
-							if (!(tmp.ngp3c && player.masterystudies.includes("t394"))) toBuy = Math.min(toBuy, 60 - player.dilation.rebuyables[2])
+							if (!(tmp.ngp3c && player.masterystudies.includes("t394"))) toBuy = Math.min(toBuy, getMaxDR2() - player.dilation.rebuyables[2])
 							player.dilation.dilatedTime = player.dilation.dilatedTime.sub(player.dilation.dilatedTime.min(cost))
 							player.dilation.rebuyables[2] += toBuy
 							resetDilationGalaxies()
@@ -510,7 +510,7 @@ function getGHPMult() {
 }
 
 ghostified = false
-function ghostify(auto, force, resetQCs=true) {	
+function ghostify(auto, force, resetQCs=true, an=false) {	
 	if (!force&&(!isQuantumReached()||!tmp.qu.bigRip.active||implosionCheck)) return
 	if (!auto && !force && player.aarexModifications.ghostifyConf && !confirm("Becoming a ghost resets everything Quantum resets, and also resets your banked stats, best TP & MA, quarks, gluons, electrons, Quantum Challenges, Replicants, Nanofield, and Tree of Decay to gain a Ghost Particle. Are you ready for this?")) {
 		denyGhostify()
@@ -533,12 +533,12 @@ function ghostify(auto, force, resetQCs=true) {
 		}, seconds * 250)
 		setTimeout(function(){
 			if (Math.random()<1e-3) giveAchievement("Boo!")
-			ghostifyReset(true, gain, amount, force, resetQCs)
+			ghostifyReset(true, gain, amount, force, resetQCs, an)
 		}, seconds * 500)
 		setTimeout(function(){
 			implosionCheck=0
 		}, seconds * 1000)
-	} else ghostifyReset(false, 0, 0, force, resetQCs)
+	} else ghostifyReset(false, 0, 0, force, resetQCs, an)
 	updateAutoQuantumMode()
 }
 
@@ -548,7 +548,7 @@ function denyGhostify() {
 	if (!tmp.ngp3l && ghostifyDenied >= 15) giveAchievement("Deny the afterlife")
 }
 
-function ghostifyReset(implode, gain, amount, force, resetQCs=true) {
+function ghostifyReset(implode, gain, amount, force, resetQCs=true, an=false) {
 	var bulk = getGhostifiedGain()
 	if (!force) {
 		if (!tmp.ngp3l && tmp.qu.times >= 1e3 && player.ghostify.milestones >= 16) giveAchievement("Scared of ghosts?")
@@ -578,14 +578,14 @@ function ghostifyReset(implode, gain, amount, force, resetQCs=true) {
 	if (!tmp.qu.breakEternity.did && !force && tmp.ngp3c) giveAchievement("Not-so-very-challenging")
 	if (player.ghostify.best<=((tmp.ngp3c?20:6))) giveAchievement("Running through Big Rips")
 	player.ghostify.time = 0
-	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs)
+	doGhostifyResetStuff(implode, gain, amount, force, bulk, nBRU, nBEU, resetQCs, an)
 	
 	tmp.qu = player.quantum
 	updateInQCs()
 	doPreInfinityGhostifyResetStuff()
-	doInfinityGhostifyResetStuff(implode, bm)
-	doEternityGhostifyResetStuff(implode, bm)	
-	doQuantumGhostifyResetStuff(implode, bm, resetQCs)
+	doInfinityGhostifyResetStuff(implode, bm, an)
+	doEternityGhostifyResetStuff(implode, bm, an)	
+	doQuantumGhostifyResetStuff(implode, bm, resetQCs, an)
 	doGhostifyGhostifyResetStuff(bm, force)
 
 	//After that...
@@ -864,8 +864,10 @@ function getGHPMultCost(offset=0) {
 //v2.2
 function canBuyGalaxyThresholdUpg() {
 	if (tmp.ngp3c && player.masterystudies.includes("t394")) return true;
-	return !tmp.ngp3 || player.dilation.rebuyables[2] < 60
+	return !tmp.ngp3 || player.dilation.rebuyables[2] < getMaxDR2()
 }
+
+function getMaxDR2() { return tmp.an?1100:60 }
 
 function showNFTab(tabName) {
 	//iterate over all elements in div_tab class. Hide everything that's not tabName and show tabName

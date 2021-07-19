@@ -115,8 +115,10 @@
 		<div id="eternitystore" class="tab" style="font-size: 15px; margin: 0 auto; display: none" align="center">
 			<table class="table" align="center" style="margin: auto">
 				<tr>
-					<td><button class="secondarytabbtn" onclick="showEternityTab('timestudies')">Time studies</button></td>
+					<td id="timestudyunlock"><button class="secondarytabbtn" onclick="showEternityTab('timestudies')">Time studies</button></td>
 					<td id="masterystudyunlock"><button class="secondarytabbtn" onclick="showEternityTab('masterystudies')">Mastery studies</button></td>
+					<td id="dilstudyunlock"><button class="secondarytabbtn" onclick="showEternityTab('dilationstudies')">Dilation studies</button></td>
+					<td id="exoticstudyunlock"><button class="secondarytabbtn" onclick="showEternityTab('exoticstudies')">Exotic studies</button></td>
 					<td><button class="secondarytabbtn" onclick="showEternityTab('eternityupgrades')">Eternity upgrades</button></td>
 					<td><button class="secondarytabbtn" onclick="showEternityTab('milestones')">Eternity milestones</button></td>
 					<td id="dilationTabbtn"><button class="secondarytabbtn" onclick="showEternityTab('dilation')">Time dilation</button></td>
@@ -622,6 +624,69 @@
 						<td><button class="timestudylocked" id="dilstudy14" onclick='buyMasteryStudy("d", 14)'>Unlock Big Rip<br><span id="ds14Cost"></span><span id="ds14Req"></span></button></td>
 						<td><button class="timestudylocked" id="timestudy432" style='font-size:9px' onclick='buyMasteryStudy("t", 432)'></button></td>
 						<td><button class="timestudylocked" id="timestudy431" style='font-size:9px' onclick='buyMasteryStudy("t", 431)'></button></td>
+					</tr>
+				</table>
+				<div style="height: 60px;"></div>
+				<div>
+					<table id="footer">
+						<tr>
+							<td>
+								<div style="text-align:center">
+									<a href="http://patreon.com/Jacorb90" onclick="giveAchievement('A sound financial decision')" target="_newtab">Donate</a> |
+									<a href="http://discord.gg/wwQfgPa" target="_newtab">Discord</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="eternitytab" id="dilationstudies" style="font-size: 15px">
+				<canvas id="studyTreeCanvas3"></canvas>
+				<table class="table" id="studytable">
+					<tr>
+						<td><button class="timestudylocked" id="specDilStudy1" onclick="buyAnhDilStudy(1)">Unlock Time Dilation<br><span id="anhds1CostReq"></span></button></td>
+					</tr>
+					<tr>
+						<td><button class="timestudylocked" id="specDilStudy6" onclick="buyAnhDilStudy(6)">Unlock Meta Dimensions<br><span id="anhds6CostReq"></span></button></td>
+					</tr>
+					<tr>
+						<td><button class="timestudylocked" id="specDilStudy7" onclick="buyAnhDilStudy(7)">Unlock Electrons<br><span id="anhds7CostReq"></span></button></td>
+					</tr>
+				</table>
+				<div style="height: 60px;"></div>
+				<div>
+					<table id="footer">
+						<tr>
+							<td>
+								<div style="text-align:center">
+									<a href="http://patreon.com/Jacorb90" onclick="giveAchievement('A sound financial decision')" target="_newtab">Donate</a> |
+									<a href="http://discord.gg/wwQfgPa" target="_newtab">Discord</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="eternitytab" id="exoticstudies" style="font-size: 15px">
+				<canvas id="studyTreeCanvas4"></canvas>
+				<table class="table" id="studytable">
+					<tr>
+						<td><button class="timestudylocked" id="ex11" onclick="buyExoticStudy(0)">Gain 1% of IP & EP gain every second, and triple Exotic Matter gain.<br>Cost: <span id="exCost11"></span> Exotic Theorems</button></td>
+					</tr>
+				</table><table class="table" id="studytable">
+					<tr>
+						<td><button class="timestudylocked" id="ex21" onclick="buyExoticStudy(1)">Total Exotic Theorems directly multiply TT gain.<br>Currently: <span id="exEff21"></span><br>Cost: <span id="exCost21"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex22" onclick="buyExoticStudy(2)">Unspent Exotic Theorems directly multiply TP gain (after Obscurements).<br>Currently: <span id="exEff22"></span><br>Cost: <span id="exCost22"></span> Exotic Theorems</button></td>
+					</tr>
+				</table><table class="table" id="studytable">
+					<tr>
+						<td><button class="timestudylocked" id="ex31" onclick="buyExoticStudy(3)">The 2nd negative Cosmic Orb effect is halved.<br>Cost: <span id="exCost31"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex32" onclick="buyExoticStudy(4)">Ghost Particles & # of bought Exotic Studies boost Exotic Matter gain.<br>Currently: <span id="exEff32"></span><br>Cost: <span id="exCost32"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex33" onclick="buyExoticStudy(5)">Ghostly Photons & Dark Matter can be gained much sooner, and you can gain both outside of Big Rip.<br>Cost: <span id="exCost33"></span> Exotic Theorems</button></td>
+					</tr>
+				</table><table class="table" id="studytable">
+					<tr>
+						<td><button class="timestudylocked" id="ex41" onclick="buyExoticStudy(6)">Meta Dimension Boosts are 5x as strong.<br>Cost: <span id="exCost41"></span> Exotic Theorems</button></td>
 					</tr>
 				</table>
 				<div style="height: 60px;"></div>
@@ -1263,7 +1328,7 @@
 						<table>
 							<tr>
 								<td><button id="breakDilation1" class="breakdilationbtn" onclick="buyBDUpg(1)">Cherenkov Radiation boosts the TP gain exponent.<br>Currently: +<span id="breakDilationEff1"></span><br>Cost: <span id="breakDilationCost1"></span> Cherenkov Radiation</button></td>
-								<td><button id="breakDilation2" class="breakdilationbtn" onclick="buyBDUpg(2)">Higgs Bosons multiply Cherenkov Radiation gain & <span id="bd2effflip"></span>its effect.<br>Currently: <span id="breakDilationEff2"></span><br>Cost: <span id="breakDilationCost2"></span> Cherenkov Radiation</button></td>
+								<td><button id="breakDilation2" class="breakdilationbtn" onclick="buyBDUpg(2)">Higgs Bosons<span id="bdupg2spec"></span> multiply Cherenkov Radiation gain & <span id="bd2effflip"></span>its effect.<br>Currently: <span id="breakDilationEff2"></span><br>Cost: <span id="breakDilationCost2"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation3" class="breakdilationbtn" onclick="buyBDUpg(3)">Bosonic AM & Cherenkov Radiation boost each other's production.<br>Currently: <span id="breakDilationEff3"></span><br>Cost: <span id="breakDilationCost3"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation4" class="breakdilationbtn" onclick="buyBDUpg(4)" style="font-size: 9.5px;">Cherenkov Radiation & Radioactive Decays reduce each other's negative effects.<br>Currently: <span id="breakDilationEff4"></span><br>Cost: <span id="breakDilationCost4"></span> Cherenkov Radiation</button></td>
 								<td><button id="breakDilation5" class="breakdilationbtn" onclick="buyBDUpg(5)">Cherenkov Radiation weakens OS_TP_1.<br>Currently: <span id="breakDilationEff5"></span>% weaker<br>Cost: <span id="breakDilationCost5"></span> Cherenkov Radiation</button></td>
@@ -2925,6 +2990,32 @@
 							</td>
 							<td>
 								<div id="This Should Be Literally Impossible" class="achievement achievementlocked" style="background-image: url(images/190.png)"></div>
+							</td>
+						</tr>
+						<tr id="achRowng3pc2">
+							<td>
+								<div id="Into the Antiverse!" class="achievement achievementlocked" style="background-image: url(images/191.png)" ach-tooltip="Annihilate your timeline. Reward: Remote Nanofield Reward scaling starts 25 rewards later, and double bought TT gain."></div>
+							</td>
+							<td>
+								<div id="ng3pc22" class="achievement achievementlocked"></div>
+							</td>
+							<td>
+								<div id="ng3pc23" class="achievement achievementlocked"></div>
+							</td>
+							<td>
+								<div id="Go Outside" class="achievement achievementlocked" style="background-image: url(images/194.png)" ach-tooltip="Unlock Electrons while Annihilated. Reward: Sacrificed Galaxies work just like Normal Galaxies."></div>
+							</td>
+							<td>
+								<div id="ng3pc25" class="achievement achievementlocked"></div>
+							</td>
+							<td>
+								<div id="ng3pc26" class="achievement achievementlocked"></div>
+							</td>
+							<td>
+								<div id="ng3pc27" class="achievement achievementlocked"></div>
+							</td>
+							<td>
+								<div id="ng3pc28" class="achievement achievementlocked"></div>
 							</td>
 						</tr>
 				</table>
@@ -5141,8 +5232,10 @@
 				</table>
 			</div>
 			<div class='quantumtab' id='electrons'>
-				You have <span id="normalGalaxies">0</span> normal galaxies.<br>
-				You sacrificed <span id='sacrificedGals'>0</span> galaxies.<br>
+				<div id="sacGalDiv">
+					You have <span id="normalGalaxies">0</span> normal galaxies.<br>
+					You sacrificed <span id='sacrificedGals'>0</span> galaxies.
+				</div><br>
 				<button class='gluonupgrade storebtn' id='sacrificeGal' onclick='sacrificeGalaxy()' style='width:210px; height:90px'>Sacrifice <span id='sacrificeGals'>0</span> galaxies for <span id="electronsGain"></span> electrons.<br>Gain <span id='electronsGainMult'>2</span> electrons for each sacrificed galaxy.</button><br>
 				<button class='storebtn' id='sacrificeAuto' onclick='toggleAutoQuantumContent("sacrifice")' style='width:210px'></button><br>
 				You have <span id="electronsAmount" style="font-size:35px">0</span> electrons.<br>
@@ -5228,7 +5321,7 @@
 						- When you get 1 preon power, you will lose preons faster if you are producing preon charge.<br>
 						- When you get 1 preon power, your preon charge production is 1.41x slower.<br>
 						- When you get 1 preon power, your anti-energy production is 1.41x faster.<br>
-						- Reward tiers are softcapped.<br><br>
+						- Reward tiers are (softcapped).<br><br>
 						However, the ghostly scientists from Bosonic Lab have created a special power. You will gain 0.5 extra tiers to <span id="apgRewardTarget"></span> when he wakes up.<br>
 						Good luck for getting more rewards. :)
 					</div>
@@ -5552,7 +5645,7 @@
 				<div id="gphUnl"></div>
 				<div id="gphDiv">
 					You have <span id="dtGPH">0</span> dilated time.<br>
-					You are getting <span class="gphAmount" id="gphProduction">0</span> <span id="gphProductionType">Ghostly Photons</span> per second.<br>
+					You are getting <span class="gphAmount" id="gphProduction">0</span> <span id="gphProductionType">Ghostly Photons</span><span id="gphProduction2"></span> per second.<br>
 					<table class='qtable'><tr>
 						<td>
 							You have <span class="gphAmount" id="gph" style="font-size:35px"></span> Ghostly Photons.<br>
@@ -5791,6 +5884,10 @@
 			</div>
 			<div id="annihilationtab" class="ghostifytab">
 				<div id="annihilationUnl"></div>
+				<div id="annihilationDiv">
+					Annihilating your timeline forces a Higgs Boson & Fix Dilation reset, and resets your Time Theorems, Nano-Condensers, Radioactive Decays, Light Empowerments, and Bosonic Upgrades.<br>In Annihilation runs, Time Studies, Mastery Studies, most Dilation Studies, Dimensional Sacrifice, Quark boosts to Dimensions, Quark Multipliers, and Brave Milestones are all disabled.<br>In addition, Bosonic Lab & all features from Dilation Studies are much weaker.
+					<br><br>You have <span id="exMat" class="annih" style="font-size: 35px;"></span> Exotic Matter, which strengthens <span id="exMatTarg"></span> by <span id="exMatEff" class="annih" style="font-size: 35px;"></span>.<br><br><button id="annihilatebtn" onclick="annihilate()"><b id="annihilateFlavor">Annihilate your timeline.</b></button>
+				</div>
 			</div>
 			<div id="footercontainer">
 				<table id="footer">
@@ -5985,6 +6082,10 @@
 		<button class="timetheorembtnlocked" onclick="buyWithEP()" id="theoremep" style="margin-left: 106px">Buy Time Theorems <br>Cost: 1 EP</button>
 		<div id="theorembuybackground"></div>
 		<p id="timetheorems" style="position: fixed;">You have 0 Time Theorems.</p>
+	</div>
+	<div id="ExTbuttons" style="display:none;">
+		<div id="extheorembuybackground"></div>
+		<p id="extheorems" style="position: fixed;">You have 0 Exotic Theorems.</p>
 	</div>
 	<div id="progress" style="display:none">
 		<div id="progressbar"><span id="progresspercent" ach-tooltip="Percentage until Infinity">0%</span></div>

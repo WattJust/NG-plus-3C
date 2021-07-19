@@ -29,7 +29,7 @@ button {
     text-align: left
 }
 
-#TTbuttons {
+#TTbuttons, #ExTbuttons {
     font-family: Typewriter;
 }
 
@@ -1398,12 +1398,12 @@ button {
     font-size: 10px;
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background: #E0E0E0;
     width: 570px;
     height: 110px;
     position: fixed;
-    bottom: 0;
+    bottom: 0px;
     left: 50%;
     margin-left: -287px;
     border: 2px solid black;
@@ -1412,7 +1412,11 @@ button {
     border-top-right-radius: 7px;
 }
 
-#studyTreeCanvas, #studyTreeCanvas2, #dilationCanvas, #blackHoleCanvas, #quarkCanvas {
+#extheorembuybackground {
+    bottom: -60px !important;
+}
+
+#studyTreeCanvas, #studyTreeCanvas2, #studyTreeCanvas3, #studyTreeCanvas4, #dilationCanvas, #blackHoleCanvas, #quarkCanvas {
     top: 0;
     left: 0;
     position: absolute;
@@ -1617,6 +1621,43 @@ button {
     border-radius: 4px;
     font-family: Typewriter;
     animation: dilationBtnGlow2 10s infinite;
+    vertical-align: top;
+    margin:7px;
+}
+
+.exoticupg {
+    color: #d12a2a !important;
+    background: black !important;
+    font-weight: bold;
+    font-size: 0.65rem;
+    border: 1px solid #d12a2a !important;
+    width: 170px;
+    height: 80px;
+    transition-duration: 0.2s;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: Typewriter;
+    animation: exoticBtnGlow 10s infinite;
+    vertical-align: top;
+    margin:7px;
+}
+
+.exoticupg:hover {
+    color: #d12a2a !important;
+    background: white !important;
+}
+
+.exoticupgbought {
+    color: black !important;
+    background: #d12a2a !important;
+    font-weight: bold;
+    font-family: Typewriter;
+    border: 1px solid black !important;
+    width: 170px;
+    height: 80px;
+    transition-duration: 0.2s;
+    border-radius: 4px;
+    font-size: 0.65rem;
     vertical-align: top;
     margin:7px;
 }
@@ -2016,6 +2057,15 @@ br {
     margin: 0;
     margin-top: 20px;
     pointer-events:none;
+}
+
+#extheorems {
+    bottom: 0px;
+    color: rgb(75, 0, 0);
+    position: fixed;
+    left: 50%;
+    font-size: 15px;
+    transform: translateX(-50%);
 }
 
 
@@ -2896,6 +2946,29 @@ td.subFactorH {
     background: #B84B5F;
 }
 
+#annihilatebtn {
+    font-family: Typewriter;
+    cursor: pointer;
+    color: white;
+	width: 210px;
+	height: 90px;
+	border-radius: 4px;
+    border-color: rgb(173, 0, 52);
+    animation: annihilationRev 0.4s linear 1 forwards;
+    filter: brightness(110%);
+}
+
+#annihilatebtn:hover {
+    color: black;
+    text-shadow: 0px 0px 2px black;
+    animation: annihilation 0.4s linear 1 forwards;
+}
+
+.annih {
+    color: rgb(173, 0, 52);
+    font-weight: bold;
+}
+
 @media print,
 screen and (max-width: 960px) {
     div.wrapper {
@@ -3034,6 +3107,14 @@ screen and (max-width: 480px) {
     50% {box-shadow: inset -5px 0px 20px #64DD17;}
     75% {box-shadow: inset 0px -5px 20px #64DD17;}
     100% {box-shadow: inset 5px 0px 20px #64DD17;}
+}
+
+@keyframes exoticBtnGlow {
+    0%  {box-shadow: inset 5px 0px 20px #d12a2a;}
+    25% {box-shadow: inset 0px 5px 20px #d12a2a;}
+    50% {box-shadow: inset -5px 0px 20px #d12a2a;}
+    75% {box-shadow: inset 0px -5px 20px #d12a2a;}
+    100% {box-shadow: inset 5px 0px 20px #d12a2a;}
 }
 
 @keyframes dilationBtnGlow2 {
@@ -3255,4 +3336,43 @@ screen and (max-width: 480px) {
 	100%{
 		background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%
 	}
+}
+
+@keyframes annihilation {
+    0% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(25, 25, 25) 100%)}
+    6% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(44, 22, 28) 97%)}
+    12% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(62, 19, 32) 93%)}
+    19% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(76, 15, 35) 90%)}
+    25% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(99, 12, 39) 87%)}
+    31% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(115, 9, 42) 84%)}
+    37% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(136, 6, 45) 81%)}
+    44% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(151, 3, 48) 78%)}
+    50% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(173, 0, 52) 75%)}
+    56% {background: radial-gradient(circle, rgb(44, 22, 28) 0%, rgb(173, 0, 52) 71%)}
+    62% {background: radial-gradient(circle, rgb(62, 6, 32) 0%, rgb(173, 0, 52) 68%)}
+    71% {background: radial-gradient(circle, rgb(76, 15, 35) 0%, rgb(173, 0, 52) 65%)}
+    75% {background: radial-gradient(circle, rgb(99, 12, 39) 0%, rgb(173, 0, 52) 62%)}
+    81% {background: radial-gradient(circle, rgb(115, 9, 42) 0%, rgb(173, 0, 52) 58%)}
+    87% {background: radial-gradient(circle, rgb(136, 12, 45) 0%, rgb(173, 0, 52) 55%)}
+    94% {background: radial-gradient(circle, rgb(151, 3, 48) 0%, rgb(173, 0, 52) 52%)}
+    100% {background: radial-gradient(circle, rgb(173, 0, 52) 0%, rgb(173, 0, 52) 50%)}
+}
+@keyframes annihilationRev {
+    100% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(25, 25, 25) 100%)}
+    93% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(44, 22, 28) 97%)}
+    87% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(62, 19, 32) 93%)}
+    81% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(76, 15, 35) 90%)}
+    75% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(99, 12, 39) 87%)}
+    71% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(115, 9, 42) 84%)}
+    64% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(136, 6, 45) 81%)}
+    56% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(151, 3, 48) 78%)}
+    50% {background: radial-gradient(circle, rgb(25, 25, 25) 0%, rgb(173, 0, 52) 75%)}
+    44% {background: radial-gradient(circle, rgb(44, 22, 28) 0%, rgb(173, 0, 52) 71%)}
+    37% {background: radial-gradient(circle, rgb(62, 6, 32) 0%, rgb(173, 0, 52) 68%)}
+    31% {background: radial-gradient(circle, rgb(76, 15, 35) 0%, rgb(173, 0, 52) 65%)}
+    25% {background: radial-gradient(circle, rgb(99, 12, 39) 0%, rgb(173, 0, 52) 62%)}
+    19% {background: radial-gradient(circle, rgb(115, 9, 42) 0%, rgb(173, 0, 52) 58%)}
+    12% {background: radial-gradient(circle, rgb(136, 12, 45) 0%, rgb(173, 0, 52) 55%)}
+    6% {background: radial-gradient(circle, rgb(151, 3, 48) 0%, rgb(173, 0, 52) 52%)}
+    0% {background: radial-gradient(circle, rgb(173, 0, 52) 0%, rgb(173, 0, 52) 50%)}
 }

@@ -640,7 +640,7 @@ function eternityUpgradesDisplay(){
 function uponDilationDisplay(){
 	let gain = getDilGain()
 	let msg = player.dilation.active?"Disable dilation":""
-	if (player.infinityPoints.lt(Number.MAX_VALUE)||inQCModifier("ad")) {}
+	if (inQCModifier("ad")) {}
 	else if (player.dilation.totalTachyonParticles.gt(gain)) msg += (player.dilation.active?".<br>":"")+"Reach " + shortenMoney(getReqForTPGain()) + " antimatter to gain more Tachyon particles"
 	else msg += (player.dilation.active?" for ":"Gain ") + shortenMoney(gain.sub(player.dilation.totalTachyonParticles)) + " Tachyon particles"
 	document.getElementById("enabledilation").innerHTML = msg + "."
@@ -694,6 +694,8 @@ function ETERNITYSTOREDisplay(){
 	if (document.getElementById("TTbuttons").style.display == "block") updateTheoremButtons()
 	if (document.getElementById("timestudies").style.display == "block" || document.getElementById("ers_timestudies").style.display == "block") updateTimeStudyButtons()
 	if (document.getElementById("masterystudies").style.display == "block") updateMasteryStudyButtons()
+	if (document.getElementById("dilationstudies").style.display == "block") updateDilationStudyButtons()
+	if (document.getElementById("exoticstudies").style.display == "block") updateExoticStudyButtons()
 	if (document.getElementById("eternityupgrades").style.display == "block") eternityUpgradesDisplay()
 	if (document.getElementById("dilation").style.display == "block") mainDilationDisplay()
 	if (document.getElementById("blackhole").style.display == "block") {

@@ -26,7 +26,8 @@ function updateTemp(tempInit=false) {
 		}
 		updateMasteryStudyTemp()
 		if (player.masterystudies.includes("d13")) tmp.branchSpeed = getBranchSpeed()
-		if (player.masterystudies.includes("d12") && tmp.nf !== undefined && tmp.nf.rewardsUsed !== undefined) {
+		if (tmp.an || (player.masterystudies.includes("d12") && tmp.nf !== undefined && tmp.nf.rewardsUsed !== undefined)) {
+			if (!tmp.nf) updateNanoRewardTemp();
 			if (tmp.nf.extra===undefined) tmp.nf.extra = 0;
 			var x = getNanoRewardPowerEff()
 			var y = tmp.qu.nanofield.rewards
@@ -70,8 +71,10 @@ function updateTemp(tempInit=false) {
 	updateMatterSpeed()
 
 	updateCondenseTemp(tempInit)
+	updateTempAN()
 	if (tmp.ngp3c) {
 		updateTempBreakDilation()
+		updateTempANData()
 	}
 	
 	tmp.tsReduce = getTickSpeedMultiplier()
@@ -265,7 +268,7 @@ function updateIntergalacticTemp() {
 function updateAntiElectronGalaxiesTemp(){
 	tmp.aeg = 0
 	if (hasBosonicUpg(14) && !tmp.ngp3c && !player.quantum.bigRip.active) tmp.aeg = Math.max(tmp.blu[14] - tmp.qu.electrons.sacGals, 0)
-	if (hasNU(17) && tmp.ngp3c && tmp.cnd) tmp.aeg = Math.max(tmp.cnd.pe - tmp.qu.electrons.sacGals, 0)
+	if (hasNU(17) && tmp.ngp3c && tmp.cnd) tmp.aeg = Math.max(tmp.cnd.pe - (hasAch("ng3pc24")?0:tmp.qu.electrons.sacGals), 0)
 	tmp.effAeg = tmp.aeg
 	if (tmp.aeg > 0) {
 		if (hasBosonicUpg(34) && !tmp.ngp3c) tmp.effAeg *= tmp.blu[34]
@@ -709,6 +712,7 @@ function updateWZBosonsTemp(){
 	if (tmp.ngp3c) {
 		bosonsExp = Math.pow(bosonsExp, player.ghostify.bl.UPGSUNL?.6:.5);
 		if (player.ghostify.bl.upgrades.length>7) bosonsExp += .5;
+		if (tmp.an) bosonsExp /= 10
 	}
 	
 	data.wbt = Decimal.pow((tmp.newNGP3E||tmp.ngp3c) ? 5 : 3, bosonsExp) //W Bosons boost to extract time
@@ -719,7 +723,7 @@ function updateWZBosonsTemp(){
 	
 	let wbp = player.ghostify.wzb.wpb.add(player.ghostify.wzb.wnb).div(tmp.ngp3c?((player.ghostify.bl.upgrades.length>1)?.01:.1):100).max(1)
 	if (tmp.ngp3c) wbp = Decimal.pow(2, Math.pow(wbp.log2(), .95));
-	data.wbp = wbp.pow((player.ghostify.bl.upgrades.length>4&&tmp.ngp3c)?(2 / 3+Math.max((Math.min(player.ghostify.bl.upgrades.length, 10)-6)/5, 0)):(1 / 3)).sub(tmp.ngp3c?0:1) //W Bosons boost to Bosonic Antimatter production
+	data.wbp = tmp.an?wbp.root(30):wbp.pow((player.ghostify.bl.upgrades.length>4&&tmp.ngp3c)?(2 / 3+Math.max((Math.min(player.ghostify.bl.upgrades.length, 10)-6)/5, 0)):(1 / 3)).sub(tmp.ngp3c?0:1) //W Bosons boost to Bosonic Antimatter production
 
 	var zbslog = player.ghostify.wzb.zb.div(10).add(1).sqrt().log10()
 	if (tmp.ngp3c) zbslog *= Math.log10(player.ghostify.bl.upgrades.length + 1) + 1
@@ -777,7 +781,7 @@ function updateNanoRewardEffects() {
 	var data = {}
 	tmp.nf.effects = data
 
-	for (var e = 0; e < tmp.nf.rewardsUsed.length; e++) {
+	for (var e = 0; e < (tmp.nf.rewardsUsed||[]).length; e++) {
 		var effect = tmp.nf.rewardsUsed[e]
 		tmp.nf.effects[effect] = nanoRewards.effects[effect](tmp.nf.powers[nanoRewards.effectToReward[effect]])
 	}
@@ -814,7 +818,7 @@ function updateHiggsMechanismTemp(tempInit=false) {
 	for (let type in hm) {
 		if (type=="limit") continue;
 		if (!tmp.hm[type]) tmp.hm[type] = {};
-		tmp.hm[type].gain = hm[type].gain(tmp.hb.higgs||0);
+		tmp.hm[type].gain = hm[type].gain(tmp.an?Math.sqrt((tmp.hb.higgs||0)/250):tmp.hb.higgs||0);
 		tmp.hm[type].eff = hm[type].eff(tmp.hb.masses[type]||new Decimal(0));
 		if (tmp.hb.masses[type]!==undefined) tmp.hm.unlocks++;
 	}
@@ -892,4 +896,17 @@ function updateTempCosmicOrbs() {
 	tmp.co.minus1 = cosmicOrbEffects.minus1(tmp.co.negAmt)
 	tmp.co.minus2 = cosmicOrbEffects.minus2(tmp.co.negAmt)
 	tmp.co.minus3 = cosmicOrbEffects.minus3(tmp.co.negAmt)
+}
+
+function updateTempAN() { tmp.an = tmp.ngp3c && player.ghostify.annihilation.active }
+
+function updateTempANData() {
+	tmp.and = {};
+	tmp.and.exTarg = tmp.qu.bigRip.active?(tmp.an?"Meta Condensers":"Time Condensers"):(tmp.an?"Dilation Condensers":"Nano-Condensers")
+	tmp.and.exEff = getExoticMatterEff(tmp.and.exTarg)
+	tmp.and.study = {};
+	for (let i=0;i<exoticStudies.filter(x => x.eff).length; i++) {
+		let data = exoticStudies.filter(x => x.eff)[i];
+		tmp.and.study[data.id] = data.eff();
+	}
 }

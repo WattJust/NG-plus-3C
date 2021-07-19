@@ -292,6 +292,7 @@ function getNanoScalingsStart(){
 	if (tmp.ngp3c) {
 		ret = [0, 7, 45, 75, 200, 300, 400]
 		if (player.masterystudies.includes("t422")) ret[1] = getMTSMult(422)
+		if (hasAch("ng3pc21")) ret[3] += 25;
 	}
 	return ret
 }

@@ -166,7 +166,7 @@ function getTotalReplicants(data) {
 function getEmperorDimensionMultiplier(dim) {
 	let ret = new Decimal(1)
 	if (player.currentEternityChall == "eterc11") return ret
-	ret = tmp.edgm //Global multiplier of all Emperor Dimensions
+	ret = tmp.edgm||new Decimal(1) //Global multiplier of all Emperor Dimensions
 	if (hasNU(7) && dim % 2 == 1) ret = ret.times(tmp.nu[3])
 	if (tmp.ngp3c && tmp.cnd) ret = ret.times(tmp.cnd.emp[dim])
 	//player.quantum.emperorDimensions[8].perm-10 

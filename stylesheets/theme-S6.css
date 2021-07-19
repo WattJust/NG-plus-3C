@@ -41,7 +41,7 @@ button:hover {
 	color: #000000 !important
 }
 
-.popup, #theorembuybackground {
+.popup, #theorembuybackground, #extheorembuybackground {
 	background-color: #000000 !important;
 	border-color: #191919 !important;
 	color: #ff7f00 !important

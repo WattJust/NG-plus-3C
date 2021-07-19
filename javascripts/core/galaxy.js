@@ -27,7 +27,7 @@ function galaxyReset(bulk) {
 	if (player.achievements.includes("r83")) player.tickspeed = player.tickspeed.times(Decimal.pow(0.95, player.galaxies));
 	divideTickspeedIC5()
 
-	if (player.infinitied < 1 && player.eternities == 0 && !quantumed) {
+	if ((player.infinitied < 1 && player.eternities == 0 && !quantumed)||tmp.an) {
 		document.getElementById("sacrifice").style.display = "none"
 		document.getElementById("confirmation").style.display = "none"
 		if (player.galacticSacrifice && (player.galaxies > 0 || (player.galacticSacrifice ? player.galacticSacrifice.times > 0 : false))) {

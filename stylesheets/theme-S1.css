@@ -303,7 +303,7 @@ input {
     border-color: black !important;
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background: #dbd242 !important;
 }
 

@@ -326,6 +326,8 @@ function ngP3CAchieveCheck() {
 	if (tmp.hb.higgs>=100) giveAchievement("Where did the Gravitons go?")
 	if (nG(player.timestudy.theorem, Number.MAX_VALUE)) giveAchievement("The Theory of Infinite Onion Layers")
 	if (!player.achievements.includes("ng3pc18")) if (player.money.l>=5e11 && inQC(6) && inQC("8c") && litImpCheck()) giveAchievement("This Should Be Literally Impossible")
+
+	if (tmp.an && player.masterystudies.includes("d7")) giveAchievement("Go Outside");
 }
 
 function ALLACHIEVECHECK(){

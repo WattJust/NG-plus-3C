@@ -197,6 +197,15 @@ const allAchievements = {
   ng3pc16 : "Where did the Gravitons go?",
   ng3pc17 : "The Theory of Infinite Onion Layers",
   ng3pc18 : "This Should Be Literally Impossible",
+  ng3pc21 : "Into the Antiverse!",
+  ng3pc22 : "ng3pc22",
+  ng3pc23 : "ng3pc23",
+  ng3pc24 : "Go Outside",
+  ng3pc25 : "ng3pc25",
+  ng3pc26 : "ng3pc26",
+  ng3pc27 : "ng3pc27",
+  ng3pc28 : "ng3pc28",
+
   s11 : "The first one's always free",
   s12 : "Just in case",
   s13 : "It pays to have respect",
@@ -414,7 +423,7 @@ function updateAchievements() {
 	var amount = 0
 	var rowsShown = 0
 	var rowsNum = 0
-	for (var i = 1; i < 26; i++) {
+	for (var i = 1; i < 27; i++) {
 		var shown=true
 		var rowid = i
 		var rownum = i

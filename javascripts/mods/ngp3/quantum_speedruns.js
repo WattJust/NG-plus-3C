@@ -4,7 +4,7 @@ var speedrunMilestones = [null, 43200, 32400, 21600, 16200, 10800, 7200, 3600, 3
 function updateSpeedruns() {
 	speedrunMilestonesReached = 0
 	if (!tmp.ngp3) return
-	if (player.ghostify.milestones >= 1) speedrunMilestonesReached = 28
+	if (player.ghostify.milestones >= 1 || tmp.an) speedrunMilestonesReached = 28
 	else {
 		for (var i = 1; i <= 28; i++) {
 			if (tmp.qu.best > speedrunMilestones[i] * 10) break

@@ -198,16 +198,16 @@ strong { color: #0072e5 }
 #eternitybtn:hover, #eternitystorebtn:hover, #pasteternities:hover, #tdtabbtn button:hover, #timedimensions td:nth-child(4) .storebtn:hover, .timestudy:hover, .eternityttbtn:hover, #eterctabbtn:hover, #breakEternityTabbtn button:hover, #autoEternityTabbtn button:hover {
     background-color: #7100e2 !important
 }
-#TTbuttons {
+#TTbuttons, #ExTbuttons {
     font-family:'Inconsolata', monospace !important
 }
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background-color: #e5e5e5 !important;
     border-color: #191919 !important;
     border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important
 }
-#TTbuttons button {
+#TTbuttons button, #ExTbuttons button {
     font-family:'Inconsolata', monospace !important;
     border-radius: 0px
 }
@@ -356,17 +356,29 @@ strong { color: #0072e5 }
 #galaxyThreshold, #dilatedGalaxies {
     color: #0072e5 !important
 }
-#dilationTabbtn button, .dilationbtn, .dilationupg, .dilationupgrebuyable {
+#dilationTabbtn button, #dilstudyunlock button, .dilationbtn, .dilationupg, .dilationupgrebuyable {
     background-color: #191919 !important;
     color: #e5e5e5 !important;
     border-color: #72e572 !important;
     animation: none
 }
-#dilationTabbtn button:hover, .dilationbtn:hover, .dilationupg:hover, .dilationupgrebuyable:hover {
+#dilationTabbtn button:hover, #dilstudyunlock button:hover, .dilationbtn:hover, .dilationupg:hover, .dilationupgrebuyable:hover {
     background-color: #72e572 !important;
     color: #191919 !important;
     animation: none
 }
+#exoticstudyunlock button {
+    background-color: #191919 !important;
+    color: #e5e5e5 !important;
+    border-color: #ff0000 !important;
+    animation: none
+}
+#exoticstudyunlock button:hover {
+    background-color: #ff0000 !important;
+    color: #191919 !important;
+    animation: none
+}
+
 #breakDilationTabbtn button {
     background-color: #191919 !important;
     color: #e5e5e5 !important;
@@ -379,7 +391,7 @@ strong { color: #0072e5 }
     animation: none
 }
 
-#timestudies .dilationupgbought {
+#timestudies .dilationupgbought, #dilationstudies .dilationupgbought {
     background-color: #72e572 !important;
     color: #191919 !important;
     border-color: #191919 !important
@@ -389,15 +401,15 @@ strong { color: #0072e5 }
 #reversedilation.dilationupg, #xdrow .dilationupgrebuyable { border-color: #16e528 !important }
 #reversedilation.dilationupg:hover, #xdrow .dilationupgrebuyable:hover  { background-color: #16e528 !important }
 #exDilationAmount { color:  #16e528 !important }
-#dilstudy6.dilationupg, #mdtabbtn .secondarytabbtn, #metadimensions .storebtn, #dil14.dilationupg, #dil15.dilationupg, #dil16.dilationupg, #dil17.dilationupg, #masteryportal.dilationupg, #masterystudyunlock button, #masterystudies .dilationupg {
+#dilstudy6.dilationupg, #specDilStudy6.dilationupg, #mdtabbtn .secondarytabbtn, #metadimensions .storebtn, #dil14.dilationupg, #dil15.dilationupg, #dil16.dilationupg, #dil17.dilationupg, #masteryportal.dilationupg, #masterystudyunlock button, #masterystudies .dilationupg {
     border-color: #00e5e5 !important;
     animation: none
 }
-#dilstudy6.dilationupg:hover, #mdtabbtn .secondarytabbtn:hover, #metadimensions .storebtn:hover, #dil13.dilationupg:hover, #dil14.dilationupg:hover, #dil15.dilationupg:hover, #dil16.dilationupg:hover, #masteryportal.dilationupg:hover, #masterystudyunlock button:hover, #masterystudies .dilationupg:hover {
+#dilstudy6.dilationupg:hover, #specDilStudy6.dilationupg:hover, #mdtabbtn .secondarytabbtn:hover, #metadimensions .storebtn:hover, #dil13.dilationupg:hover, #dil14.dilationupg:hover, #dil15.dilationupg:hover, #dil16.dilationupg:hover, #masteryportal.dilationupg:hover, #masterystudyunlock button:hover, #masterystudies .dilationupg:hover {
     background-color: #00e5e5 !important;
     animation: none
 }
-#dilstudy6.dilationupgbought, #dil14.dilationupgbought, #dil15.dilationupgbought, #dil16.dilationupgbought, #dil17.dilationupgbought, #masterystudies .dilationupgbought {
+#dilstudy6.dilationupgbought, #specDilStudy6.dilationupgbought, #dil14.dilationupgbought, #dil15.dilationupgbought, #dil16.dilationupgbought, #dil17.dilationupgbought, #masterystudies .dilationupgbought {
 	background-color: #00e5e5 !important;
     color: #191919 !important;
 	border-color: #191919 !important
@@ -431,12 +443,12 @@ strong { color: #0072e5 }
 	border: 2px solid #191919 !important;
 	color: #191919 !important
 }
-#dilstudy7.dilationupg, #electronstabbtn button, #electrons .gluonupgrade.storebtn { 
+#dilstudy7.dilationupg, #specDilStudy7.dilationupg, #electronstabbtn button, #electrons .gluonupgrade.storebtn { 
 	background-color: #191919 !important;
 	border: 2px solid #d2e500 !important;
 	animation: none !important
 }
-#dilstudy7.dilationupg:hover, #electronstabbtn button:hover, #dilstudy7.dilationupgbought, #electrons .gluonupgrade.storebtn:hover { background-color: #d2e500 !important }
+#dilstudy7.dilationupg:hover, #specDilStudy7.dilationupg:hover, #electronstabbtn button:hover, #dilstudy7.dilationupgbought, #specDilStudy7.dilationupgbought, #electrons .gluonupgrade.storebtn:hover { background-color: #d2e500 !important }
 #electronsAmount, #electronsTranslation { color: #d2e500 !important }
 #electronsEffect { color: #00e500 !important }
 .quantumchallengediv {
@@ -761,6 +773,10 @@ strong { color: #0072e5 }
     color: black;
     text-shadow: 0px 0px 2px black;
     animation: annihilation 0.4s linear 1 forwards;
+}
+
+#annihilatebtn {
+    border-color: rgb(173, 0, 52) !important;
 }
 
 @keyframes rg {

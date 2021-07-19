@@ -256,7 +256,7 @@ input, select {
     color: #bbb !important;
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background: #111 !important;
     border-width: 1px !important;
     border-color: #fff !important;

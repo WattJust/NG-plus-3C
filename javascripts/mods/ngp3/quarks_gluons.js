@@ -225,7 +225,7 @@ function updateColorPowers(log) {
 	colorBoosts.r=Math.pow(log.r,player.dilation.active?2/3:0.5)/10+1
 	if (colorBoosts.r>1.3) colorBoosts.r=Math.sqrt(colorBoosts.r*1.3)
 	if (colorBoosts.r>2.3&&(!player.dilation.active||getTreeUpgradeLevel(2)>7||ghostified)) colorBoosts.r=Math.pow(colorBoosts.r/2.3,0.5*((ghostified&&player.ghostify.neutrinos.boosts>4&&!tmp.ngp3c)?1+tmp.nb[5]:1))*2.3
-	if (player.dilation.active && colorBoosts.r>=12 && tmp.ngp3c) colorBoosts.r = Math.log10(colorBoosts.r-2)+11
+	if ((player.dilation.active||tmp.an) && colorBoosts.r>=(tmp.an?1:12) && tmp.ngp3c) colorBoosts.r = Math.log10(colorBoosts.r-(tmp.an?0:2))/(tmp.an?4:1)+(tmp.an?1:11)
 
 	//Green
 	let m = 1
@@ -258,6 +258,7 @@ function updateColorPowers(log) {
 		else bLog = Math.min(bLog.toNumber(), bLog.log10() * (40 + 10 * bLog.sub(90).log10()))
 	}
 	if (ghostified && player.ghostify.neutrinos.boosts>4 && tmp.ngp3c) bLog *= 1+tmp.nb[5];
+	if (tmp.an && bLog>=2) bLog = Math.sqrt(bLog+2)
 	if (bLog < 0) bLog = 0
 	colorBoosts.b = tmp.ngp3c?softcap(Decimal.pow(10, bLog), "ngp3cFBPE"):Decimal.pow(10,bLog)
 
@@ -266,7 +267,7 @@ function updateColorPowers(log) {
 }
 
 function updateColorDimPowers(log) {
-	if (tmp.ngp3l) return
+	if (tmp.ngp3l||tmp.an) return
 	if (log == undefined) log = getCPLogs()
 	
 	var rexp = Math.sqrt(player.money.add(1).log10()) * Math.pow(getColorDimPowerBase("r", log), 4/7) * (inQC(6) ? 1 : 35)
@@ -414,6 +415,8 @@ function GUBought(id) {
 }
 
 function buyQuarkMult(name) {
+	if (tmp.an) return;
+
 	var cost = Decimal.pow(100, tmp.qu.multPower[name] + Math.max(tmp.qu.multPower[name] - 467, 0)).times(500)
 	if (tmp.qu.gluons[name].lt(cost)) return
 	tmp.qu.gluons[name] = tmp.qu.gluons[name].sub(cost).round()
@@ -428,6 +431,8 @@ function buyQuarkMult(name) {
 }
 
 function maxQuarkMult() {
+	if (tmp.an) return;
+	
 	var names = ["rg", "gb", "br"]
 	var bought = 0
 	for (let c = 0; c < 3; c++) {
@@ -500,7 +505,7 @@ function updateQuarksTab(tab) {
 	var msg = getFullExpansion(Math.round((colorBoosts.g-1)*100))+(tmp.pe>0?"+"+getFullExpansion(Math.round(tmp.pe*100)):"")
 	document.getElementById("greenTranslation").textContent=msg
 	document.getElementById("blueTranslation").textContent=shortenMoney(colorBoosts.b)
-	if (!tmp.ngp3l) {
+	if (!tmp.ngp3l && !tmp.an) {
 		document.getElementById("redDimTranslation").textContent=shortenMoney(colorBoosts.dim.r)
 		document.getElementById("greenDimTranslation").textContent=shortenMoney(colorBoosts.dim.g)
 		document.getElementById("blueDimTranslation").textContent=shortenMoney(colorBoosts.dim.b)
@@ -579,7 +584,8 @@ function updateQuarksTabOnUpdate(mode) {
 	var canAssign = assortAmount.gt(0)
 	document.getElementById("quarkAssort").style.display = tmp.ngp3l ? "none" : ""
 	document.getElementById("quarkAssign").style.display = tmp.ngp3l ? "" : "none"
-	document.getElementById("colorDimTranslations").style.display = tmp.ngp3l ? "none" : ""
+	document.getElementById("colorDimTranslations").style.display = (tmp.ngp3l||tmp.an) ? "none" : ""
+	document.getElementById("colorDimPowerUpg").style.display = (tmp.ngp3l||tmp.an) ? "none" : ""
 	if (tmp.ngp3l) {
 		document.getElementById("redAssign").className = canAssign ? "storebtn" : "unavailablebtn"
 		document.getElementById("greenAssign").className = canAssign ? "storebtn" : "unavailablebtn"
@@ -647,7 +653,7 @@ function updateGluonsTabOnUpdate(mode) {
 			var upg = name + "qk"
 			var cost = Decimal.pow(100, tmp.qu.multPower[name] + Math.max(tmp.qu.multPower[name] - 467,0)).times(500)
 			document.getElementById(upg+"cost").textContent = shortenDimensions(cost)
-			if (tmp.qu.gluons[name].lt(cost)) document.getElementById(upg+"btn").className = "gluonupgrade unavailablebtn"
+			if (tmp.qu.gluons[name].lt(cost)||tmp.an) document.getElementById(upg+"btn").className = "gluonupgrade unavailablebtn"
 			else document.getElementById(upg + "btn").className = "gluonupgrade " + name
 		}
 		let colNames = ["Red","Green","Blue"]

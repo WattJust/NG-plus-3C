@@ -16,7 +16,7 @@ function matchTempPlayerBD() {
 }
 
 function updateBreakDilationTabBtn() {
-    if (!tmp.ngp3c) {
+    if (!tmp.ngp3c || (tmp.an&&!player.dilation.studies.includes(1))) {
         document.getElementById("breakDilationTabbtn").style.display = "none"
         return;
     }
@@ -34,6 +34,7 @@ function breakDilationDisplay() {
             document.getElementById("cherenkovRadGain").textContent = shorten(tmp.bdt.radGain);
             document.getElementById("cherenkovRadEffDesc").textContent = tmp.bdt.radEffFlipped ? "multiplies" : "divides"
             document.getElementById("cherenkovRadEff").textContent = shorten(tmp.bdt.radEffFlipped?Decimal.div(1, tmp.bdt.radEff):tmp.bdt.radEff);
+            document.getElementById("bdupg2spec").textContent = tmp.an ? " & CR" : ""
             document.getElementById("bd2effflip").textContent = tmp.bdt.radEffFlipped ? "" : "divide "
             for (let i=1;i<=BDUpgs.amt;i++) updateBDUpg(i);
             
@@ -48,7 +49,7 @@ function breakDilationDisplay() {
                     document.getElementById("cosmicOrbPlus3").textContent = getFullExpansion(tmp.co.plus3)
                     document.getElementById("cosmicOrbMinus1").textContent = getFullExpansion(Math.round((tmp.co.minus1-1)*1e4)/100)+"%"
                     document.getElementById("cosmicOrbMinus2Desc").textContent = tmp.bdt.radEffFlipped ? "bringing" : "raising"
-                    document.getElementById("cosmicOrbMinus2").textContent = (tmp.bdt.radEffFlipped?"to the ":"^")+getFullExpansion(Math.round(tmp.co.minus2*100)/100)+(tmp.bdt.radEffFlipped?"th root":"")
+                    document.getElementById("cosmicOrbMinus2").textContent = "^"+(tmp.bdt.radEffFlipped?"1/":"")+getFullExpansion(Math.round(tmp.co.minus2*100)/100)
                     document.getElementById("cosmicOrbMinus3").textContent = shorten(tmp.co.minus3)
                 }
             }
@@ -86,6 +87,10 @@ function breakDilation() {
     if (!tmp.ngp3c) return;
     if (!tmp.bd.unl) return;
     if (tmp.bd.active) {
+        if (tmp.an) {
+            alert("You cannot Fix Dilation while the timeline is Annihilated!");
+            return;
+        }
         if (!player.aarexModifications.bdNoConf) if (!confirm("Are you sure you want to Fix Dilation? This will reset your Cherenkov Radiation but also your Tachyon Particles, and will force a Ghostify reset!")) return;
         fixDilationReset();
     } else {
@@ -94,8 +99,8 @@ function breakDilation() {
     player.dilation.break.active = !player.dilation.break.active
 }
 
-function fixDilationReset() {
-    ghostifyReset(false, 0, 0, true)
+function fixDilationReset(noGhost=false) {
+    if (!noGhost) ghostifyReset(false, 0, 0, true)
     player.dilation.tachyonParticles = new Decimal(0);
     player.dilation.bestTP = new Decimal(0);
     player.dilation.bestTPOverGhostifies = new Decimal(0);
@@ -106,7 +111,7 @@ function breakDilationTick(diff) {
     if (!tmp.ngp3c) return;
     if (!tmp.bd.unl) return;
     
-    if (tmp.bd.active) {
+    if (tmp.bd.active && !(tmp.an && !player.dilation.studies.includes(1))) {
         setTachyonParticles(player.dilation.tachyonParticles.max(getDilGain()));
         player.dilation.break.rads = player.dilation.break.rads.plus(tmp.bdt.radGain.times(diff));
     }
@@ -123,7 +128,7 @@ function getCherenkovRadGain() {
     if ((!tmp.ngp3c) || (!tmp.bd.unl) || (!tmp.bd.active)) return new Decimal(0);
 
     let OoMsBetween = 50;
-    let reqmod = Decimal.log10(breakDilationReq[1])
+    let reqmod = Decimal.log10(tmp.an?1e80:breakDilationReq[1])
     let tpmod = 1+Math.max(player.dilation.tachyonParticles.plus(1).log10()-reqmod, 0)/OoMsBetween
     let base = tpmod;
     let exp = Math.log10(tpmod)*tmp.co.plus2;
@@ -164,7 +169,7 @@ var BDUpgs = {
     },
     2: {
         cost: new Decimal(400),
-        eff(p) { return Decimal.pow(1.1, Math.max(tmp.hb.higgs-30, 0)*p) },
+        eff(p) { return Decimal.pow(1.1, Math.max((tmp.an?Math.sqrt(tmp.hb.higgs*tmp.bd.rads.plus(1).log10()/10):tmp.hb.higgs)-30, 0)*p) },
         disp(e) { return shorten(e)+"x gain, "+(tmp.bdt.radEffFlipped?(shorten(Decimal.pow(e, 25))+"x effect"):("/"+shorten(Decimal.pow(e, 25))+" effect")) },
     },
     3: {
@@ -237,7 +242,7 @@ function updateBDUpg(x) {
     document.getElementById("breakDilationCost"+x).textContent = shorten(cost)
 }
 
-function hasBDUpg(x) { return (tmp.ngp3c&&tmp.bd&&tmp.bdt&&tmp.bdt.upgs)?(tmp.bd.active && tmp.bd.upgrades.includes(x)):false };
+function hasBDUpg(x) { return (tmp.ngp3c&&!(tmp.an&&!player.dilation.studies.includes(1))&&tmp.bd&&tmp.bdt&&tmp.bdt.upgs)?(tmp.bd.active && tmp.bd.upgrades.includes(x)):false };
 
 function buyBDUpg(x) {
     if ((!tmp.ngp3c)||(!tmp.bd)) return;
@@ -277,8 +282,13 @@ var cosmicOrbEffects = {
         if (hasBDUpg(12)) cp /= tmp.bdt.upgs[12]
         return cp/3+1 
     },
-    minus2: function(cp) { return cp+1 },
+    minus2: function(cp) { 
+        let eff = cp+1
+        if (hasExS(31)) eff /= 2;
+        return eff;
+    },
     minus3: function(cp) { 
+        if (tmp.an) cp /= Math.max(cp-tmp.bd.rads.plus(1).log10()/10, 1)
         if (cp>=2) cp = cp/2+1
         return Decimal.pow(10, cp) 
     },

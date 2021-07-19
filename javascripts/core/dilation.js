@@ -92,12 +92,13 @@ function getDilUpgPower(x) {
 		if (player.masterystudies.includes("t267")) r *= 1.5
 		r *= getECReward(14, true)
 		if (ghostified && player.ghostify.neutrinos.boosts > 7 && tmp.qu.bigRip.active) r *= tmp.nb[8]
+		if (tmp.and && tmp.and.exTarg=="Dilation Condensers") r *= tmp.and.exEff;
 	}
 	return r
 }
 
 function getDil3Power() {
-	let ret = 3
+	let ret = tmp.an?2:3
 	if (player.aarexModifications.nguspV) ret += getDilUpgPower(4) / 2
 	if (player.dilation.upgrades.includes("ngp3c8") && player.aarexModifications.ngp3c) ret = Decimal.pow(ret, getDil85Mult())
 	return ret
@@ -105,7 +106,7 @@ function getDil3Power() {
 
 function getDil6Base() {
 	if (!player.aarexModifications.ngp3c) return 1;
-	let base = Math.sqrt(player.dilation.dilatedTime.plus(1).log10()+1)
+	let base = Math.sqrt(player.dilation.dilatedTime.plus(1).log10()/(tmp.an?4:1)+1)
 	return base;
 }
 
@@ -114,7 +115,7 @@ function getDilationTPFormulaExp(disable){
 }
 
 function getDilExp(disable) {
-	let ret = 1.5
+	let ret = tmp.an?0.15:1.5
 	if (player.aarexModifications.newGameExpVersion) ret += .001
 	if (player.meta !== undefined && !player.aarexModifications.nguspV) ret += getDilUpgPower(4) / 4
 	if (tmp.ngp3) {
@@ -137,7 +138,7 @@ function getDilGain() {
 	if (inQCModifier("ad") || player.money.lt(10)) {
 		return new Decimal(0)
 	}
-	var log = Math.log10(player.money.log10() / 400) * getDilExp() + getDilPower().log10()
+	var log = Math.log10(player.money.log10() / (tmp.an?4e8:400)) * getDilExp() + getDilPower().log10()
 	if (tmp.ngp3) if (!tmp.be && player.quantum.bigRip.active) {
 		if (log > 100) log = Math.sqrt(100 * log)
 	}
@@ -146,6 +147,7 @@ function getDilGain() {
 	if (player.aarexModifications.ngp3c) gain = softcap(gain, "ngp3cTP")
 	if (player.dilation.upgrades.includes("ngp3c3") && player.aarexModifications.ngp3c) gain = gain.times(10)
 	if (player.dilation.upgrades.includes("ngp3c6") && player.aarexModifications.ngp3c) gain = gain.times(getDil83Mult())
+	if (hasExS(22)) gain = gain.times(tmp.and.study[22])
 	return gain;
 }
 
@@ -160,7 +162,7 @@ function getReqForTPGain() {
 	
 	let tplog = amt.max(1).log10()
 	if (tmp.ngp3) if (tplog > 100 && !tmp.be && player.quantum.bigRip.active) tplog = Math.pow(tplog, 2) / 100
-	return Decimal.pow(10, Decimal.pow(10, tplog).div(getDilPower()).pow(1 / getDilExp()).toNumber() * 400)
+	return Decimal.pow(10, Decimal.pow(10, tplog).div(getDilPower()).pow(1 / getDilExp()).toNumber() * (tmp.an?4e8:400))
 }
 
 function getNGUDTGain(){
@@ -463,7 +465,7 @@ function buyDilationUpgrade(pos, max, isId) {
 			if (getEternitied() >= 1e9) player.dbPower = new Decimal(getDimensionBoostPower())
 		}
 		if (id == "ngpp6" && tmp.ngp3) {
-			document.getElementById("masterystudyunlock").style.display=""
+			document.getElementById("masterystudyunlock").style.display=tmp.an?"none":""
 			document.getElementById("respecMastery").style.display = "block"
 			document.getElementById("respecMastery2").style.display = "block"
 			if (!quantumed) {
@@ -485,6 +487,7 @@ function getPassiveTTGen() {
 	r = nD(r, (player.achievements.includes("ng3p51") ? 200 : 2e4))
 	if (tmp.ngp3c && QCIntensity(8)>=1) r = nM(r, 100)
 	if (isLEBoostUnlocked(6)) r = nM(r, tmp.leBonus[6])
+	if (hasExS(21)) r = nM(r, tmp.and.study[21]);
 	return r
 }
 
@@ -492,8 +495,10 @@ function getTTGenPart(x) {
 	if (!x) return new Decimal(0)
 	x = x.max(1).log10()
 	let y = player.aarexModifications.ngudpV && !player.aarexModifications.nguepV ? 73 : 80
+	if (tmp.an) y /= 10;
+	let z = tmp.an ? 20 : 200
 	if (x > y) x = Math.sqrt((x - y + 5) * 5) + y - 5
-	if (x > 200) x = Math.sqrt(Math.pow(200, Math.sqrt(Math.log(x)/Math.log(200)))*200)
+	if (x > z) x = Math.sqrt(Math.pow(z, Math.sqrt(Math.log(x)/Math.log(z)))*z)
 	return Decimal.pow(10,x)
 }
 
@@ -574,7 +579,7 @@ function getFreeGalaxyThresholdUpgEff() {
 	if (tmp.ngp3c && player.masterystudies.includes("t394")) {
 		if (pow<=60) return 1.35 + 3.65 * Math.pow(0.8, pow);
 		return Math.pow(1.35, 1/Math.sqrt(Math.log10(Math.log10(pow / 60)+1)+1))
-	} else return 1.35 + 3.65 * Math.pow(0.8, pow);
+	} else return 1.35 + (tmp.an?9998.65:3.65) * Math.pow(tmp.an?0.98:0.8, pow);
 }
 
 function getFreeGalaxyThresholdIncrease(){

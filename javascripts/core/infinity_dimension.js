@@ -175,7 +175,7 @@ function DimensionPower(tier) {
   	if (player.galacticSacrifice !== undefined) mult = mult.times(ec9)
 
   	mult = dilates(mult, 1)
-  	if (quantumed && !tmp.ngp3l) mult = mult.times(colorBoosts.dim.g)
+  	if (quantumed && !tmp.ngp3l && !tmp.an) mult = mult.times(colorBoosts.dim.g)
 	
 	if (player.aarexModifications.ngp3c) {
 		mult = softcap(mult, "ngp3cIDs")

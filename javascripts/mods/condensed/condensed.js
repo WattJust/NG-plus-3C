@@ -37,6 +37,16 @@ function loadCondensedVars() {
 		player.dilation.break.rads = new Decimal(player.dilation.break.rads||0);
 		matchTempPlayerBD();
 	}
+
+	if (player.ghostify.annihilation === undefined) initAnnihilationPlayerData();
+	else {
+		player.ghostify.annihilation.storage.tt = nP(player.ghostify.annihilation.storage.tt||0)
+		player.ghostify.annihilation.theorem = nP(player.ghostify.annihilation.theorem||0)
+		player.ghostify.annihilation.spentThm = nP(player.ghostify.annihilation.spentThm||0)
+		player.ghostify.annihilation.ex = new Decimal(player.ghostify.annihilation.ex||0)
+		for (let i=0;i<player.ghostify.annihilation.attractors.length;i++) player.ghostify.annihilation.attractors[i] = new Decimal(player.ghostify.annihilation.attractors[i]);
+		updateTempAN()
+	}
 }
 
 function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity, 4: Eternity, 5: Quantum, 6: Ghostify
@@ -65,6 +75,7 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 	if (resetNum>=7) {
 		player.condensed.light = [null, 0, 0, 0, 0, 0, 0, 0, 0]
 		initBreakDilationPlayerData();
+		initAnnihilationPlayerData();
 	}
 	
 	if (preVer<1.1) {
@@ -100,6 +111,7 @@ function updateCondensedUnlocks() {
 
 function doCondensedUnlocks() {
 	if (tmp.bd?(!tmp.bd.unl):false) if (canUnlockBD()) unlockBreakDilation();
+	if (!player.ghostify.annihilation.unl && player.money.l>=annihilationReq) unlockAnnihilation();
 }
 
 function getTotalCondensers(type) {
@@ -436,6 +448,7 @@ function getTimeCondenserPow() {
 	if (player.masterystudies.includes("t267")) ret = ret.times(1.5)
 	if (tmp.ngp3c && tmp.be && tmp.qu.breakEternity.upgrades.includes(1)) ret = ret.times(getBreakUpgMult(1))
 	if (tmp.qu.bigRip.upgrades.includes(13) && tmp.qu.bigRip.active) ret = ret.times(1.5)
+	if (tmp.and && tmp.and.exTarg=="Time Condensers") ret = ret.times(tmp.and.exEff);
 	return ret;
 }
 
@@ -766,6 +779,7 @@ function getMetaCondenserPow() {
 	ret = ret.times(getECReward(14, true))
 	if (inQC("8c")) ret = ret.times(2.15)
 	if (tmp.twr) if (tmp.twr.gte(9)) ret = ret.times(1.1)
+	if (tmp.and && tmp.and.exTarg=="Meta Condensers") ret = ret.times(tmp.and.exEff);
 	return ret;
 }
 
@@ -1001,6 +1015,7 @@ function getNanoCondenserTarget(x) {
 function getNanoCondenserPow() {
 	let pow = new Decimal(1)
 	if (isBigRipUpgradeActive(20)) pow = pow.times(1.1);
+	if (tmp.and && tmp.and.exTarg=="Nano-Condensers") pow = pow.times(tmp.and.exEff);
 	return pow
 }
 
@@ -1157,6 +1172,7 @@ var display_scalings_data = [
 	{
 		id: "dimBoost",
 		name: "Dimension Boosts",
+		unl() { return player.resets>0 || player.galaxies>0 || quantumed },
 		amt() { return player.resets },
 		scalings: [
 			{
@@ -1175,6 +1191,7 @@ var display_scalings_data = [
 	{
 		id: "galaxies",
 		name: "Galaxies",
+		unl() { return player.galaxies>0 || quantumed },
 		amt() { return player.galaxies },
 		scalings: [
 			{
@@ -1233,6 +1250,7 @@ var display_scalings_data = [
 	{
 		id: "replGal",
 		name: "Replicated Galaxies",
+		unl() { return player.replicanti.gal>0 || quantumed },
 		amt() { return player.replicanti.gal },
 		scalings: [
 			{
@@ -1256,6 +1274,7 @@ var display_scalings_data = [
 	{
 		id: "intergalactic",
 		name: "Intergalactic Boost",
+		unl() { return player.achievements.includes("ng3p27") },
 		amt() { return tmp.ig },
 		decimal: true,
 		scalings: [
@@ -1328,6 +1347,7 @@ var display_scalings_data = [
 	{
 		id: "nanoreward",
 		name: "Nanofield Rewards",
+		unl() { return player.masterystudies.includes("d12") },
 		amt() { return tmp.qu.nanofield.rewards||0 },
 		scalings: [
 			{
@@ -1386,6 +1406,7 @@ var display_scalings_data = [
 	{
 		id: "le",
 		name: "Light Empowerments",
+		unl() { return player.ghostify.ghostlyPhotons.unl },
 		amt() { return player.ghostify.ghostlyPhotons.enpowerments },
 		scalings: [
 			{
@@ -1409,6 +1430,7 @@ var display_scalings_data = [
 	{
 		id: "hb",
 		name: "Higgs Bosons",
+		unl() { return tmp.hb?tmp.hb.unl:false },
 		amt() { return tmp.hb?tmp.hb.higgs:0 },
 		scalings: [
 			{
@@ -1430,7 +1452,7 @@ function updateScalingsDisplay() {
 		let data = display_scalings_data[i];
 		let amt = data.amt();
 		let shown = false
-		for (let j=0;j<data.scalings.length;j++) {
+		if (data.unl()) for (let j=0;j<data.scalings.length;j++) {
 			let data2 = data.scalings[j];
 			let useDecimal = !(!data.decimal)
 			if (data2.active()) {

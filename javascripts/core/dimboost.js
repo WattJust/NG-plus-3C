@@ -76,7 +76,7 @@ function softReset(bulk, tier=1) {
 	if (player.achievements.includes("r83")) player.tickspeed = player.tickspeed.times(Decimal.pow(0.95,player.galaxies));
 	divideTickspeedIC5()
 
-	if (player.resets > 4) {
+	if (player.resets > 4 && !tmp.an) {
 		document.getElementById("confirmation").style.display = "inline-block";
 		document.getElementById("sacrifice").style.display = "inline-block";
 		document.getElementById("confirmations").style.display = "inline-block";

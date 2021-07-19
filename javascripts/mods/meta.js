@@ -27,6 +27,7 @@ function getDilationMetaDimensionMultiplier() {
 }
 
 function getMetaDimensionMultiplier(tier) {
+	if (tmp.an && !player.dilation.studies.includes(6)) return new Decimal(0)
 	if (player.currentEternityChall === "eterc11") return new Decimal(1)
 	if (inQC("8c")) {
 		let r = tmp.cnd.meta[tier]||new Decimal(1)
@@ -108,7 +109,8 @@ function getMetaBoostPower() {
 		if (!tmp.ngp3l && player.achievements.includes("ng3p26")) exp *= Math.log10(9 + Math.max(player.meta.resets / 75 + 0.25, 1))
 	}
 	if (player.achievements.includes("ngpp14")) r *= 1.01
-	return Math.pow(r, exp)
+	if (hasExS(41)) exp *= 5
+	return Decimal.pow(r, exp)
 }
 
 function getMetaDimensionDescription(tier) {
@@ -422,7 +424,7 @@ function updateMetaDimensions () {
 	var reqGotten = isQuantumReached()
 	var newClassName = reqGotten ? (bigRipped && player.options.theme == "Aarex's Modifications" ? "" : "storebtn ") + (bigRipped ? "aarexmodsghostifybtn" : "") : 'unavailablebtn'
 	var message = 'Lose all your previous progress, but '
-	document.getElementById("quantumResetLabel").textContent = (bigRipped ? 'Ghostify' : 'Quantum') + ': requires ' + shorten(req) + ' meta-antimatter ' + (!inQC(0) ? "and " + shortenCosts(Decimal.pow(10, getQCGoal())) + " antimatter" : player.masterystudies ? "and an EC14 completion" : "")
+	document.getElementById("quantumResetLabel").textContent = (bigRipped ? 'Ghostify' : 'Quantum') + ': requires ' + shorten(req) + ' meta-antimatter ' + (!inQC(0) ? "and " + shortenCosts(Decimal.pow(10, getQCGoal())) + " antimatter" : (player.masterystudies&&!tmp.an) ? "and an EC14 completion" : "")
 	if (reqGotten && bigRipped && ghostified) {
 		var GS = getGHPGain()
 		message += "gain " + shortenDimensions(GS) + " Ghost Particle" + (GS.lt(2) ? "" : "s")

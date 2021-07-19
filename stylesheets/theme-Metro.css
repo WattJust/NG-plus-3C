@@ -234,7 +234,7 @@ input, select {
     background: #EF5350 !important;
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background: #EEEEEE !important;
     border-width: 1px !important;
 }

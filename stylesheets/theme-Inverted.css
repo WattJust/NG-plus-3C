@@ -10,7 +10,7 @@ body {
     filter: invert(100%);
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     border-color: #fff !important;
     background-color: #1f1f1f !important;
 }

@@ -357,7 +357,7 @@ input {
     border: 1px solid #B84B5F !important;
 }
 
-#theorembuybackground {
+#theorembuybackground, #extheorembuybackground {
     background: #455A64 !important;
 }
 

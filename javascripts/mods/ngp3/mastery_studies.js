@@ -746,6 +746,7 @@ function buyingDilationStudy(id){
 }
 
 function buyMasteryStudy(type, id, quick=false) {
+	if (tmp.an) return;
 	if (quick) setMasteryStudyCost(id,type)
 	if (!canBuyMasteryStudy(type, id)) return
 	player.timestudy.theorem = nS(player.timestudy.theorem, masteryStudies.costs[masteryStudies.types[type]][id])

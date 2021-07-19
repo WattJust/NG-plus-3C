@@ -26,7 +26,7 @@ button, div.storebtn {
 	background-color: #f2f2f2 !important
 }
 
-.popup, #theorembuybackground {
+.popup, #theorembuybackground, #extheorembuybackground {
 	font-family: "Roboto" !important;
 	background-color: #999999;
 	color: #191919;
@@ -342,15 +342,15 @@ button, div.storebtn {
 	background-color: #57e557 !important
 }
 
-#dilstudy6.dilationupgbought, #mdtabbtn button, #metadimensions table .storebtn, #mddilupg .dilationupgbought, #masterystudyunlock button {
+#dilstudy6.dilationupgbought, #specDilStudy6.dilationupgbought, #mdtabbtn button, #metadimensions table .storebtn, #mddilupg .dilationupgbought, #masterystudyunlock button {
 	background-color: #00e5e5 !important
 }
 
-#dilstudy6.dilationupg, #mdtabbtn button:hover, #metadimensions table .storebtn:hover, #mddilupg .dilationupg, #masterystudyunlock button:hover {
+#dilstudy6.dilationupg, #specDilStudy6.dilationupg, #mdtabbtn button:hover, #metadimensions table .storebtn:hover, #mddilupg .dilationupg, #masterystudyunlock button:hover {
 	background-color: #39e5e5 !important
 }
 
-#dilstudy6.dilationupg:hover, #mddilupg .dilationupg:hover {
+#dilstudy6.dilationupg:hover, #specDilStudy6.dilationupg:hover, #mddilupg .dilationupg:hover {
 	background-color: #57e5e5 !important
 }
 
@@ -393,16 +393,16 @@ button, div.storebtn {
 	color: #0000e5 !important
 }
 
-#dilstudy7.dilationupgbought, #electronstabbtn button, #electrons .gluonupgrade.storebtn {
+#dilstudy7.dilationupgbought, #specDilStudy7.dilationupgbought, #electronstabbtn button, #electrons .gluonupgrade.storebtn {
 	background-color: #e5e500 !important;
 	animation: none !important
 }
 
-#dilstudy7.dilationupg, #electronstabbtn button:hover, #electrons .gluonupgrade.storebtn:hover {
+#dilstudy7.dilationupg, #specDilStudy7.dilationupg, #electronstabbtn button:hover, #electrons .gluonupgrade.storebtn:hover {
 	background-color: #e5e539 !important
 }
 
-#dilstudy7.dilationupg:hover {
+#dilstudy7.dilationupg:hover, #specDilStudy7.dilationupg:hover {
 	background-color: #e5e557 !important
 }
 

@@ -1,5 +1,7 @@
 function updateElectronsTab() {
-	document.getElementById("normalGalaxies").textContent = getFullExpansion(player.galaxies)
+	let trueSacGals = !hasAch("ng3pc24")
+	document.getElementById("sacGalDiv").style.display = trueSacGals?"":"none"
+	if (trueSacGals) document.getElementById("normalGalaxies").textContent = getFullExpansion(player.galaxies)
 	document.getElementById("sacrificeGal").className = "gluonupgrade " + ((player.galaxies > tmp.qu.electrons.sacGals && inQC(0)) ? "stor" : "unavailabl") + "ebtn"
 	document.getElementById("sacrificeGals").textContent = getFullExpansion(Math.max(player.galaxies-tmp.qu.electrons.sacGals, 0))
 	document.getElementById("electronsGain").textContent = getFullExpansion(Math.floor(Math.max(player.galaxies-tmp.qu.electrons.sacGals, 0) * getElectronGainFinalMult()))

@@ -3,9 +3,14 @@ function nP(a) {
 	return new Decimal(a)
 }
 
+function nQ(a) {
+	if (Decimal.lt(a, Number.MAX_VALUE)) return new Decimal(a).toNumber()
+	return new Decimal(a)
+}
+
 function nN(a) {
-	if (a.lt(Number.MAX_VALUE)) return Math.floor(a.toNumber())
-	return a
+	if (Decimal.lt(a, Number.MAX_VALUE)) return Math.floor(new Decimal(a).toNumber())
+	return new Decimal(a)
 }
 
 function nA(a,b) {

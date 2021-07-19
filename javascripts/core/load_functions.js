@@ -1803,8 +1803,8 @@ function doNGp3Init2(){
 
 function setConfirmationsDisplay(){
         document.getElementById("confirmations").style.display = (player.resets > 4 || player.galaxies > 0 || (player.galacticSacrifice ? player.galacticSacrifice.times > 0 : false) || player.infinitied !== 0 || player.eternities !== 0 || quantumed) ? "inline-block" : "none"
-        document.getElementById("confirmation").style.display = (player.resets > 4 || player.infinitied > 0 || player.eternities !== 0 || quantumed) ? "inline-block" : "none"
-        document.getElementById("sacrifice").style.display = (player.resets > 4 || player.infinitied > 0 || player.eternities !== 0 || quantumed) ? "inline-block" : "none"
+        document.getElementById("confirmation").style.display = ((player.resets > 4 || player.infinitied > 0 || player.eternities !== 0 || quantumed) && !tmp.an) ? "inline-block" : "none"
+        document.getElementById("sacrifice").style.display = ((player.resets > 4 || player.infinitied > 0 || player.eternities !== 0 || quantumed) && !tmp.an) ? "inline-block" : "none"
         document.getElementById("sacConfirmBtn").style.display = (player.resets > 4 || player.galaxies > 0 || (player.galacticSacrifice ? player.galacticSacrifice.times > 0 : false) || player.infinitied > 0 || player.eternities !== 0 || quantumed) ? "inline-block" : "none"
         var gSacDisplay = !player.galacticSacrifice ? "none" : player.galaxies > 0 || player.galacticSacrifice.times > 0 || player.infinitied > 0 || player.eternities !== 0 || quantumed ? "inline-block" : "none"
         document.getElementById("gConfirmation").style.display = gSacDisplay
@@ -1889,7 +1889,10 @@ function setDisplaysStuff1(){
   
         document.getElementById("bestAntimatterType").textContent = player.masterystudies && quantumed ? "Your best meta-antimatter for this quantum" : "Your best-ever meta-antimatter"
 
-        document.getElementById("masterystudyunlock").style.display = player.dilation.upgrades.includes("ngpp6") && player.masterystudies ? "" : "none"
+        document.getElementById("timestudyunlock").style.display = tmp.an?"none":""
+        document.getElementById("dilstudyunlock").style.display = tmp.an?"":"none"
+        document.getElementById("exoticstudyunlock").style.display = tmp.an?"":"none"
+        document.getElementById("masterystudyunlock").style.display = player.dilation.upgrades.includes("ngpp6") && player.masterystudies && !tmp.an ? "" : "none"
         document.getElementById("respecMastery").style.display = player.dilation.upgrades.includes("ngpp6") && player.masterystudies ? "block" : "none"
         document.getElementById("respecMastery2").style.display = player.dilation.upgrades.includes("ngpp6") && player.masterystudies ? "block" : "none"
 
@@ -2354,7 +2357,7 @@ function onLoad(noOffline) {
         showAchTab((tabsSave.on && (tabsSave.tabAchs == 'normalachievements' || tabsSave.tabAchs == 'secretachievements') && tabsSave.tabAchs) || 'normalachievements')
         showChallengesTab((tabsSave.on && tabsSave.tabChalls) || 'normalchallenges')
         showInfTab((tabsSave.on && tabsSave.tabInfinity) || 'preinf')
-        showEternityTab((tabsSave.on && tabsSave.tabEternity) || 'timestudies', true)
+        showEternityTab((tabsSave.on && tabsSave.tabEternity) || (tmp.an?'dilationstudies':'timestudies'), true)
         showQuantumTab((tabsSave.on && tabsSave.tabQuantum) || 'uquarks')
         showNFTab((tabsSave.on && tabsSave.tabNF) || 'nanoverse')
         showBranchTab((tabsSave.on && tabsSave.tabBranch) || 'red')

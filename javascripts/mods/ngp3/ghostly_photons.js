@@ -100,13 +100,19 @@ function updateGPHUnlocks() {
 }
 
 function getGPHProduction() {
-	let b = tmp.qu.bigRip.active
-	if (b) var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e2460":"1e480")
-	else var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e1780":"1e930")
+	var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e2460":"1e480");
+	if (hasExS(33)) ret = player.dilation.dilatedTime.div(1e128)
 	if (ret.gt(1)) ret = ret.pow(tmp.ngp3c?0.004:0.02)
-	if (b && ret.gt(Decimal.pow(2, tmp.ngp3c?50:444))) ret = ret.div(Decimal.pow(2, tmp.ngp3c?50:444)).sqrt().times(Decimal.pow(2, tmp.ngp3c?50:444))
-	if (!b && hasNU(14) && tmp.ngp3c) ret = ret.times(tmp.nu[5]);
+	if (ret.gt(Decimal.pow(2, tmp.ngp3c?50:444))) ret = ret.div(Decimal.pow(2, tmp.ngp3c?50:444)).sqrt().times(Decimal.pow(2, tmp.ngp3c?50:444))
 	return ret
+}
+
+function getDMProduction() {
+	var ret = player.dilation.dilatedTime.div(tmp.ngp3c?"1e1780":"1e930")
+	if (hasExS(33)) ret = player.dilation.dilatedTime.div(1e128)
+	if (ret.gt(1)) ret = ret.pow(tmp.ngp3c?0.004:0.02)
+	if (hasNU(14) && tmp.ngp3c) ret = ret.times(tmp.nu[5]);
+	return ret;
 }
 
 function updatePhotonsTab(){
@@ -119,10 +125,12 @@ function updatePhotonsTab(){
 
 function updateRaysPhotonsDisplay(){
 	var gphData = player.ghostify.ghostlyPhotons
+	let bothGen = hasExS(33)
 	document.getElementById("dtGPH").textContent = shorten(player.dilation.dilatedTime)
-	document.getElementById("gphProduction").textContent = shorten(getGPHProduction())
-	document.getElementById("gphProduction").className = (tmp.qu.bigRip.active ? "gph" : "dm") + "Amount"
-	document.getElementById("gphProductionType").textContent = tmp.qu.bigRip.active ? "Ghostly Photons" : "Dark Matter"
+	document.getElementById("gphProduction").textContent = bothGen?shorten(getGPHProduction()):shorten(tmp.qu.bigRip.active?getGPHProduction():getDMProduction())
+	document.getElementById("gphProduction").className = (bothGen?"gph":(tmp.qu.bigRip.active ? "gph" : "dm")) + "Amount"
+	document.getElementById("gphProductionType").textContent = (tmp.qu.bigRip.active||bothGen) ? "Ghostly Photons" : "Dark Matter"
+	document.getElementById("gphProduction2").innerHTML = bothGen?(" & <span class='dmAmount'>"+shorten(getDMProduction())+"</span> Dark Matter"):""
 	document.getElementById("gph").textContent = shortenMoney(gphData.amount)
 	document.getElementById("dm").textContent = shortenMoney(gphData.darkMatter)
 	document.getElementById("ghrProduction").textContent = shortenMoney(getGHRProduction())
@@ -170,8 +178,8 @@ function updateLEmpowermentBoosts(){
 		document.getElementById("le"+e).style.visibility = unlocked ? "visible" : "hidden"
 	}
 	if (boosts >= 1) {
-		document.getElementById("leBoost1").textContent = getFullExpansion(Math.floor(tmp.leBonus[1].effect))
-		document.getElementById("leBoost1Total").textContent = getFullExpansion(Math.floor(tmp.leBonus[1].total))
+		document.getElementById("leBoost1").textContent = getFullExpansion(tmp.an?0:Math.floor(tmp.leBonus[1].effect))
+		document.getElementById("leBoost1Total").textContent = getFullExpansion(tmp.an?0:Math.floor(tmp.leBonus[1].total))
 	}
 	if (boosts >= 2) document.getElementById("leBoost2").textContent = (tmp.leBonus[2] * 100 - 100).toFixed(1)
 	if (boosts >= 3) document.getElementById("leBoost3").textContent = tmp.leBonus[3].toFixed(2)
@@ -239,6 +247,10 @@ function lightEmpowerment() {
 	if (!player.ghostify.ghostlyPhotons.enpowerments) document.getElementById("leConfirmBtn").style.display = "inline-block"
 	player.ghostify.ghostlyPhotons.enpowerments++
 	if (hasAch("ng3pc16")) return;
+	else if (tmp.an) {
+		alert("You cannot become a ghost through Light Empowerments while the timeline is Annihilated!");
+		return;
+	}
 	ghostify(false, true)
 	if (player.achievements.includes("ng3p91")) return
 	player.ghostify.ghostlyPhotons.amount = new Decimal(0)
