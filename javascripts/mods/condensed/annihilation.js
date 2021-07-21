@@ -90,9 +90,9 @@ function annihilate() {
     } else {
         player.ghostify.annihilation.ex = player.ghostify.annihilation.ex.plus(getExoticMatterGain())
 
-        player.ghostify.annihilation.storage.aglu = tmp.qu.upgrades;
-        player.ghostify.annihilation.storage.aqc = tmp.qu.challenges;
-        player.ghostify.annihilation.storage.apc = tmp.qu.pairedChallenges;
+        if (tmp.qu.upgrades) player.ghostify.annihilation.storage.aglu = tmp.qu.upgrades;
+        if (tmp.qu.challenges) player.ghostify.annihilation.storage.aqc = tmp.qu.challenges;
+        if (tmp.qu.pairedChallenges) player.ghostify.annihilation.storage.apc = tmp.qu.pairedChallenges;
         
         player.timestudy.theorem = nP(player.ghostify.annihilation.storage.tt);
         player.timestudy.studies = player.ghostify.annihilation.storage.ts;

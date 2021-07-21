@@ -112,8 +112,12 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		}
 		if (tmp.an) tmp.qu.pairedChallenges = player.ghostify.annihilation.storage.apc;
 	}
+	if (preVer<1.32) {
+		if (!player.ghostify.annihilation.storage.aqc) player.ghostify.annihilation.storage.aqc = {};
+		if (!player.ghostify.annihilation.storage.aglu) player.ghostify.annihilation.storage.aglu = [];
+	}
 
-	player.aarexModifications.ngp3c = 1.31;
+	player.aarexModifications.ngp3c = 1.32;
 }
 
 function updateCondensedUnlocks() {
