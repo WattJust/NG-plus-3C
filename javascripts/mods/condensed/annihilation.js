@@ -13,7 +13,15 @@ function initAnnihilationPlayerData() {
             glu: [],
             aglu: [],
             aqc: {},
-            apc: {},
+            apc: {
+                order: {},
+                current: 0,
+                completed: 0,
+                completions: tmp.qu.pairedChallenges.completions,
+                fastest: tmp.qu.pairedChallenges.fastest,
+                pc68best: tmp.qu.pairedChallenges.pc68best,
+                respec: false
+            },
             pc: {},
             bru: [],
             be: false,

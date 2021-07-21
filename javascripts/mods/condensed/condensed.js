@@ -100,8 +100,20 @@ function loadCondensedData(resetNum=0) { // 1: DimBoost, 2: Galaxy, 3: Infinity,
 		player.ghostify.hb.masses = {};
 		player.ghostify.hb.mechType = 0;
 	}
+	if (preVer<1.31) {
+		player.ghostify.annihilation.storage.apc = {
+			order: {},
+			current: 0,
+			completed: 0,
+			completions: tmp.qu.pairedChallenges.completions,
+			fastest: tmp.qu.pairedChallenges.fastest,
+			pc68best: tmp.qu.pairedChallenges.pc68best,
+			respec: false
+		}
+		if (tmp.an) tmp.qu.pairedChallenges = player.ghostify.annihilation.storage.apc;
+	}
 
-	player.aarexModifications.ngp3c = 1.3;
+	player.aarexModifications.ngp3c = 1.31;
 }
 
 function updateCondensedUnlocks() {

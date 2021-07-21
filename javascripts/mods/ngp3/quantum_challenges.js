@@ -169,7 +169,7 @@ var ranking=0
 function updatePCCompletions() {
 	var shownormal = false
 	document.getElementById("pccompletionsbtn").style.display = "none"
-	if (!player.masterystudies) return
+	if (!player.masterystudies) return;
 	var r = 0
 	tmp.pcc = {} // PC Completion counters
 	for (var c1 = 2; c1 < 9; c1++) for (var c2 = 1; c2 < c1; c2++) {
