@@ -488,6 +488,8 @@ function getPassiveTTGen() {
 	if (tmp.ngp3c && QCIntensity(8)>=1) r = nM(r, 100)
 	if (isLEBoostUnlocked(6)) r = nM(r, tmp.leBonus[6])
 	if (hasExS(21)) r = nM(r, tmp.and.study[21]);
+	if (hasExS(34)) r = nM(r, tmp.and.study[34]);
+	if (hasExS(51)) r = nM(r, 10);
 	return r
 }
 

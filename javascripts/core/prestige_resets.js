@@ -164,7 +164,7 @@ function doQuantumResetStuff(bigRip, challid){
 	player.dead = true
 	if (!player.dilation.bestTP) player.dilation.bestTP = player.dilation.tachyonParticles
 	player.dilation = {
-		studies: bigRip ? (tmp.qu.bigRip.upgrades.includes(12) ? [1,2,3,4,5,6] : tmp.qu.bigRip.upgrades.includes(10) ? [1] : []) : isRewardEnabled(4) ? (speedrunMilestonesReached > 5 ? [1,2,3,4,5,6] : [1]) : [],
+		studies: bigRip ? (tmp.qu.bigRip.upgrades.includes(12) ? (tmp.an?[1,6]:[1,2,3,4,5,6]) : tmp.qu.bigRip.upgrades.includes(10) ? [1] : []) : isRewardEnabled(4) ? (speedrunMilestonesReached > 5 ? (tmp.an?[1,6]:[1,2,3,4,5,6]) : [1]) : [],
 		active: false,
 		tachyonParticles: (((player.achievements.includes("ng3p37") && (!bigRip || tmp.qu.bigRip.upgrades.includes(11))) || player.achievements.includes("ng3p71")) && !inQCModifier("ad")) ? player.dilation.bestTP.pow((player.ghostify.milestones > 15 && (!bigRip || player.achievements.includes("ng3p71"))) || (!challid && player.ghostify.milestones > 3) ? 1 : 0.5) : new Decimal(0),
 		dilatedTime: new Decimal(speedrunMilestonesReached > 21 && isRewardEnabled(4) && !inQCModifier("ad") && !bigRip ? 1e100 : 0),
@@ -211,7 +211,7 @@ function doMetaDimensionsReset(bigRip, headstart, challid){
 		bestAntimatter: headstart ? player.meta.bestAntimatter : getMetaAntimatterStart(bigRip),
 		bestOverQuantums: player.meta.bestOverQuantums,
 		bestOverGhostifies: player.meta.bestOverGhostifies,
-		resets: isRewardEnabled(27) ? (!challid && player.ghostify.milestones > 4 && bigRip == tmp.qu.bigRip.active ? player.meta.resets : 4) : 0,
+		resets: isRewardEnabled(27) ? (!challid && (player.ghostify.milestones > 4 || hasExS(42)) && bigRip == tmp.qu.bigRip.active ? player.meta.resets : 4) : 0,
 		'1': {
 			amount: new Decimal(0),
 			bought: 0,
@@ -952,19 +952,19 @@ function doNGUpdateGhostifyResetStuff(){
 	}
 }
 
-function doTOUSOnGhostify(bm, an){
+function doTOUSOnGhostify(bm, an) {
 	if (player.achievements.includes("ng3p77") && !an) { //thry of ultimate studies
-		player.timestudy.studies=[]
-		player.masterystudies=[]
-		for (var t = 0; t < all.length; t++) player.timestudy.studies.push(all[t])
 		for (var c = 1; c <= 14; c++) player.eternityChalls["eterc" + c] = 5
-		for (var t = 0; t < masteryStudies.timeStudies.length; t++) player.masterystudies.push("t" + masteryStudies.timeStudies[t])
-		for (var d = 1; d < 7; d++) player.dilation.studies.push(d)
-		for (var d = 7; d < 15; d++) player.masterystudies.push("d" + d)
 		if (bm < 2) {
 			player.dimensionMultDecrease = 2
 			player.tickSpeedMultDecrease = 1.65
 		}
+		player.timestudy.studies=[]
+		player.masterystudies=[]
+		for (var t = 0; t < all.length; t++) player.timestudy.studies.push(all[t])
+		for (var t = 0; t < masteryStudies.timeStudies.length; t++) player.masterystudies.push("t" + masteryStudies.timeStudies[t])
+		for (var d = 1; d < 7; d++) player.dilation.studies.push(d)
+		for (var d = 7; d < 15; d++) player.masterystudies.push("d" + d)
 	}
 }
 

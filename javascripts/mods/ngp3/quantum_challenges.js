@@ -113,12 +113,15 @@ function getQCGoal(num, bigRip) {
 		var data = tmp.inQCs
 		if (data[0]) c1 = data[0]
 		if (data[1]) c2 = data[1]
+		if (tmp.an) mult *= (an_pc_mods[c1]||1)*(an_pc_mods[c2]||1)
 		if (tmp.ngp3c && data[2]) bigRip = true;
 	} else if (num < 9) {
 		c1 = num
+		if (tmp.an) mult *= an_pc_mods[c1]||1
 	} else if (tmp.qu.pairedChallenges.order[num - 8]) {
 		c1 = tmp.qu.pairedChallenges.order[num - 8][0]
 		c2 = tmp.qu.pairedChallenges.order[num - 8][1]
+		if (tmp.an) mult *= (an_pc_mods[c1]||1)*(an_pc_mods[c2]||1)
 	}
 	if (c1 == 0) return goalData[0] * mult
 	if (c2 == 0) return goalData[c1] * mult
@@ -214,7 +217,7 @@ function updatePCCompletions() {
 				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', (qcm.descs[id] || "???")+(tmp.ngp3c?(" Also raises QC goals ^"+shorten(qcm.condExps[id] || 1)+"."):""))
 			} else {
 				document.getElementById("qcm_" + id).className = "unavailablebtn"
-				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', tmp.ngp3c?(qcm.condReqDescs[id]+" to unlock this modifier."):('Get ' + qcm.reqs[id] + ' Paired Challenges ranking to unlock this modifier. Ranking: ' + ranking.toFixed(1)))
+				document.getElementById("qcm_" + id).setAttribute('ach-tooltip', (tmp.an&&id=="sp")?"Exit Annihilation to use this modifier.":(tmp.ngp3c?(qcm.condReqDescs[id]+" to unlock this modifier."):('Get ' + qcm.reqs[id] + ' Paired Challenges ranking to unlock this modifier. Ranking: ' + ranking.toFixed(1))))
 			}
 		}
 	} else document.getElementById("modifiersdiv").style.display = (tmp.ngp3c && QCModifierUnl("ad", r))?"":"none"
@@ -400,7 +403,7 @@ var qcm={
 	condReqs: {
 		ad() { return player.ghostify.wzb.unl },
 		sm() { return player.ghostify.hb.unl },
-		sp() { return player.dilation.break.unl },
+		sp() { return player.dilation.break.unl && !tmp.an },
 	},
 	condReqDescs: {
 		ad: "Unlock Bosonic Lab",
@@ -421,7 +424,8 @@ var qcm={
 }
 
 function QCModifierUnl(id, r) {
-	if (tmp.ngp3c) return qcm.condReqs[id]();
+	if (tmp.an && id=="sp") return false;
+	else if (tmp.ngp3c) return qcm.condReqs[id]();
 	else return r >= qcm.reqs[id];
 }
 

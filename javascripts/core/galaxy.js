@@ -149,6 +149,7 @@ function getDistantScalingStart() {
 	if (player.timestudy.studies.includes(224)) n += Math.floor(player.resets/2000)
 	if (tmp.ngp3) if (tmp.qu.bigRip.active && tmp.qu.bigRip.upgrades.includes(15)) n += tmp.bru[15]
 	if (player.dilation.upgrades.includes("ngmm11")) n += 25
+	if (tmp.ngp3c && player.ghostify.annihilation.unl && tmp.and) n += tmp.and.attr[1].eff
 
 	if (tmp.grd.galaxies >= tmp.grd.darkStart) {
 		let push = getDarkMatterGalaxyPush(tmp.grd.speed);

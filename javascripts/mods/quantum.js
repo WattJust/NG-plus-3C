@@ -456,8 +456,8 @@ function quantumReset(force, auto, challid, bigRip, implode = false) {
 		else player.timestudy.theorem = nA(player.timestudy.theorem, ([0, 30, 35, 40, 70, 130, 85, 115, 115, 415, 550, 1, 1])[player.eternityChallUnlocked])
 	}
 	player.eternityChallUnlocked = 0
-	if (headstart) for (var ec = 1; ec < 13; ec++) player.eternityChalls['eterc' + ec]=5
-	else if (isRewardEnabled(3) && !bigRip) for (ec = 1; ec < 15; ec++) player.eternityChalls['eterc' + ec] = 5
+	if (headstart && !tmp.an) for (var ec = 1; ec < 13; ec++) player.eternityChalls['eterc' + ec]=5
+	else if (isRewardEnabled(3) && !tmp.an && !bigRip) for (ec = 1; ec < 15; ec++) player.eternityChalls['eterc' + ec] = 5
 	player.dilation.totalTachyonParticles = player.dilation.tachyonParticles
 	if (player.exdilation != undefined) {
 		if (player.eternityUpgrades.length) for (var u = 7; u < 10; u++) player.eternityUpgrades.push(u)

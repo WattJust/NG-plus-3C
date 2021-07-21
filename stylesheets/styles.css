@@ -2946,7 +2946,7 @@ td.subFactorH {
     background: #B84B5F;
 }
 
-#annihilatebtn {
+#annihilatebtn, .ex {
     font-family: Typewriter;
     cursor: pointer;
     color: white;
@@ -2958,7 +2958,7 @@ td.subFactorH {
     filter: brightness(110%);
 }
 
-#annihilatebtn:hover {
+#annihilatebtn:hover, .ex:hover {
     color: black;
     text-shadow: 0px 0px 2px black;
     animation: annihilation 0.4s linear 1 forwards;

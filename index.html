@@ -649,8 +649,10 @@
 					<tr>
 						<td><button class="timestudylocked" id="specDilStudy6" onclick="buyAnhDilStudy(6)">Unlock Meta Dimensions<br><span id="anhds6CostReq"></span></button></td>
 					</tr>
+				</table><table class="table" id="studytable">
 					<tr>
 						<td><button class="timestudylocked" id="specDilStudy7" onclick="buyAnhDilStudy(7)">Unlock Electrons<br><span id="anhds7CostReq"></span></button></td>
+						<td><button class="timestudylocked" id="specDilStudy8" onclick="buyAnhDilStudy(8)">Unlock Quantum Challenges<br><span id="anhds8CostReq"></span></button></td>
 					</tr>
 				</table>
 				<div style="height: 60px;"></div>
@@ -671,22 +673,31 @@
 				<canvas id="studyTreeCanvas4"></canvas>
 				<table class="table" id="studytable">
 					<tr>
-						<td><button class="timestudylocked" id="ex11" onclick="buyExoticStudy(0)">Gain 1% of IP & EP gain every second, and triple Exotic Matter gain.<br>Cost: <span id="exCost11"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex11" onclick="buyExoticStudy(0)" style="visibility: hidden;">Gain 1% of IP & EP gain every second, and triple Exotic Matter gain.<br>Cost: <span id="exCost11"></span> Exotic Theorems</button></td>
 					</tr>
 				</table><table class="table" id="studytable">
 					<tr>
-						<td><button class="timestudylocked" id="ex21" onclick="buyExoticStudy(1)">Total Exotic Theorems directly multiply TT gain.<br>Currently: <span id="exEff21"></span><br>Cost: <span id="exCost21"></span> Exotic Theorems</button></td>
-						<td><button class="timestudylocked" id="ex22" onclick="buyExoticStudy(2)">Unspent Exotic Theorems directly multiply TP gain (after Obscurements).<br>Currently: <span id="exEff22"></span><br>Cost: <span id="exCost22"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex21" onclick="buyExoticStudy(1)" style="visibility: hidden;">Total Exotic Theorems directly multiply TT gain.<br>Currently: <span id="exEff21"></span><br>Cost: <span id="exCost21"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex22" onclick="buyExoticStudy(2)" style="visibility: hidden;">Unspent Exotic Theorems directly multiply TP gain (after Obscurements).<br>Currently: <span id="exEff22"></span><br>Cost: <span id="exCost22"></span> Exotic Theorems</button></td>
 					</tr>
 				</table><table class="table" id="studytable">
 					<tr>
-						<td><button class="timestudylocked" id="ex31" onclick="buyExoticStudy(3)">The 2nd negative Cosmic Orb effect is halved.<br>Cost: <span id="exCost31"></span> Exotic Theorems</button></td>
-						<td><button class="timestudylocked" id="ex32" onclick="buyExoticStudy(4)">Ghost Particles & # of bought Exotic Studies boost Exotic Matter gain.<br>Currently: <span id="exEff32"></span><br>Cost: <span id="exCost32"></span> Exotic Theorems</button></td>
-						<td><button class="timestudylocked" id="ex33" onclick="buyExoticStudy(5)">Ghostly Photons & Dark Matter can be gained much sooner, and you can gain both outside of Big Rip.<br>Cost: <span id="exCost33"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex34" onclick="buyExoticStudy(10)" style="visibility: hidden;">Bosonic Speed & TT get a boost that weakens over time in this Ghostify.<br>Currently: <span id="exEff34"></span><br>Cost: <span id="exCost34"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex31" onclick="buyExoticStudy(3)" style="visibility: hidden;">The 2nd negative Cosmic Orb effect is halved.<br>Cost: <span id="exCost31"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex32" onclick="buyExoticStudy(4)" style="visibility: hidden;">Ghost Particles & # of bought Exotic Studies boost Exotic Matter gain.<br>Currently: <span id="exEff32"></span><br>Cost: <span id="exCost32"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex33" onclick="buyExoticStudy(5)" style="visibility: hidden;">Ghostly Photons & Dark Matter can be gained much sooner, and you can gain both outside of Big Rip.<br>Cost: <span id="exCost33"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex35" onclick="buyExoticStudy(11)" style="visibility: hidden;">The Max Replicated Galaxy cost uses a weaker formula.<br>Cost: <span id="exCost35"></span> Exotic Theorems</button></td>
+					</tr>
+				</table><table class="table" id="studytable">
+					<tr></tr>
+						<td><button class="timestudylocked" id="ex43" onclick="buyExoticStudy(8)" style="visibility: hidden;"># of bought Bosonic Upgrades boost the mult per 10 Meta Dims.<br>Currently: <span id="exEff43"></span><br>Cost: <span id="exCost43"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex41" onclick="buyExoticStudy(6)" style="visibility: hidden;">Meta Dimension Boosts are 5x as strong.<br>Cost: <span id="exCost41"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex42" onclick="buyExoticStudy(7)" style="visibility: hidden;">Multiply Automator Charge gain by 12, and gain 1% of QK, Colored QK, & Gluon gain every second.<br>Cost: <span id="exCost42"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex44" onclick="buyExoticStudy(9)" style="visibility: hidden;">Bosonic Upgrade 25 is kept in Annihilation runs, and multiply Exotic Matter gain by 5.<br>Cost: <span id="exCost44"></span> Exotic Theorems</button></td>
 					</tr>
 				</table><table class="table" id="studytable">
 					<tr>
-						<td><button class="timestudylocked" id="ex41" onclick="buyExoticStudy(6)">Meta Dimension Boosts are 5x as strong.<br>Cost: <span id="exCost41"></span> Exotic Theorems</button></td>
+						<td><button class="timestudylocked" id="ex51" onclick="buyExoticStudy(12)" style="visibility: hidden;">Multiply Exotic Matter, Bosonic Antimatter, Quark Energy, & TT gain by 10.<br>Cost: <span id="exCost51"></span> Exotic Theorems</button></td>
 					</tr>
 				</table>
 				<div style="height: 60px;"></div>
@@ -3003,7 +3014,7 @@
 								<div id="ng3pc23" class="achievement achievementlocked"></div>
 							</td>
 							<td>
-								<div id="Go Outside" class="achievement achievementlocked" style="background-image: url(images/194.png)" ach-tooltip="Unlock Electrons while Annihilated. Reward: Sacrificed Galaxies work just like Normal Galaxies."></div>
+								<div id="Go Outside" class="achievement achievementlocked" style="background-image: url(images/194.png)" ach-tooltip="Unlock Electrons while Annihilated. Reward: Sacrificed Galaxies work just like Normal Galaxies, and you cannot lose Bosonic Battery."></div>
 							</td>
 							<td>
 								<div id="ng3pc25" class="achievement achievementlocked"></div>
@@ -5613,6 +5624,11 @@
 							Power usage: 1<br>
 							Is active: <input id="isAutoGhostOn23" type="checkbox" onchange="toggleAutoGhost(23)"></input>
 						</div></td>
+						<td id="autoGhost24"><div class="autoBuyerDiv" style="display:block">
+							<b>Auto-Light Empowerment Ghost</b><br>
+							Power usage: 15<br>
+							Is active: <input id="isAutoGhostOn24" type="checkbox" onchange="toggleAutoGhost(24)"></input>
+						</div></td>
 					</tr>
 				</table>
 			</div>
@@ -5886,7 +5902,33 @@
 				<div id="annihilationUnl"></div>
 				<div id="annihilationDiv">
 					Annihilating your timeline forces a Higgs Boson & Fix Dilation reset, and resets your Time Theorems, Nano-Condensers, Radioactive Decays, Light Empowerments, and Bosonic Upgrades.<br>In Annihilation runs, Time Studies, Mastery Studies, most Dilation Studies, Dimensional Sacrifice, Quark boosts to Dimensions, Quark Multipliers, and Brave Milestones are all disabled.<br>In addition, Bosonic Lab & all features from Dilation Studies are much weaker.
-					<br><br>You have <span id="exMat" class="annih" style="font-size: 35px;"></span> Exotic Matter, which strengthens <span id="exMatTarg"></span> by <span id="exMatEff" class="annih" style="font-size: 35px;"></span>.<br><br><button id="annihilatebtn" onclick="annihilate()"><b id="annihilateFlavor">Annihilate your timeline.</b></button>
+					<br><br>You have <span id="exMat" class="annih" style="font-size: 35px;"></span> Exotic Matter, which strengthens <span id="exMatTarg"></span> by <span id="exMatEff" class="annih" style="font-size: 35px;"></span>.<br><br><button id="annihilatebtn" onclick="annihilate()"><b id="annihilateFlavor">Annihilate your timeline.</b></button><br><br>
+					<table class="qtable_4col"><tr>
+						<td><b style="font-size: 30px;">Galactic Attractor</b></td>
+						<td><b style="font-size: 30px;">Replication Attractor</b></td>
+						<td><b style="font-size: 30px;">Nanoscopic Attractor</b></td>
+						<td><b style="font-size: 30px;">Photonic Attractor</b></td>
+					</tr><tr>
+						<td>Galactic Matter: <b id="exAttrAmt1" style="font-size: 20px; color: rgb(0, 123, 145);"></b></td>
+						<td>Replicated Matter: <b id="exAttrAmt2" style="font-size: 20px; color: rgb(145, 87, 0);"></b></td>
+						<td>Nanoscopic Matter: <b id="exAttrAmt3" style="font-size: 20px; color: rgb(155, 122, 148);"></b></td>
+						<td>Photonic Matter: <b id="exAttrAmt4" style="font-size: 20px; color: rgb(143, 124, 42);"></b></td>
+					</tr><tr>
+						<td>Effect: Makes Distant Galaxy scaling start <b id="exAttrEff1" style="font-size: 20px; color: rgb(0, 123, 145);"></b> later</td>
+						<td>Effect: Makes Distant RG scaling start <b id="exAttrEff2" style="font-size: 20px; color: rgb(145, 87, 0);"></b> later</td>
+						<td>Effect: Makes Distant Nanofield Reward scaling start <b id="exAttrEff3" style="font-size: 20px; color: rgb(155, 122, 148);"></b> later</td>
+						<td>Effect: Makes Distant Light Empowerment scaling start <b id="exAttrEff4" style="font-size: 20px; color: rgb(143, 124, 42);"></b> later</td>
+					</tr><tr>
+						<td>Multiplies Exotic Matter gain by <b id="exAttrEff21" style="font-size: 20px;" class="annih"></b></td>
+						<td>Multiplies Exotic Matter gain by <b id="exAttrEff22" style="font-size: 20px;" class="annih"></b></td>
+						<td>Multiplies Exotic Matter gain by <b id="exAttrEff23" style="font-size: 20px;" class="annih"></b></td>
+						<td>Multiplies Exotic Matter gain by <b id="exAttrEff24" style="font-size: 20px;" class="annih"></b></td>
+					</tr><tr>
+						<td><button id="exAttr1" class="gluonupgrade unavailablebtn" onclick="sacrificeExMat(1)" style="font-size: 10px;">Sacrifice 10% of your Exotic Matter into Galactic Matter (+<span id="exAttrGain1"></span>)<br>This process expends an additional <span id="exAttrFuel1"></span> Exotic Matter as fuel</button></td>
+						<td><button id="exAttr2" class="gluonupgrade unavailablebtn" onclick="sacrificeExMat(2)" style="font-size: 10px;">Sacrifice 10% of your Exotic Matter into Replicated Matter (+<span id="exAttrGain2"></span>)<br>This process expends an additional <span id="exAttrFuel2"></span> Exotic Matter as fuel</button></td>
+						<td><button id="exAttr3" class="gluonupgrade unavailablebtn" onclick="sacrificeExMat(3)" style="font-size: 10px;">Sacrifice 10% of your Exotic Matter into Nanoscopic Matter (+<span id="exAttrGain3"></span>)<br>This process expends an additional <span id="exAttrFuel3"></span> Exotic Matter as fuel</button></td>
+						<td><button id="exAttr4" class="gluonupgrade unavailablebtn" onclick="sacrificeExMat(4)" style="font-size: 10px;">Sacrifice 10% of your Exotic Matter into Photonic Matter (+<span id="exAttrGain4"></span>)<br>This process expends an additional <span id="exAttrFuel4"></span> Exotic Matter as fuel</button></td>
+					</tr></table>
 				</div>
 			</div>
 			<div id="footercontainer">

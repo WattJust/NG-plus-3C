@@ -362,7 +362,7 @@ button, div.storebtn {
 	color: #00e5e5 !important
 }
 
-#metadimensions table #quantum.storebtn, .quantumbtn, #pastquantums, #dilstudy8.dilationupgbought, #qctabbtn, #qcsbtn, #dilstudy9.dilationupgbought, #pccompletionsbtn {
+#metadimensions table #quantum.storebtn, .quantumbtn, #pastquantums, #dilstudy8.dilationupgbought, #specDilStudy8.dilationupgbought, #qctabbtn, #qcsbtn, #dilstudy9.dilationupgbought, #pccompletionsbtn {
 	background-color: #009900 !important;
 	color: #191919 !important
 }
@@ -373,7 +373,7 @@ button, div.storebtn {
 	color: #191919 !important
 }
 
-#metadimensions table #quantum.storebtn:hover, .quantumbtn:hover, #pastquantums:hover, #dilstudy8.dilationupg, #qctabbtn:hover, #qcsbtn:hover, #dilstudy9.dilationupg, #pccompletionsbtn:hover {
+#metadimensions table #quantum.storebtn:hover, .quantumbtn:hover, #pastquantums:hover, #dilstudy8.dilationupg, #specDilStudy8.dilationupg, #qctabbtn:hover, #qcsbtn:hover, #dilstudy9.dilationupg, #pccompletionsbtn:hover {
 	background-color: #269926 !important
 }
 
@@ -418,7 +418,7 @@ button, div.storebtn {
 	background-color: #f2f2f2 !important
 }
 
-#dilstudy8.dilationupg:hover, #dilstudy9.dilationupg:hover {
+#dilstudy8.dilationupg:hover, #specDilStudy8.dilationupg:hover, #dilstudy9.dilationupg:hover {
 	background-color: #3a993a !important
 }
 

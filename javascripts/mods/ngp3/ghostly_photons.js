@@ -246,11 +246,11 @@ function lightEmpowerment() {
 	if (!player.aarexModifications.leNoConf && !confirm("You will become a ghost, but Ghostly Photons will be reset. You will gain 1 Light Empowerment from this. Are you sure you want to proceed?")) return
 	if (!player.ghostify.ghostlyPhotons.enpowerments) document.getElementById("leConfirmBtn").style.display = "inline-block"
 	player.ghostify.ghostlyPhotons.enpowerments++
-	if (hasAch("ng3pc16")) return;
-	else if (tmp.an) {
-		alert("You cannot become a ghost through Light Empowerments while the timeline is Annihilated!");
-		return;
-	}
+	leReset()
+}
+
+function leReset() {
+	if (hasAch("ng3pc16") || tmp.an) return;
 	ghostify(false, true)
 	if (player.achievements.includes("ng3p91")) return
 	player.ghostify.ghostlyPhotons.amount = new Decimal(0)
@@ -264,6 +264,7 @@ var LE_scale_start = {
 	1() { 
 		let start = 20;
 		if (hasBosonicUpg(55) && tmp.ngp3c) start += 5;
+		if (tmp.ngp3c && player.ghostify.annihilation.unl && tmp.and) start += tmp.and.attr[4].eff
 		return start; 
 	},
 	2() { return 50 },
@@ -300,4 +301,18 @@ function getLightEmpowermentReq(le) {
 	}
 	tmp.leReqScale = scale
 	return Math.floor(x)
+}
+
+function maxLE() {
+	var uv = player.ghostify.ghostlyPhotons.lights[7]
+	var le = player.ghostify.ghostlyPhotons.enpowerments
+	var x = 1
+	var y = 0
+	while (uv >= getLightEmpowermentReq(le + x * 2 - 1)) x *= 2
+	while (x >= 1) {
+		if (uv >= getLightEmpowermentReq(le + x + y - 1)) y += x
+		x /= 2
+	}
+	player.ghostify.ghostlyPhotons.enpowerments += y
+	leReset();
 }

@@ -909,4 +909,11 @@ function updateTempANData() {
 		let data = exoticStudies.filter(x => x.eff)[i];
 		tmp.and.study[data.id] = data.eff();
 	}
+	tmp.and.attr = {};
+	for (let i=1;i<=4;i++) {
+		tmp.and.attr[i] = {};
+		tmp.and.attr[i].amt = getExoticAttrAmt(i);
+		tmp.and.attr[i].eff = exoticAttrEff[i](tmp.and.attr[i].amt);
+		tmp.and.attr[i].exMult = Decimal.pow(2, Math.sqrt(tmp.and.attr[i].amt.plus(1).l))
+	}
 }

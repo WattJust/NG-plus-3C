@@ -90,6 +90,7 @@ function isIntervalAffordable() {
 function getDistantRGStart() {
 	let start = 3e3
 	if (hasBosonicUpg(43) && tmp.ngp3c) start += tmp.blu[43]
+	if (tmp.ngp3c && player.ghostify.annihilation.unl && tmp.and) start += tmp.and.attr[2].eff
 	return start;
 }
 
@@ -109,6 +110,7 @@ function getRGCost(offset = 0, costChange) {
 				if (player.meta != undefined || player.aarexModifications.ngp3c) {
 					var isReduced = false
 					if (player.masterystudies != undefined) if (player.masterystudies.includes("t266") && player.currentEternityChall != "eterc6") isReduced = true
+					if (hasExS(35)) isReduced = true;
 					if (isReduced) {
 						increase += (offset - Math.max(scaleStart-1 - player.replicanti.gal, 0)) * (1500 * (offset - Math.max(scaleStart-1 - player.replicanti.gal, 0) + Math.max(player.replicanti.gal, scaleStart-1) * 2) - 1183500)
 
@@ -125,7 +127,7 @@ function getRGCost(offset = 0, costChange) {
 					} else for (var g = Math.max(player.replicanti.gal, scaleStart-1); g < player.replicanti.gal + offset; g++) increase += 5 * Math.floor(Math.pow(1.2, g - (scaleStart-6)))
 				}
 			}
-			ret = ret.times(Decimal.pow(10, increase))
+			ret = ret.times(Decimal.pow(hasExS(35)?2:10, increase))
 		}
 	}
 	if (player.timestudy.studies.includes(233) && !costChange) ret = ret.dividedBy(player.replicanti.amount.pow(0.3))

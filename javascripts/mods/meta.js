@@ -95,7 +95,8 @@ function getPerTenMetaPower() {
 	let exp = 1
 	if (player.dilation.upgrades.includes("ngpp4")) r = getDil15Bonus()
 	if (hasBosonicUpg(25) && !tmp.ngp3c) exp = tmp.blu[25]
-	return Math.pow(r, exp)
+	if (hasExS(43)) exp *= tmp.and.study[43]
+	return Decimal.pow(r, exp)
 }
 
 function getMetaBoostPower() {

@@ -4973,18 +4973,19 @@ function doPerSecondNGP3Stuff(){
 	}
 
 	if (player.achievements.includes("ng3p43")) if (player.ghostify.milestones >= 8) maxUpgradeColorDimPower()
-	if (tmp.qu.autoOptions.assignQK && player.ghostify.milestones > 7) assignAll(true) 
+	if (tmp.qu.autoOptions.assignQK && (player.ghostify.milestones > 7 || hasExS(42))) assignAll(true) 
 	givePerSecondNeuts()
 
 	if (tmp.ngp3c) {
 		if (isAutoGhostActive(22)) for (let i=1;i<=8;i++) maxCondenseLight(i);
 		if (isAutoGhostActive(23)) maxNanoCondenseAll();
+		if (isAutoGhostActive(24)) maxLE();
 	}
 }
 
 function checkGluonRounding(){
 	if (!tmp.ngp3) return
-	if (player.ghostify.milestones > 7 || !quantumed) return
+	if (player.ghostify.milestones > 7 || hasExS(42) || !quantumed) return
 	if (player.quantum.gluons.rg.lt(101)) player.quantum.gluons.rg = player.quantum.gluons.rg.round()
 	if (player.quantum.gluons.gb.lt(101)) player.quantum.gluons.gb = player.quantum.gluons.gb.round()
 	if (player.quantum.gluons.br.lt(101)) player.quantum.gluons.br = player.quantum.gluons.br.round()
@@ -5990,7 +5991,7 @@ function ECRewardDisplayUpdating(){
 }
 
 function bigRipUpgradeUpdating(){
-	if (player.ghostify.milestones>7) {
+	if (player.ghostify.milestones>7||(tmp.an&&player.masterystudies.includes("d14"))) {
 		document.getElementById("spaceShards").textContent=shortenDimensions(tmp.qu.bigRip.spaceShards)
 		for (var u=1;u<=getMaxBigRipUpgrades();u++) {
 			document.getElementById("bigripupg"+u).className = tmp.qu.bigRip.upgrades.includes(u) ? "gluonupgradebought bigrip" + (isBigRipUpgradeActive(u, true) ? "" : "off") : tmp.qu.bigRip.spaceShards.lt(getBigRipUpgCost(u)) ? "gluonupgrade unavailablebtn" : "gluonupgrade bigrip"
@@ -6138,7 +6139,7 @@ function setTachyonParticles(x) {
 }
 
 function passiveQuantumLevelStuff(diff){
-	if (tmp.qu.bigRip.active || hasBosonicUpg(24)) {
+	if (player.masterystudies.includes("d14") && (tmp.qu.bigRip.active || hasBosonicUpg(24))) {
 		tmp.qu.bigRip.spaceShards = tmp.qu.bigRip.spaceShards.add(getSpaceShardsGain().times(diff / 100))
 		if (tmp.ngp3c && tmp.qu.bigRip.tss) tmp.qu.bigRip.tss = tmp.qu.bigRip.tss.add(getSpaceShardsGain().times(diff / 100))
 	}
@@ -6151,7 +6152,7 @@ function passiveQuantumLevelStuff(diff){
 			else r = r.sqrt()
 			tmp.qu.gluons[p[i]] = tmp.qu.gluons[p[i]].add(r.times(diff))
 		}
-		if (player.ghostify.milestones>15) tmp.qu.quarks=tmp.qu.quarks.add(quarkGain().times(diff / 100))
+		if (player.ghostify.milestones>15||hasExS(42)) tmp.qu.quarks=tmp.qu.quarks.add(quarkGain().times(diff / 100))
 	}
 	if ((tmp.be && player.ghostify.milestones>14)||(tmp.qu.breakEternity.break && hasAch("ng3pc13"))) tmp.qu.breakEternity.eternalMatter=tmp.qu.breakEternity.eternalMatter.add(getEMGain().times(diff / 100))
 	updateQuarkDisplay()
@@ -6296,7 +6297,7 @@ function gameLoop(diff) {
 			let gain = getDilGain()
 			if (player.dilation.tachyonParticles.lt(gain)) setTachyonParticles(gain)
 		}
-		if (player.ghostify.milestones>7) passiveQuantumLevelStuff(diff)
+		if (player.ghostify.milestones>7||hasExS(42)) passiveQuantumLevelStuff(diff)
 		if (player.masterystudies.includes('t291')) updateEternityUpgrades() // to fix the 5ep upg display
 		if (quantumed) quantumOverallUpdating(diff)
 		if (ghostified) {

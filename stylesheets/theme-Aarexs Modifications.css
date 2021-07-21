@@ -417,10 +417,10 @@ strong { color: #0072e5 }
 #metaAntimatterAmount, #metaAntimatterBest, #metaAntimatterPower, #metaAntimatterEffect {
     color: #00e5e5 !important
 }
-#quantum.storebtn, .quantumbtn, #pastquantums, #dilstudy8.dilationupg, #qctabbtn, #dilstudy9.dilationupg, #pccompletionsbtn {
+#quantum.storebtn, .quantumbtn, #pastquantums, #dilstudy8.dilationupg, #specDilStudy8.dilationupg, #qctabbtn, #dilstudy9.dilationupg, #pccompletionsbtn {
     border-color: #009900 !important
 }
-#quantum.storebtn:hover, .quantumbtn:hover, #pastquantums:hover, #dilstudy8.dilationupg:hover, #dilstudy8.dilationupgbought, #qctabbtn:hover, #dilstudy9.dilationupg:hover, #dilstudy9.dilationupgbought, #pccompletionsbtn:hover {
+#quantum.storebtn:hover, .quantumbtn:hover, #pastquantums:hover, #dilstudy8.dilationupg:hover, #dilstudy8.dilationupgbought, #specDilStudy8.dilationupg:hover, #specDilStudy8.dilationupgbought, #qctabbtn:hover, #dilstudy9.dilationupg:hover, #dilstudy9.dilationupgbought, #pccompletionsbtn:hover {
     background-color: #009900 !important
 }
 #progressbar.quantumProgress {
@@ -775,7 +775,7 @@ strong { color: #0072e5 }
     animation: annihilation 0.4s linear 1 forwards;
 }
 
-#annihilatebtn {
+#annihilatebtn, .ex {
     border-color: rgb(173, 0, 52) !important;
 }
 

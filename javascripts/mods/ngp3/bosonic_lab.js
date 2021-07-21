@@ -121,7 +121,8 @@ function bosonicTick(diff) {
 	diff = new Decimal(diff)
 	if (isNaN(diff.e)) return
 	let ogDiff = diff;
-	if (data.odSpeed > 1 && data.battery.gt(0)) {
+	if (hasAch("ng3pc24")) diff = Decimal.mul(diff, getFinalBosonicSpeedMult(data));
+	else if (data.odSpeed > 1 && data.battery.gt(0)) {
 		var bBtL = getBosonicBatteryLoss()
 		var odDiff = diff.times(bBtL).min(data.battery)
 		var fasterDiff = odDiff.div(bBtL).times(adjustOverdriveSpeed(data.odSpeed))
@@ -248,8 +249,8 @@ function getBosonicAMProduction() {
 	if (player.achievements.includes("ng3p91")) ret = ret.times(getAchBAMMult())
 	if (player.ghostify.neutrinos.boosts >= 11 && tmp.ngp3c) ret = ret.times(tmp.nb[11])
 	if (hasBDUpg(3)) ret = ret.times(tmp.bdt.upgs[3].bam)
+	if (hasExS(51)) ret = ret.times(10)
 	if (player.achievements.includes("ng3p98") && !tmp.ngp3c) ret = ret.plus(Decimal.pow(player.ghostify.hb.higgs, 2))
-
 	// ret = softcap(ret, "bam")
 	return ret
 }
@@ -315,14 +316,24 @@ function showBLTab(tabName) {
 function getEstimatedNetBatteryGain(){
 	let pos = ((tmp.ngp3c?getBatteryGainPerSecond(player.ghostify.wzb.dP):tmp.batteryGainLast) || new Decimal(0)).times(tmp.ngp3c?1:1000).times(player.ghostify.bl.speed)
 	if (player.ghostify.wzb.dPUse != 1 && !tmp.ngp3c) pos = new Decimal(0)
-	let neg = getBosonicBatteryLoss().times(player.ghostify.bl.speed)
+	let neg = hasAch("ng3pc24")?new Decimal(0):getBosonicBatteryLoss().times(player.ghostify.bl.speed)
 	if (pos.gte(neg)) return [true, pos.minus(neg)]
 	return [false, neg.minus(pos)]
 }
 
+function getFinalBosonicSpeed(data) {
+	return data.speed * getFinalBosonicSpeedMult(data);
+}
+
+function getFinalBosonicSpeedMult(data) {
+	let mult = adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1);
+	if (hasExS(34)) mult *= tmp.and.study[34];
+	return mult;
+}
+
 function updateBosonicLabTab(){
 	let data = player.ghostify.bl
-	let speed = data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1)
+	let speed = getFinalBosonicSpeed(data)
 	document.getElementById("bWatt").textContent = shorten(data.watt)
 	document.getElementById("bSpeed").textContent = shorten(data.speed)
 	document.getElementById("bTotalSpeed").textContent = shorten(speed)
@@ -538,7 +549,7 @@ function getEnchantEffect(id, desc) {
 function updateBosonExtractorTab(){
 	let ag17 = isAutoGhostActive(17)
 	let data = player.ghostify.bl
-	let speed = data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1)
+	let speed = getFinalBosonicSpeed(data)
 	let time = getExtractTime().div(speed)
 	if (data.extracting) document.getElementById("extract").textContent = "Extracting" + (time.lt(0.1)?"":" ("+(ag17?data.glyphs[data.typeToExtract-1].sub(Decimal.floor(data.glyphs[data.typeToExtract-1])).times(100).toFixed(1):data.extractProgress.times(100).toFixed(1))+"%)")
 	else document.getElementById("extract").textContent="Extract"
@@ -1359,7 +1370,7 @@ function updateWZBosonsTab() {
 	let data = player.ghostify.bl
 	let data2 = tmp.wzb
 	let data3 = player.ghostify.wzb
-	let speed = data2.spd.times(data.speed * adjustOverdriveSpeed(data.battery.gt(0) ? data.odSpeed : 1))
+	let speed = data2.spd.times(getFinalBosonicSpeed(data))
 	let show0 = data2.dPUse == 1 && getAntiPreonLoss().times(speed).div(tmp.ngp3c?condAplScalings[1]:aplScalings[1]).times(tmp.wzb.zbs).gte(10)
 	let gainSpeed = getOscillateGainSpeed().times(tmp.wzb.spd)
 	let r

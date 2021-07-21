@@ -17,6 +17,8 @@ function updateQuantumWorth(mode) {
 				if (automaticCharge>=20) automaticCharge = Math.sqrt(automaticCharge*20);
 				if (automaticCharge>=25) automaticCharge = Math.sqrt(automaticCharge*25);
 				if (automaticCharge>=35.5) automaticCharge = Math.pow(automaticCharge, 1.5)/Math.sqrt(35.5)
+
+				if (hasExS(42)) automaticCharge *= 12;
 			}
 			player.ghostify.automatorGhosts.power = Math.max(automaticCharge, player.ghostify.automatorGhosts.power)
 			if (mode != "quick") {
@@ -350,6 +352,7 @@ function getQuarkEnergyGainMult() {
 	if (player.masterystudies.includes("t333") && tmp.ngp3c) mult = mult.times(getMTSMult(333))
 	if (tmp.ngp3c && player.masterystudies.includes("t353")) mult = mult.times(3)
 	if (tmp.ngp3c && player.masterystudies.includes("t355")) mult = mult.times(getMTSMult(355))
+	if (hasExS(51)) mult = mult.times(10)
 	return mult;
 }
 
@@ -559,7 +562,7 @@ function updateGluonsTab() {
 		document.getElementById("generateBRGluonsAmount").textContent=shortenDimensions(brGain)
 		document.getElementById("generateAllGluons").className = "gluonupgrade " + (rgGain.max(gbGain).max(brGain).gt(0) ? "br" : "unavailablebtn")
 	}
-	if (player.ghostify.milestones > 7) {
+	if (player.ghostify.milestones > 7 || hasExS(42)) {
 		updateQuantumWorth("display")
 		updateGluonsTabOnUpdate("display")
 	}

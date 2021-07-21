@@ -12,6 +12,8 @@ function initAnnihilationPlayerData() {
             du: [],
             glu: [],
             aglu: [],
+            aqc: {},
+            apc: {},
             pc: {},
             bru: [],
             be: false,
@@ -43,6 +45,7 @@ function annihilationDisplay() {
         document.getElementById("exMat").textContent = shortenDimensions(player.ghostify.annihilation.ex);
         document.getElementById("exMatTarg").textContent = tmp.and.exTarg
         document.getElementById("exMatEff").textContent = getFullExpansion(Math.round((tmp.and.exEff-1)*1e3)/10)+"%"
+        updateExoticAttractors();
     }
 }
 
@@ -80,6 +83,8 @@ function annihilate() {
         player.ghostify.annihilation.ex = player.ghostify.annihilation.ex.plus(getExoticMatterGain())
 
         player.ghostify.annihilation.storage.aglu = tmp.qu.upgrades;
+        player.ghostify.annihilation.storage.aqc = tmp.qu.challenges;
+        player.ghostify.annihilation.storage.apc = tmp.qu.pairedChallenges;
         
         player.timestudy.theorem = nP(player.ghostify.annihilation.storage.tt);
         player.timestudy.studies = player.ghostify.annihilation.storage.ts;
@@ -109,8 +114,13 @@ function annihilate() {
         player.eternityUpgrades = [1,2,3,4,5,6];
         player.dilation.studies = player.ghostify.annihilation.dilstudies.filter(x => x <= 6);
         player.masterystudies = player.ghostify.annihilation.dilstudies.filter(x => x > 6).map(x => "d"+x);
+
         player.quantum.upgrades = player.ghostify.annihilation.storage.aglu;
+        player.quantum.challenges = player.ghostify.annihilation.storage.aqc;
+        player.quantum.pairedChallenges = player.ghostify.annihilation.storage.apc
+
         if (player.dilation.studies.includes(1)) player.dilation.upgrades = player.ghostify.annihilation.storage.du;
+        if (hasExS(44)) tmp.bl.upgrades.push(55);
         showEternityTab("dilationstudies", true)
     } else {
         updateBoughtTimeStudies()
@@ -128,17 +138,22 @@ function annihilate() {
     updateSpeedruns()
     updateQuarksTabOnUpdate()
     updateResetTierButtons()
+    updateQuantumChallenges()
+    updatePCCompletions()
 }
 
 function getExoticMatterGainMult() {
     let mult = new Decimal(1)
     if (hasExS(11)) mult = mult.times(3);
     if (hasExS(32)) mult = mult.times(tmp.and.study[32]);
+    if (hasExS(44)) mult = mult.times(5);
+    if (hasExS(51)) mult = mult.times(10)
     return mult;
 }
 
 function getExoticMatterGain() {
     let gain = new Decimal(Math.max(Math.pow(player.money.l/1e10, 0.9), 0)).times(getExoticMatterGainMult());
+    if (tmp.and) for (let i=1;i<=4;i++) gain = gain.times(tmp.and.attr[i].exMult);
     return gain.floor();
 }
 
@@ -175,18 +190,19 @@ function updateDilationStudyButtons() {
     if (!tmp.ngp3c || !tmp.an) return;
     for (let j=0;j<availableAnhDilStudies.length;j++) {
         let i = availableAnhDilStudies[j]
-        document.getElementById("specDilStudy"+i).className = (player.dilation.studies.includes(i)||player.masterystudies.includes("d"+i))?"dilationupgbought":(canBuyAnhDilStudy(i)?"dilationupg":"timestudylocked")
+        document.getElementById("specDilStudy"+i).className = (player.dilation.studies.includes(Number(i))||player.masterystudies.includes("d"+i))?"dilationupgbought":(canBuyAnhDilStudy(i)?"dilationupg":"timestudylocked")
         document.getElementById("anhds"+i+"CostReq").textContent = "Cost: "+(nG(anhDilStudyCosts[i], 1e12-1)?shortenDimensions(anhDilStudyCosts[i]):getFullExpansion(anhDilStudyCosts[i]))+" TT"+(anhDilStudyReqs[i]?(", Req: "+anhDilStudyReqs[i].desc()):"")
     }
 }
-
-var availableAnhDilStudies = [1,6,7]
 
 var anhDilStudyCosts = {
     1: 1.2e4,
     6: 2.5e21,
     7: 5e26,
+    8: 1e28,
 }
+
+var availableAnhDilStudies = Object.keys(anhDilStudyCosts);
 
 var anhDilStudyReqs = {
     6: {
@@ -194,8 +210,12 @@ var anhDilStudyReqs = {
         done() { return player.dilation.tachyonParticles.gte(1e90) },
     },
     7: {
-        desc() { return shortenCosts(new Decimal("1e960"))+" Quantum Worth" },
-        done() { return Decimal.gte(quantumWorth||0, "1e960") },
+        desc() { return shortenCosts(new Decimal("1e606"))+" Quantum Worth" },
+        done() { return Decimal.gte(quantumWorth||0, "1e606") },
+    },
+    8: {
+        desc() { return getFullExpansion(87500)+" Electrons" },
+        done() { return tmp.qu.electrons.amount>=87500 },
     },
 }
 
@@ -278,7 +298,47 @@ var exoticStudies = [
         id: 41,
         branches: [31, 32, 33],
         cost: 6e3,
-        shown() { return player.ghostify.annihilation.studies.includes(31) || player.ghostify.annihilation.studies.includes(32) || player.ghostify.annihilation.studies.includes(33) },
+        shown() { return player.dilation.studies.includes(6) && (player.ghostify.annihilation.studies.includes(31) || player.ghostify.annihilation.studies.includes(32) || player.ghostify.annihilation.studies.includes(33)) },
+    },
+    {
+        id: 42,
+        branches: [41],
+        cost: 2e4,
+        shown() { return player.ghostify.annihilation.studies.includes(41) },
+    },
+    {
+        id: 43,
+        branches: [41],
+        cost: 3.5e4,
+        eff() { return Math.sqrt(tmp.bl.upgrades.length*4+1) },
+        dispEff(e) { return "^"+getFullExpansion(Math.round(e*1000)/1000) },
+        shown() { return player.ghostify.annihilation.studies.includes(42) },
+    },
+    {
+        id: 44,
+        branches: [42],
+        cost: 2.5e4,
+        shown() { return player.ghostify.annihilation.studies.includes(42) },
+    },
+    {
+        id: 34,
+        branches: [43],
+        cost: 4e4,
+        eff() { return 1+9/(Math.log10(player.ghostify.time/10+1)+1) },
+        dispEff(e) { return e.toFixed(3)+"x" },
+        shown() { return player.ghostify.annihilation.studies.includes(43) },
+    },
+    {
+        id: 35,
+        branches: [44],
+        cost: 4e4,
+        shown() { return player.ghostify.annihilation.studies.includes(44) },
+    },
+    {
+        id: 51,
+        branches: [41, 42],
+        cost: 1.8e5,
+        shown() { return player.ghostify.annihilation.studies.includes(41) && player.ghostify.annihilation.studies.includes(42) && player.masterystudies.includes("d8") },
     },
 ]
 
@@ -287,7 +347,7 @@ function updateExoticStudyButtons() {
     for (let i=0;i<exoticStudies.length;i++) {
         let data = exoticStudies[i]
         let id = data.id;
-        document.getElementById("ex"+id).style.display = data.shown()?"":"none"
+        document.getElementById("ex"+id).style.visibility = data.shown()?"visible":"hidden"
         document.getElementById("ex"+id).className = player.ghostify.annihilation.studies.includes(id)?"exoticupgbought":(nG(player.ghostify.annihilation.theorem, nA(data.cost, player.ghostify.annihilation.spentThm))?"exoticupg":"timestudylocked")
         document.getElementById("exCost"+id).textContent = nG(data.cost, 1e12-1)?shortenDimensions(data.cost):getFullExpansion(data.cost)
         if (data.eff) document.getElementById("exEff"+id).textContent = data.dispEff(tmp.and.study[data.id])
@@ -300,7 +360,8 @@ function drawExoticStudyTree() {
     exctx.clearRect(0, 0, exc.width, exc.height);
 	if (player === undefined) return
 	if (document.getElementById("eternitystore").style.display === "none" || document.getElementById("exoticstudies").style.display === "none" || !tmp.ngp3c || !tmp.an) return
-	let shown = exoticStudies.filter(x => x.shown());
+	updateExoticStudyButtons();
+    let shown = exoticStudies.filter(x => x.shown());
     for (var i = 1; i < shown.length; i++) for (let j=0;j<shown[i].branches.length;j++) drawExoticStudyBranch(String(shown[i].branches[j]), String(shown[i].id))
 }
 
@@ -332,6 +393,15 @@ function buyExoticStudy(i) {
     player.ghostify.annihilation.spentThm = nA(player.ghostify.annihilation.spentThm, data.cost);
     player.ghostify.annihilation.studies.push(id);
 
+    if (id==44 && !tmp.bl.upgrades.includes(55)) tmp.bl.upgrades.push(55);
+    if (id==35) {
+        var gal = player.replicanti.gal
+		player.replicanti.gal = 0
+		player.replicanti.galCost = new Decimal(player.galacticSacrifice!=undefined?1e110:1e170)
+		player.replicanti.galCost = getRGCost(gal)
+		player.replicanti.gal = gal
+    }
+
     updateExoticStudyButtons()
     drawExoticStudyTree()
 }
@@ -343,4 +413,51 @@ function getPotentialExThm() {
     let exp = Math.log2(player.ghostify.annihilation.ex.div(25).plus(1).log2()+1);
     let amt = nPow(base, exp);
     return nN(amt)
+}
+
+var an_pc_mods = [null, 81, 5.4, 81, 81, 81, 81, 81, 81]
+
+var exoticAttrEff = {
+    1(x) { return (Math.pow(2, Math.sqrt(Math.log2(x.plus(1).log10()+1)))-1)*1e4 },
+    2(x) { return (Math.pow(3, Math.pow(Math.log(x.plus(1).log10()+1)/Math.log(3), 1/3))-1)*100 },
+    3(x) { return Math.pow(4, Math.pow(Math.log(x.plus(1).log10()+1)/Math.log(4), 1/4))-1 },
+    4(x) { return Math.pow(5, Math.pow(Math.log(x.plus(1).log10()+1)/Math.log(5), 1/5))-1 },
+}
+var exoticAttrBaseSpent = {
+    1: 5e4,
+    2: 1e6,
+    3: 1e9,
+    4: 1e12,
+}
+
+function getExoticAttrAmt(x) { return player.ghostify.annihilation.attractors[x]||new Decimal(0) }
+function getExoticAttrSpent(x) {
+    let base = exoticAttrBaseSpent[x]
+    return player.ghostify.annihilation.ex.max(base).div(base).sqrt().times(base).round();
+}
+function getExoticAttrGain(spent) {
+    return player.ghostify.annihilation.ex.sub(spent).div(10).max(0).ceil();
+}
+
+function updateExoticAttractors() {
+    for (let i=1;i<=4;i++) {
+        let spent = getExoticAttrSpent(i)
+        let gain = getExoticAttrGain(spent);
+
+        document.getElementById("exAttrAmt"+i).textContent = shortenDimensions(tmp.and.attr[i].amt)
+        document.getElementById("exAttrEff"+i).textContent = getFullExpansion(Math.round(tmp.and.attr[i].eff))
+        document.getElementById("exAttrGain"+i).textContent = shortenDimensions(gain);
+        document.getElementById("exAttr"+i).className = gain.gte(1)?"gluonupgrade ex":"gluonupgrade unavailablebtn"
+        document.getElementById("exAttrFuel"+i).textContent = shortenDimensions(spent);
+        document.getElementById("exAttrEff2"+i).textContent = shorten(tmp.and.attr[i].exMult);
+    }
+}
+
+function sacrificeExMat(x) {
+    if (!tmp.ngp3c || !player.ghostify.annihilation.unl) return;
+    let spent = getExoticAttrSpent(x);
+    let gain = getExoticAttrGain(spent);
+    if (gain.lt(1) || spent.gt(player.ghostify.annihilation.ex)) return;
+    player.ghostify.annihilation.ex = player.ghostify.annihilation.ex.sub(spent).times(.9).round();
+    player.ghostify.annihilation.attractors[x] = Decimal.add(player.ghostify.annihilation.attractors[x]||0, gain);
 }
