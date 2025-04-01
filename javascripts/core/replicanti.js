@@ -250,7 +250,7 @@ function getReplSpeed() {
 		inc /= Math.min(x, 200)
 		if (x > 200) exp += x / 10 - 20
 	}
-	if (player.dilation.upgrades.includes("ngmm10")) exp += player.dilation.upgrades.length
+	if (player.dilation.upgrades.includes("ngmm10")) exp += player.dilation.upgrades.length*2
 	inc = inc + 1
 	if (GUBought("gb2")) exp *= 2
 	if (hasNU(12) && tmp.qu.bigRip.active && tmp.ngp3c) exp *= tmp.nu[4].time;

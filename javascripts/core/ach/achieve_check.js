@@ -105,7 +105,7 @@ function checkUniversalHarmony() {
 
 function checkEPReqAchieve(){
 	if (player.eternityPoints.gte(Number.MAX_VALUE)) giveAchievement("But I wanted another prestige layer...")
-	if (player.eternityPoints.gte(player.aarexModifications.ngp3c?"1e2550":"1e40000")) giveAchievement("In the grim darkness of the far endgame")
+	if (player.eternityPoints.gte(player.aarexModifications.ngp3c?"1e2550":"1e4000")) giveAchievement("In the grim darkness of the far endgame")
 	if (player.eternityPoints.gte(tmp.ngp3c?"9.999e99999":"9e99999999")) giveAchievement("This achievement doesn't exist 3")
 }
 
@@ -167,7 +167,7 @@ function checkTickspeedReqAchieve(){
 	if (player.tickspeed.lt(1e-55)) giveAchievement("Faster than a squared potato");
 	if (player.tickspeed.log10() < -8296262) giveAchievement("Faster than a potato^286078")
 	if (player.totalTickGained >= 308) giveAchievement("Infinite time");
-	if (player.totalTickGained>=1e6) giveAchievement("GAS GAS GAS")
+	if (player.totalTickGained>=4.04e5) giveAchievement("GAS GAS GAS")
 }
 
 function newDimension() {

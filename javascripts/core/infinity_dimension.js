@@ -235,7 +235,7 @@ function getInfBuy10Mult(tier) {
 	if (player.currentEternityChall == "eterc13" && player.aarexModifications.ngp3c) return new Decimal(1);
 	let ret = infPowerMults[player.galacticSacrifice!==undefined&&player.tickspeedBoosts===undefined ? 1 : 0][tier]
 	if (player.galacticSacrifice !== undefined && player.galacticSacrifice.upgrades.includes(41)) ret *= player.galacticSacrifice.galaxyPoints.max(10).log10()
-	if (player.dilation.upgrades.includes("ngmm6")) ret *= getDil45Mult()
+	if (player.dilation.upgrades.includes("ngmm6")) ret *= (tmp.rm.pow(0.025))
 	if (player.aarexModifications.ngp3c) if (tier<8) ret *= 0.25
 	return ret
 }
@@ -294,9 +294,9 @@ function getInfinityPowerEffect() {
 function getInfinityPowerEffectExp() {
 	let x = 7
 	let galaxies = Math.max(player.galaxies, 0)
-	if (player.galacticSacrifice != undefined) {
-		x = Math.pow(galaxies, 0.7)
-		if (player.currentChallenge === "postcngm3_2" || (player.tickspeedBoosts != undefined && player.currentChallenge === "postc1")) {
+	    if (player.galacticSacrifice != undefined) {
+		  x = Math.pow(galaxies, 0.7)
+		  if (player.currentChallenge === "postcngm3_2" || (player.tickspeedBoosts != undefined && player.currentChallenge === "postc1")) {
 			if (player.aarexModifications.ngmX >= 4) {
 				x = Math.pow(galaxies, 1.25)
 				if (x > 7) x += 1
@@ -304,6 +304,10 @@ function getInfinityPowerEffectExp() {
 		}
 		else if (player.challenges.includes("postcngm3_2")) x = Math.pow(galaxies + (player.resets + player.tickspeedBoosts) / 30, 0.7)
 		x = Math.max(x , 7)
+
+	if (player.dilation.upgrades.includes("ngmm5")) x += Math.max(player.dilation.freeGalaxies, 0)
+		if (player.galacticSacrifice != undefined && player.dilation.upgrades.includes("ngmm5")) 
+			x = x+(Math.pow(player.dilation.freeGalaxies, 0.5))
 	}
 	if (x > 100) x = 50 * Math.log10(x)
 	if (hasPU(34)) x *= puMults[34]()
@@ -311,7 +315,7 @@ function getInfinityPowerEffectExp() {
 		x *= 0.85
 		if (player.timestudy.studies.includes(191)) x += ts191Eff()
 	}
-	if (player.dilation.upgrades.includes("ngmm5")) x += getDil44Mult()
+
 	if (player.aarexModifications.ngp3c) {
 		x += getECReward(13)
 		if (isNanoEffectUsed("infdim_eff_exp")) x += tmp.nf.effects.infdim_eff_exp

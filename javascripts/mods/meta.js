@@ -90,24 +90,24 @@ function getMetaDimensionGlobalMultiplier() {
 }
 
 function getPerTenMetaPower() {
-	let r = 2
+	let r = 3
 	let exp = 1
-	if (player.dilation.upgrades.includes("ngpp4")) r = getDil15Bonus()
+	if (player.dilation.upgrades.includes("ngpp4")) r *= getDil15Bonus()
 	if (hasBosonicUpg(25) && !tmp.ngp3c) exp = tmp.blu[25]
 	return Math.pow(r, exp)
 }
 
 function getMetaBoostPower() {
 	if (inQC(8)) return 1
-	let r = 2
+	let r = 3
 	let exp = 1
-	if (player.dilation.upgrades.includes("ngpp4")) r = getDil15Bonus()
+	if (player.dilation.upgrades.includes("ngpp4")) r *= getDil15Bonus()
 	if (tmp.ngp3) {
 		if (isNanoEffectUsed("meta_boost_power")) r = tmp.nf.effects.meta_boost_power
 		if (player.masterystudies.includes("t312")) exp = 1.045
 		if (!tmp.ngp3l && player.achievements.includes("ng3p26")) exp *= Math.log10(9 + Math.max(player.meta.resets / 75 + 0.25, 1))
 	}
-	if (player.achievements.includes("ngpp14")) r *= 1.01
+	if (player.achievements.includes("ngpp14")) r *= 10
 	return Math.pow(r, exp)
 }
 
@@ -150,9 +150,11 @@ function getMetaShiftRequirement() {
 	data.mult = inQC4 ? 5.5 : 15
 	if (player.aarexModifications.ngp3c && !player.masterystudies.includes("t345")) data.mult *= 1.5
 	if (tmp.ngp3) if (player.masterystudies.includes("t312")) data.mult -= 1
+	if(player.dilation.upgrades.includes("ngmm7")) data.mult -= 1
 	data.amount += data.mult * Math.max(mdb - 4, 0)
 	if (tmp.ngp3) if (player.masterystudies.includes("d13")) data.amount -= getTreeUpgradeEffect(1)
 	if (ghostified) if (hasNU(1)) data.amount -= tmp.nu[0]
+	if(player.dilation.upgrades.includes("ngmm7")) data.amount -= 20
 
 	data.scalingStart = inQC4 ? 55 : 15
 	if (player.meta.resets >= data.scalingStart) {
@@ -364,7 +366,7 @@ function getExtraDimensionBoostPowerExponent(ma) {
 			return power
 		}
 	}
-	if (player.dilation.upgrades.includes("ngpp5")) power+=player.aarexModifications.ngp3c?4:1
+	if (player.dilation.upgrades.includes("ngpp5")) power+=player.aarexModifications.ngp3c?4:4
 	power += getECReward(13)
 	if (tmp.ngp3) {
 		if (isNanoEffectUsed("ma_effect_exp")) power += tmp.nf.effects.ma_effect_exp
@@ -374,13 +376,15 @@ function getExtraDimensionBoostPowerExponent(ma) {
 }
 
 function getDil14Bonus() {
-	return 1 + Math.log10(1 - Math.min(0, player.tickspeed.log(10)));
+	return 1 + Math.log2(1 - Math.min(0, player.tickspeed.log(2)));
 }
 
 function getDil17Bonus() {
 	return Math.sqrt(player.meta.bestAntimatter.max(1).log10()) / (player.masterystudies ? 1 : 2);
 }
-
+function getDil71Mult() {
+	return Math.log10(Math.max(0, player.meta.bestAntimatter.log(10))) **0.33334;
+}
 function updateOverallMetaDimensionsStuff(){
 	document.getElementById("metaAntimatterAmount").textContent = shortenMoney(player.meta.antimatter)
 	document.getElementById("metaAntimatterBest").textContent = shortenMoney(player.meta.bestAntimatter)
@@ -436,7 +440,7 @@ function updateMetaDimensions () {
 
 function getDil15Bonus() {
 	let x = 1
-	let max = 3
+	let max = 10
 	if (ghostified && player.ghostify.neutrinos.boosts >= 3 && !tmp.ngp3c) {
 		if (tmp.ngp3l) max = tmp.nb[3]
 		else {
@@ -445,11 +449,11 @@ function getDil15Bonus() {
 		}
 	}
 	if (player.aarexModifications.nguspV !== undefined) x *= Math.min(Math.max(player.dilation.dilatedTime.max(1).log10() / 10 - 6.25, 2), max)
-	else x *= Math.min(Math.log10(player.dilation.dilatedTime.max(1e10).log(10)) + 1, max)
+	else x *= Math.min(Math.log10(player.dilation.dilatedTime.max(1e10).log(2)) + 2, max)
 	return x
 }
 
 function getMetaUnlCost() {
 	if (player.aarexModifications.nguspV) return 1e21
-	return 1e24
+	return 2e22
 }

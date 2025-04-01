@@ -4364,8 +4364,8 @@ var ecExpData = {
 		eterc10: 3000,
 		eterc11: 500,
 		eterc12: 110000,
-		eterc13: 38500000,
-		eterc14: 1595000,
+		eterc13: 510000,
+		eterc14: 480000,
 		eterc1_ngmm: 1800,
 		eterc2_ngmm: 1125,
 		eterc3_ngmm: 1025,
@@ -4407,7 +4407,7 @@ var ecExpData = {
 		eterc10: 300,
 		eterc11: 200,
 		eterc12: 12000,
-		eterc13: 1000000,
+		eterc13: 20000,
 		eterc14: 800000,
 		eterc1_ngmm: 400,
 		eterc2_ngmm: 250,
@@ -4493,7 +4493,7 @@ function getECReward(x, alt=false) {
 	if (x == 12) return 1 - c * (m2 ? .06 : 0.008)
 	if (x == 13 && !alt) {
 		var data={
-			main:[0, 0.25, 0.5, 0.7, 0.85, 1],
+			main:[0, 2.5, 5, 7, 8.5, 10],
 			legacy:[0, 0.2, 0.4, 0.6, 0.8, 1],
 			cnd: [0, 1.5, 3.5, 6, 7.2, 8],
 		}
@@ -4507,10 +4507,10 @@ function getECReward(x, alt=false) {
 		let eff = Decimal.pow(10, Math.pow(Decimal.mul(chance, c).plus(1).log10(), 2)).pow(6e3+2e3*c).times(Decimal.add(tmp.rep?tmp.rep.chance:0, 1));
 		return tmp.ngp3c?softcap(eff, "ngp3cEC13"):eff;
 	}
-	if (x == 14 && !alt) return getIC3EffFromFreeUpgs()
+	if (x == 14 && !alt) return getIC3EffFromFreeUpgs/10()
 	if (x == 14 && alt) {
 		if (!pc) return 1;
-		return Math.log10(player.galaxies*Math.pow(c, 2)+1)/4.3+1
+		return Math.log10(player.galaxies*Math.pow(c, 2)+1)/5+1
 	}
 }
 

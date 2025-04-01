@@ -29,7 +29,7 @@ function getBaseDTProduction(){
 	}
 	if (hasBosonicUpg(15)) gain = gain.times(tmp.blu[15].dt)
 	if (tmp.newNGP3E && player.achievements.includes("r138") && gain.lt(1e100)) gain = gain.times(3).min(1e100)
-	if (!tmp.ngp3l && (tmp.ngp3 || tmp.newNGP3E) && player.achievements.includes("ngpp13")) gain = gain.times(2)
+	if (!tmp.ngp3l && (tmp.ngp3 || tmp.newNGP3E) && player.achievements.includes("ngpp13")) gain = gain.times(100)
 	return gain
 }
 
@@ -243,12 +243,12 @@ function dilationPowerStrength() {
 const DIL_UPGS = []
 const DIL_UPG_SIZES = [6, 8]
 const DIL_UPG_COSTS = {
-	r1: [1e5, 10, 1/0],
-	r2: [1e6, 100, 1/0],
-	r3: [1e7, 20, 72],
+	r1: [1e4, 10, 1/0],
+	r2: [1e5, 100, 1/0],
+	r3: [1e6, 20, 72],
 	r4: [1e8, 1e4, 24],
-	r4_ngmm: [1e30, 1e4, 18],
-	r5: [1e16, 10, 1/0],
+	r4_ngmm: [1e13, 1e4, 18],
+	r5: [1e12, 1e5, 1/0],
 	r6: [5e6, 50, 1],
 	  4: 5e6,
 	  5: 1e9,
@@ -260,11 +260,11 @@ const DIL_UPG_COSTS = {
 	  ngud1: 1e20,
 	  ngud2: 1e25,
 	  ngpp1: 1e20,
-	  ngpp2: 1e25,
-	  ngpp3: 1e50,
-	  ngpp4: 1e60,
-	  ngpp5: 1e80,
-	  ngpp6: 1e100,
+	  ngpp2: 1e23,
+	  ngpp3: 1e43,
+	  ngpp4: 1e47,
+	  ngpp5: 1e60,
+	  ngpp6: 1e80,
 	  ngpp3_usp: 1e79,
 	  ngpp4_usp: 1e84,
 	  ngpp5_usp: 1e89,
@@ -275,16 +275,16 @@ const DIL_UPG_COSTS = {
 	  ngpp5_p3c: 1e64,
 	  ngmm1: 5e16,
 	  ngmm2: 1e19,
-	  ngmm3: 1e20,
+	  ngmm3: 1e16,
 	  ngmm4: 1e25,
-	  ngmm5: 1/0,
-	  ngmm6: 1/0,
-	  ngmm7: 1/0,
-	  ngmm8: 1/0,
-	  ngmm9: 1/0,
-	  ngmm10: 1/0,
-	  ngmm11: 1/0,
-	  ngmm12: 1/0,
+	  ngmm5: 1e35,
+	  ngmm6: 1e38,
+	  ngmm7: 1e68,
+	  ngmm8: 1e72,
+	  ngmm9: 1e48,
+	  ngmm10: 1e55,
+	  ngmm11: 1e75,
+	  ngmm12: 1e78,
 	  ngusp1: 1e50,
 	  ngusp2: 1e55,
 	  ngusp3: 1e94,
@@ -523,7 +523,7 @@ function updateDilationUpgradeButtons() {
 		document.getElementById("dil51desc").textContent = "Currently: " + shortenMoney(getDil14Bonus()) + 'x';
 		document.getElementById("dil52desc").textContent = "Currently: " + shortenMoney(getDil15Bonus()) + 'x';
 		document.getElementById("dil52ngp3cdesc").textContent = player.aarexModifications.ngp3c?", and get 1 of each time & meta condenser for free":""
-		document.getElementById("dil53desc").textContent = "(^8 -> ^"+(player.aarexModifications.ngp3c?"12), and it also multiplies Infinity & Time Dimensions (unaffected by Obscurements).":"9)")
+		document.getElementById("dil53desc").textContent = "(^8 -> ^"+(player.aarexModifications.ngp3c?"12), and it also multiplies Infinity & Time Dimensions (unaffected by Obscurements).":"12)")
 		document.getElementById("dil54formula").textContent = "(log(x)^0.5" + (tmp.ngp3 ? ")" : "/2)")
 		document.getElementById("dil54desc").textContent = "Currently: " + shortenMoney(getDil17Bonus()) + 'x';
 	}
@@ -536,7 +536,7 @@ function updateDilationUpgradeButtons() {
 		document.getElementById("dil44desc").textContent = "Currently: +" + shortenMoney(getDil44Mult())
 		document.getElementById("dil45desc").textContent = "Currently: " + shortenMoney(getDil45Mult()) + "x"
 		if (player.dilation.studies.includes(6)) {
-			document.getElementById("dil71desc").textContent = "Currently: ^" + shortenMoney(getDil71Mult())
+			document.getElementById("dil71desc").textContent = "Currently: ^" + 1
 			document.getElementById("dil72desc").textContent = "Currently: " + shortenMoney(getDil72Mult()) + "x"
 		}
 	}
