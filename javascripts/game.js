@@ -4507,7 +4507,7 @@ function getECReward(x, alt=false) {
 		let eff = Decimal.pow(10, Math.pow(Decimal.mul(chance, c).plus(1).log10(), 2)).pow(6e3+2e3*c).times(Decimal.add(tmp.rep?tmp.rep.chance:0, 1));
 		return tmp.ngp3c?softcap(eff, "ngp3cEC13"):eff;
 	}
-	if (x == 14 && !alt) return getIC3EffFromFreeUpgs/10()
+	if (x == 14 && !alt) return getIC3EffFromFreeUpgs()
 	if (x == 14 && alt) {
 		if (!pc) return 1;
 		return Math.log10(player.galaxies*Math.pow(c, 2)+1)/5+1

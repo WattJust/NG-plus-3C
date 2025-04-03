@@ -1,5 +1,5 @@
 function onQuantumAM(){
-	let x = 10
+	let x = 100
 	if (player.challenges.includes("challenge1")) x = 100
 	if (player.aarexModifications.ngmX > 3) x = 200
 	if (player.achievements.includes("r37")) x = 1000
